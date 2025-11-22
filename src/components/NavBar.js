@@ -22,6 +22,8 @@ export default function Home() {
 
   const handleToggle = () => {
     setToggle((prev) => !prev);
+    setOpenSearch(false);
+    setToogleProfile(false);
   };
 
   const handleClose = () => {
@@ -31,6 +33,7 @@ export default function Home() {
   const handleOpenSearch = () => {
     setOpenSearch((prev) => !prev);
     setToogleProfile(false);
+    setToggle(false);
   };
 
   // useEffect(() => {
@@ -48,26 +51,21 @@ export default function Home() {
   // }, []);
 
   return (
-    <nav className=" relative ">
+    <nav className=" relative z-50 select-none ">
       <div className=" xl:py-[23.5px] lg:py-[23.5px] md:py-[23.5px] py-4 xl:px-10 lg:px-10 md:px-8 px-4 flex flex-row justify-between items-center ">
-        <Link href="/" className=" flex justify-center items-center gap-2 ">
+        <Link href="/">
           <img
-            src="/gpLogo.png"
+            src="/logo.png"
             alt="gachpala_logo"
-            className=" xl:w-10 lg:w-6 md:w-5 w-4 "
+            className=" 2xl:w-40 xl:w-36 lg:w-32 md:w-28 w-23 "
           />
-          <h1
-            className={` xl:text-[30px] lg:text-[26px] md:text-[20px] text-[18px] ${arapey.className} `}
-          >
-            GachPala
-          </h1>
         </Link>
 
         <div className=" flex justify-between items-center xl:gap-[120px] lg:gap-16 md:gap-7 ">
           <div
             className={` ${
               toggle
-                ? " flex flex-col gap-2 justify-center items-center absolute left-0 top-14 bg-[#F6F7F2] w-full "
+                ? " flex flex-col gap-2 justify-center items-center absolute left-0 top-14 bg-[#F6F7F2] pb-5 w-full "
                 : "hidden"
             }  xl:flex lg:flex md:flex justify-center items-center xl:gap-[30px] lg:gap-5 md:gap-2 `}
           >
@@ -134,7 +132,7 @@ export default function Home() {
             <li className={`${listItemsSec} cursor-pointer relative`}>
               <LiaSearchSolid
                 onClick={handleOpenSearch}
-                className=" xl:text-[24px] lg:text-[24px] md:text-[20px] text-[18px] text-[#58575B] "
+                className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] "
               />
               <motion.input
                 initial={{ opacity: 0, height: 0 }}
@@ -157,10 +155,11 @@ export default function Home() {
                 onClick={() => {
                   setToogleProfile((prev) => !prev);
                   setOpenSearch(false);
+                  setToggle(false);
                 }}
                 className={`${listItemsSec} cursor-pointer block `}
               >
-                <BiUser className=" xl:text-[24px] lg:text-[24px] md:text-[20px] text-[18px] text-[#58575B] " />
+                <BiUser className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] " />
               </button>
               <motion.div
                 initial={{ opacity: 0, scale: 0, top: -20 }}
@@ -170,7 +169,7 @@ export default function Home() {
                   toogleProfile
                     ? "flex flex-col justify-center items-center xl:gap-3 lg:gap-3 md:gap-3 gap-1 absolute xl:left-[-60px] lg:left-[-60px] md:left-[-45px] -left-8 top-10  "
                     : "hidden"
-                } bg-black/10 backdrop-blur-2xl xl:w-[150px] lg:w-[150px] md:w-[110px] w-[110px] xl:h-[150px] lg:h-[150px] md:h-[120px] h-[110px] drop-shadow-xl shadow-xl duration-200 ease-out `}
+                } bg-black/10 backdrop-blur-2xl xl:w-[150px] lg:w-[150px] md:w-[110px] w-[110px] xl:h-[150px] lg:h-[150px] md:h-[120px] h-[110px] drop-shadow-xl shadow-xl `}
               >
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -203,7 +202,7 @@ export default function Home() {
 
             <Link href="/cart" className=" relative">
               <li className={`${listItemsSec} `}>
-                <HiOutlineShoppingBag className=" xl:text-[24px] lg:text-[24px] md:text-[20px] text-[18px] text-[#58575B] " />
+                <HiOutlineShoppingBag className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] " />
               </li>
               <div className=" text-[12px] text-white bg-[#588456] w-5 h-5 rounded-full flex justify-center items-center absolute left-3 top-3 ">
                 12

@@ -3,6 +3,7 @@
 body {
   scroll-behavior: smooth;
   background: #f6f7f2;
+  overflow-x: hidden;
 }
 
 @theme {
@@ -10,9 +11,22 @@ body {
   --font-Omomo: "Omomo", monospace;
 
   --color-BG: "#f6f7f2";
+  --color-green: "#588456";
 }
 
 #basic-menu {
   right: 80px;
   top: 16px;
+}
+
+.slick-slide {
+  transition: transform 1s ease-in-out, background-color 1s ease-in-out;
+  transform: scale(0.5);
+  background-color: rgb(194, 194, 194);
+}
+
+.slick-active {
+  transform: scale(1);
+  transition: transform 1s ease-in-out, background-color 1s ease-in-out;
+  background: transparent;
 }

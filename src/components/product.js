@@ -1,0 +1,57 @@
+"use client";
+
+import { arapey, openSans } from "@/lib/fonts";
+import { useState } from "react";
+
+export default function Product() {
+  const [isActive, setIsActive] = useState(false);
+
+  function handleCartButton() {
+    setIsActive((prev) => !prev);
+  }
+
+  function handleAddToCart(event) {
+    event.stopPropagation();
+    console.log("Add to cart clicked for this product");
+  }
+
+  return (
+    <>
+      <div>
+        <div
+          onClick={handleCartButton}
+          className="w-fit bg-[#EBEEE3] 2xl:px-11 xl:px-4 lg:px-2 md:px-2 px-1 2xl:py-[90.5px] xl:py-12 lg:py-8 md:py-10 py-6 select-none group relative "
+        >
+          <img
+            src="/plant.png"
+            alt="product"
+            className=" mx-auto 2xl:w-auto xl:w-[80%] lg:w-[70%] md:w-[60%] w-[60%] "
+          />
+          <button
+            onClick={handleAddToCart}
+            className={`${openSans.className} ${
+              isActive
+                ? "opacity-100 border-black text-black 2xl:bottom-8 xl:bottom-4 lg:bottom-2 md:bottom-4 bottom-[9px] duration-300 ease-out "
+                : "opacity-0 border-transparent "
+            } w-fit font-medium 2xl:text-[12px] xl:text-[12px] lg:text-[12px] md:text-[12px] text-[10px] 2xl:px-5 xl:px-5 lg:px-3 md:px-2 px-1.5 2xl:py-2 xl:py-2 lg:py-1 py-0.5 border-2 border-black rounded-lg 
+                  absolute left-[50%] translate-x-[-50%] bottom-10 cursor-pointer group-hover:opacity-100 group-hover:border-black group-hover:text-black group-hover:bg-transparent duration-300 ease-out `}
+          >
+            Add to cart
+          </button>
+        </div>
+        <h3
+          className={`${arapey.className} 2xl:text-[25.5px] xl:text-[25.5px] lg:text-[20px] md:text-[22px] text-[18px] text-black font-normal leading-[35.7px] 
+                  2xl:mt-6 xl:mt6 lg:mt-4 md:mt-3 mt-2 cursor-pointer `}
+        >
+          Chinese Money Plant
+        </h3>
+        <p
+          className={`${openSans.className} font-normal 2xl:text-[19.5px] xl:text-[18px] lg:text-[16px] md:text-[14px] text-[12px] text-[#3D713C] 
+                  2xl:leading-[29.3px] xl:leading-7 lg:leading-6 md:leading-4 leading-2 `}
+        >
+          $ 23.00
+        </p>
+      </div>
+    </>
+  );
+}

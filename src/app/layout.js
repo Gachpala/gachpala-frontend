@@ -2,7 +2,6 @@ import "./globals.css";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
-
 export const metadata = {
   title: "GachPala",
   description:
@@ -20,3 +19,6 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
+// app/layout.js
+import "./globals.css";
