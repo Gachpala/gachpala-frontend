@@ -1,9 +1,9 @@
-import Image from "next/image";
+import Landing from "@/subPage/Landing";
 
 export default function Home() {
   return (
     <>
-      <h1>Hello, Next.js!</h1>
+      <Landing />
     </>
   );
 }
