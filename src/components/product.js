@@ -46,7 +46,7 @@ export default function Product() {
           Chinese Money Plant
         </h3>
         <p
-          className={`${openSans.className} font-normal 2xl:text-[19.5px] xl:text-[18px] lg:text-[16px] md:text-[14px] text-[12px] text-[#3D713C] 
+          className={`${openSans.className} font-normal 2xl:text-[19.5px] xl:text-[18px] lg:text-[16px] md:text-[14px] text-[12px] text-[#00bf63] 
                   2xl:leading-[29.3px] xl:leading-7 lg:leading-6 md:leading-4 leading-2 `}
         >
           $ 23.00

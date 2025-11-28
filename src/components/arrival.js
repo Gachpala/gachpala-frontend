@@ -42,7 +42,7 @@ export default function Arrival() {
                     ? "opacity-100 border-black text-black 2xl:bottom-8 xl:bottom-4 lg:bottom-2 md:bottom-4 bottom-[9px] duration-300 ease-out "
                     : "opacity-0 border-transparent "
                 } w-fit font-medium 2xl:text-[12px] xl:text-[12px] lg:text-[12px] md:text-[12px] text-[10px] 2xl:px-5 xl:px-5 lg:px-3 md:px-2 px-1.5 2xl:py-2 xl:py-2 lg:py-1 py-0.5 border-2 border-black rounded-lg 
-                absolute left-[50%] translate-x-[-50%] bottom-10 cursor-pointer group-hover:opacity-100 group-hover:border-black group-hover:text-black group-hover:bg-transparent duration-300 ease-out `}
+                absolute left-[50%] translate-x-[-50%] bottom-10 cursor-pointer group-hover:opacity-100 group-hover:border-gray-500 group-hover:text-gray-500 group-hover:bg-transparent duration-300 ease-out `}
               >
                 Add to cart
               </button>
@@ -54,7 +54,7 @@ export default function Arrival() {
               Chinese Money Plant
             </h3>
             <p
-              className={`${openSans.className} font-normal 2xl:text-[19.5px] xl:text-[18px] lg:text-[16px] md:text-[14px] text-[12px] text-[#3D713C] 
+              className={`${openSans.className} font-normal 2xl:text-[19.5px] xl:text-[18px] lg:text-[16px] md:text-[14px] text-[12px] text-[#00bf63] 
                 2xl:leading-[29.3px] xl:leading-7 lg:leading-6 md:leading-4 leading-2 `}
             >
               $ 23.00

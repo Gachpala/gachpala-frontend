@@ -65,7 +65,7 @@ export default function Home() {
           <div
             className={` ${
               toggle
-                ? " flex flex-col gap-2 justify-center items-center absolute left-0 top-14 bg-[#F6F7F2] pb-5 w-full "
+                ? " flex flex-col gap-2 justify-center items-center absolute left-0 top-12 bg-[#F6F7F2] pb-5 w-full "
                 : "hidden"
             }  xl:flex lg:flex md:flex justify-center items-center xl:gap-[30px] lg:gap-5 md:gap-2 `}
           >
@@ -74,7 +74,7 @@ export default function Home() {
               onClick={handleClose}
               className={` ${
                 (openSans.className, listItems)
-              } bg-transparent hover:bg-[#588456] px-3 hover:px-3 hover:text-white duration-200 ease-in `}
+              } bg-transparent hover:bg-[#00bf63] px-3 hover:px-3 hover:text-white duration-200 ease-in `}
             >
               Home
             </Link>
@@ -84,7 +84,7 @@ export default function Home() {
               onClick={handleClose}
               className={` ${
                 (openSans.className, listItems)
-              } bg-transparent hover:bg-[#588456] px-3 hover:px-3 hover:text-white duration-200 ease-in `}
+              } bg-transparent hover:bg-[#00bf63] px-3 hover:px-3 hover:text-white duration-200 ease-in `}
             >
               About
             </Link>
@@ -94,7 +94,7 @@ export default function Home() {
               onClick={handleClose}
               className={` ${
                 (openSans.className, listItems)
-              } bg-transparent hover:bg-[#588456] px-3 hover:px-3 hover:text-white duration-200 ease-in `}
+              } bg-transparent hover:bg-[#00bf63] px-3 hover:px-3 hover:text-white duration-200 ease-in `}
             >
               Shop
             </Link>
@@ -104,7 +104,7 @@ export default function Home() {
               onClick={handleClose}
               className={` ${
                 (openSans.className, listItems)
-              } bg-transparent hover:bg-[#588456] px-3 hover:px-3 hover:text-white duration-200 ease-in `}
+              } bg-transparent hover:bg-[#00bf63] px-3 hover:px-3 hover:text-white duration-200 ease-in `}
             >
               Blog
             </Link>
@@ -114,7 +114,7 @@ export default function Home() {
               onClick={handleClose}
               className={` ${
                 (openSans.className, listItems)
-              } bg-transparent hover:bg-[#588456] px-3 hover:px-3 hover:text-white duration-200 ease-in `}
+              } bg-transparent hover:bg-[#00bf63] px-3 hover:px-3 hover:text-white duration-200 ease-in `}
             >
               Gifts
             </Link>
@@ -123,7 +123,7 @@ export default function Home() {
               href="/contact"
               onClick={handleClose}
               className={` font-medium xl:text-[16.5px] lg:text-[16.5px] text-[13.5px] text-[#ffffff] bg-black xl:px-7 lg:px-7 md:px-4 px-3 xl:py-2 lg:py-2 py-1 border-2 border-black
-                hover:bg-transparent hover:border-[#588456] hover:text-[#588456] duration-300 ease-in-out `}
+                hover:bg-transparent hover:border-[#00bf63] hover:text-[#00bf63] duration-300 ease-in-out `}
             >
               Contact
             </Link>

@@ -4,7 +4,7 @@ import { FaArrowRight } from "react-icons/fa";
 
 export default function Journey() {
   return (
-    <section className="2xl:my-[112.5px] xl:my-[112.5px] lg:my-[112.5px] my-20 flex 2xl:flex-row xl:flex-row lg:flex-row md:flex-col flex-col justify-between items-center gap-[30px] 2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-2 mx-2  ">
+    <section className="2xl:my-[112.5px] xl:my-[112.5px] lg:my-[112.5px] my-20 flex 2xl:flex-row xl:flex-row lg:flex-row md:flex-col flex-col justify-between items-center gap-[30px] 2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-2 mx-2 select-none ">
       <img
         src="/Container.png"
         className=" w-auto lg:w-[60%] 2xl:px-0 xl:px-0 lg:px-0 md:px-15 px-4 mr-auto "
