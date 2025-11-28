@@ -119,14 +119,14 @@ export default function Home() {
               Gifts
             </Link>
 
-            <Link
-              href="/contact"
+            <a
+              href="mailto:gachpala.business@gmail.com?subject=Inquiry%20from%20Gachpala&body=Hi%2C%20I%20want%20to%20know%20more%20about%20your%20products."
               onClick={handleClose}
               className={` font-medium xl:text-[16.5px] lg:text-[16.5px] text-[13.5px] text-[#ffffff] bg-[#00bf63] xl:px-7 lg:px-7 md:px-4 px-3 xl:py-2 lg:py-2 py-1 border-2 border-[#00bf63]
                 hover:bg-transparent hover:border-[#00bf63] hover:text-[#00bf63] duration-300 ease-in-out `}
             >
               Contact
-            </Link>
+            </a>
           </div>
           <ul className=" flex flex-row justify-center items-center xl:gap-5 lg:gap-5 gap-4 ">
             <li className={`${listItemsSec} cursor-pointer relative`}>

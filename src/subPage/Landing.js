@@ -11,7 +11,7 @@ export default function Landing() {
      
       <Container>
         <Arrival />
-        <Collection />
+        {/* <Collection /> */}
       </Container>
     </>
   );
