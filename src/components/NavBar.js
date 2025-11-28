@@ -99,26 +99,6 @@ export default function Home() {
               Shop
             </Link>
 
-            <Link
-              href="/blog"
-              onClick={handleClose}
-              className={` ${
-                (openSans.className, listItems)
-              } bg-transparent hover:bg-[#00bf63] px-3 hover:px-3 hover:text-white duration-200 ease-in `}
-            >
-              Blog
-            </Link>
-
-            <Link
-              href="/gifts"
-              onClick={handleClose}
-              className={` ${
-                (openSans.className, listItems)
-              } bg-transparent hover:bg-[#00bf63] px-3 hover:px-3 hover:text-white duration-200 ease-in `}
-            >
-              Gifts
-            </Link>
-
             <a
               href="mailto:gachpala.business@gmail.com?subject=Inquiry%20from%20Gachpala&body=Hi%2C%20I%20want%20to%20know%20more%20about%20your%20products."
               onClick={handleClose}
