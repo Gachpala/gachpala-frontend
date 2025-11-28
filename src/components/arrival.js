@@ -17,7 +17,7 @@ export default function Arrival() {
   }
 
   return (
-    <section className="  2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-16 mx-6  ">
+    <section className="  2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-16 mx-6 mt-[30px]  ">
       <h1
         className={`${inter.className} font-normal 2xl:text-[48px] xl:text-[48px] lg:text-[48px] md:text-[38px] text-[28px] leading-12 text-black`}
       >
