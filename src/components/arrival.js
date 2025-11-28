@@ -64,8 +64,8 @@ export default function Arrival() {
       </div>
       <button
         className={`${openSans.className} flex justify-center items-center gap-1 2xl:text-[13.5px] xl:text-[13.5px] md:text-[12px] text-[10px] font-normal text-white 
-          2xl:px-[35.44px] xl:px-[35'p.44px] lg:px-[35.44px] md:px-[30px] px-6 2xl:py-[21.25px] xl:py-[21.5px] lg:py-5 md:py-4 py-3 bg-black border-2 border-black rounded-lg 
-          mt-15 mx-auto cursor-pointer hover:bg-transparent hover:border-black hover:text-black duration-300 ease-out`}
+          2xl:px-[35.44px] xl:px-[35'p.44px] lg:px-[35.44px] md:px-[30px] px-6 2xl:py-[21.25px] xl:py-[21.5px] lg:py-5 md:py-4 py-3 bg-[#00bf63] border-2 border-[#00bf63] rounded-lg 
+          mt-15 mx-auto cursor-pointer hover:bg-transparent hover:border-[#00bf63] hover:text-[#00bf63] duration-300 ease-out`}
       >
         Shop All <BsArrowRight />
       </button>

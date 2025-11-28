@@ -12,7 +12,44 @@ export default function Collection() {
           >
             Best Collections
           </h1>
-          <Product />
+          <div className=" flex justify-between items-center ">
+            <div>
+              <img
+                src="collection1.jpg"
+                rel="preload"
+                className=" w-[415px] scale-100 "
+              />
+              <h1
+                className={` ${arapey.className} font-normal text-[30px] text-black leading-[42px] mt-[18px] `}
+              >
+                Virgin Green
+              </h1>
+            </div>
+            <div>
+              <img
+                src="collection2.jpg"
+                rel="preload"
+                className=" w-[415px] scale-100 "
+              />
+              <h2
+                className={` ${arapey.className} font-normal text-[30px] text-black leading-[42px] mt-[18px] `}
+              >
+                Virgin Green
+              </h2>
+            </div>
+            <div>
+              <img
+                src="collection3.jpg"
+                rel="preload"
+                className=" w-[415px] scale-100 "
+              />
+              <h3
+                className={` ${arapey.className} font-normal text-[30px] text-black leading-[42px] mt-[18px] `}
+              >
+                Virgin Green
+              </h3>
+            </div>
+          </div>
         </Container>
       </section>
     </>

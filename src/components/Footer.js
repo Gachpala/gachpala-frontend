@@ -28,8 +28,8 @@ export default function Footer() {
                 className={`  bg-[#DDE2D7] w-47 md:w-43 h-[58px] placeholder:font-${openSans.className} font-normal px-4 focus:outline-none `}
               />
               <button
-                className={` ${openSans.className} font-normal text-[14px] text-[#ffffff] leading-6 px-[13px] py-[17px] bg-black rounded-r-[10px] 
-                 cursor-pointer hover:bg-[#DDE2D7] hover:text-black duration-300 ease-out `}
+                className={` ${openSans.className} font-normal text-[14px] text-[#ffffff] leading-6 px-[13px] py-[17px] bg-[#00bf63] rounded-r-[10px] 
+                 cursor-pointer hover:bg-[#DDE2D7] hover:text-[#00bf63] duration-300 ease-out `}
               >
                 Subscribe
               </button>

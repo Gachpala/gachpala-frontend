@@ -122,7 +122,7 @@ export default function Home() {
             <Link
               href="/contact"
               onClick={handleClose}
-              className={` font-medium xl:text-[16.5px] lg:text-[16.5px] text-[13.5px] text-[#ffffff] bg-black xl:px-7 lg:px-7 md:px-4 px-3 xl:py-2 lg:py-2 py-1 border-2 border-black
+              className={` font-medium xl:text-[16.5px] lg:text-[16.5px] text-[13.5px] text-[#ffffff] bg-[#00bf63] xl:px-7 lg:px-7 md:px-4 px-3 xl:py-2 lg:py-2 py-1 border-2 border-[#00bf63]
                 hover:bg-transparent hover:border-[#00bf63] hover:text-[#00bf63] duration-300 ease-in-out `}
             >
               Contact
