@@ -8,10 +8,8 @@ export default function Banner() {
   return (
     <>
       <section className=" w-full max-w-[1500px] mx-auto 2xl:pb-220 xl:pb-190 lg:pb-170 md:pb-160 pb-110 relative">
-        <img id="bannerImg" src="/heroBanner.png" />
-        <div
-          className=" grid grid-cols-2 grid-rows-2 gap-x-6 gap-y-8 absolute left-[50%] translate-x-[-50%] 2xl:bottom-[45px] xl:bottom-[45px] lg:bottom-[35px] md:bottom-[45px] bottom-[25px] w-full 2xl:px-10 xl:px-10 lg:px-10 md:px-4 px-4 "
-        >
+        <img id="bannerImg" src="/heroBanner.png" rel="preload" />
+        <div className=" grid grid-cols-2 grid-rows-2 gap-x-6 gap-y-8 absolute left-[50%] translate-x-[-50%] 2xl:bottom-[45px] xl:bottom-[45px] lg:bottom-[35px] md:bottom-[45px] bottom-[25px] w-full 2xl:px-10 xl:px-10 lg:px-10 md:px-4 px-4 ">
           <Link
             href="/shop"
             className=" bg-[#EBEEE3] 2xl:px-8 xl:px-8 lg:px-8 md:px-6 px-2 pb-8 pt-2 select-none hover:shadow-xl hover:drop-shadow-2xl hover:bg-[#EBEEE3]/30 hover:backdrop-blur-xl hover:scale-[1.03] duration-200 ease-out "
@@ -27,9 +25,9 @@ export default function Banner() {
               Bring Nature Home
             </p>
             <div className=" flex justify-between items-center mt-4 ">
-              <img src="/indoor5.jpg" className={imageWidth} />
-              <img src="/indoor2.jpg" className={imageWidth} />
-              <img src="/indoor3.jpg" className={imageWidth} />
+              <img src="/indoor5.jpg" className={imageWidth} rel="preload" />
+              <img src="/indoor2.jpg" className={imageWidth} rel="preload" />
+              <img src="/indoor3.jpg" className={imageWidth} rel="preload" />
             </div>
             <p
               className={` ${openSans.className} block font-normal text-[#00bf63] 2xl:text-[14px] xl:text-[14px] lg:text-[14px] md:text-[12px] text-[10px] w-fit mx-auto mt-4 `}
@@ -53,9 +51,9 @@ export default function Banner() {
               Grow Your Outdoor Oasis
             </p>
             <div className=" flex justify-between items-center mt-4 ">
-              <img src="/outdoor1.jpg" className={imageWidth} />
-              <img src="/outdoor2.jpg" className={imageWidth} />
-              <img src="/outdoor3.jpg" className={imageWidth} />
+              <img src="/outdoor1.jpg" className={imageWidth} rel="preload" />
+              <img src="/outdoor2.jpg" className={imageWidth} rel="preload" />
+              <img src="/outdoor3.jpg" className={imageWidth} rel="preload" />
             </div>
             <p
               className={` ${openSans.className} block font-normal text-[#00bf63] 2xl:text-[14px] xl:text-[14px] lg:text-[14px] md:text-[12px] text-[10px] w-fit mx-auto mt-4 `}
@@ -79,9 +77,9 @@ export default function Banner() {
               Equip Your Garden Journey
             </p>
             <div className=" flex justify-between items-center mt-4 ">
-              <img src="/tools1.jpg" className={imageWidth} />
-              <img src="/tools2.jpg" className={imageWidth} />
-              <img src="/tools3.jpg" className={imageWidth} />
+              <img src="/tools1.jpg" className={imageWidth} rel="preload" />
+              <img src="/tools2.jpg" className={imageWidth} rel="preload" />
+              <img src="/tools3.jpg" className={imageWidth} rel="preload" />
             </div>
             <p
               className={` ${openSans.className} block font-normal text-[#00bf63] 2xl:text-[14px] xl:text-[14px] lg:text-[14px] md:text-[12px] text-[10px] w-fit mx-auto mt-4 `}
@@ -105,9 +103,9 @@ export default function Banner() {
               Gifts for Every Occasion
             </p>
             <div className=" flex justify-between items-center mt-4 ">
-              <img src="/gift4.jpg" className={imageWidth} />
-              <img src="/gift2.jpg" className={imageWidth} />
-              <img src="/gift3.jpg" className={imageWidth} />
+              <img src="/gift4.jpg" className={imageWidth} rel="preload" />
+              <img src="/gift2.jpg" className={imageWidth} rel="preload" />
+              <img src="/gift3.jpg" className={imageWidth} rel="preload" />
             </div>
             <p
               className={` ${openSans.className} block font-normal text-[#00bf63] 2xl:text-[14px] xl:text-[14px] lg:text-[14px] md:text-[12px] text-[10px] w-fit mx-auto mt-4 `}
