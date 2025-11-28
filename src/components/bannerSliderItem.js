@@ -1,4 +1,4 @@
-import { arapey, openSans } from "@/lib/fonts";
+import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import { IoIosArrowRoundForward } from "react-icons/io";
 
@@ -7,7 +7,7 @@ export default function ({ bannerText, bannerTextSpan }) {
     <div className=" flex justify-center items-center gap-10 cursor-grab 2xl:mx-0 xl:mx-0 lg:mx-8 md:mx-2 mx-2 ">
       <div className=" 2xl:pt-[50px] xl:pt-[50px] lg:pt-10 md:pt-[30px] pt-2.5 ">
         <h1
-          className={` ${arapey.className} font-normal 2xl:text-[75px] xl:text-[70px] lg:text-[60px] md:text-[40px] text-[24px] text-[#0B0B0D]
+          className={` ${inter.className} font-normal 2xl:text-[75px] xl:text-[70px] lg:text-[60px] md:text-[40px] text-[24px] text-[#0B0B0D]
              2xl:leading-[105px] xl:leading-[105px] lg:leading-20 
             2xl:w-[689px] xl:w-[650px] lg:w-[550px] md:w-[350px] w-40 2xl:b-10 xl:mb-10 lg:mb-10 md:mb-10 mb-4 `}
         >

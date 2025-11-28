@@ -1,4 +1,4 @@
-import { arapey, openSans } from "@/lib/fonts";
+import { inter, openSans } from "@/lib/fonts";
 import Container from "./container";
 import Link from "next/link";
 
@@ -24,7 +24,7 @@ export default function Footer() {
           </div>
           <div>
             <lable
-              className={` ${arapey.className} font-normal 2xl:text-[27px] xl:text-[27px] lg:text-[27px] md:text-[24px] text-[20px] text-black leading-[33.8px] tracking-[1px] `}
+              className={` ${inter.className} font-normal 2xl:text-[27px] xl:text-[27px] lg:text-[27px] md:text-[24px] text-[20px] text-black leading-[33.8px] tracking-[1px] `}
             >
               Company
             </lable>
@@ -58,7 +58,7 @@ export default function Footer() {
 
           <div className=" 2xl:mt-0 xl:mt-0 lg:mt-0 md:mt-0 mt-8  ">
             <lable
-              className={` ${arapey.className} font-normal 2xl:text-[27px] xl:text-[27px] lg:text-[27px] md:text-[24px] text-[20px] text-black leading-[33.8px] tracking-[1px]  `}
+              className={` ${inter.className} font-normal 2xl:text-[27px] xl:text-[27px] lg:text-[27px] md:text-[24px] text-[20px] text-black leading-[33.8px] tracking-[1px]  `}
             >
               Support
             </lable>

@@ -1,4 +1,4 @@
-import { arapey, openSans } from "@/lib/fonts";
+import { inter, openSans } from "@/lib/fonts";
 import { BsArrowBarRight, BsArrowRight, BsArrowUpRight } from "react-icons/bs";
 import { FaArrowRight } from "react-icons/fa";
 
@@ -11,7 +11,7 @@ export default function Journey() {
       />
       <div className=" select-none 2xl:px-0 xl:px-0 lg:px-0 md:px-15 px-4 2xl:mt-0 xl:mt-0 lg:mt-0 md:mt-6 ">
         <h1
-          className={` ${arapey.className} font-normal 2xl:text-[48px] xl:text-[48px] lg:text-[48px] md:text-[38px] text-[28px] leading-12 text-black 
+          className={` ${inter.className} font-normal 2xl:text-[48px] xl:text-[48px] lg:text-[48px] md:text-[38px] text-[28px] leading-12 text-black 
             2xl:mb-6 xl:mb-6 lg:mb-6 md:mb-4 mb-2 `}
         >
           Our journey

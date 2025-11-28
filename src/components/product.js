@@ -1,6 +1,6 @@
 "use client";
 
-import { arapey, openSans } from "@/lib/fonts";
+import { inter, openSans } from "@/lib/fonts";
 import { useState } from "react";
 
 export default function Product() {
@@ -40,7 +40,7 @@ export default function Product() {
           </button>
         </div>
         <h3
-          className={`${arapey.className} 2xl:text-[25.5px] xl:text-[25.5px] lg:text-[20px] md:text-[22px] text-[18px] text-black font-normal leading-[35.7px] 
+          className={`${inter.className} 2xl:text-[25.5px] xl:text-[25.5px] lg:text-[20px] md:text-[22px] text-[18px] text-black font-normal leading-[35.7px] 
                   2xl:mt-6 xl:mt6 lg:mt-4 md:mt-3 mt-2 cursor-pointer `}
         >
           Chinese Money Plant

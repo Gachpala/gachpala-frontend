@@ -1,5 +1,5 @@
 "use client";
-import { arapey, openSans } from "@/lib/fonts";
+import { inter,  openSans, interSec } from "@/lib/fonts";
 import { useState } from "react";
 import { BsArrowRight } from "react-icons/bs";
 
@@ -19,7 +19,7 @@ export default function Arrival() {
   return (
     <section className="  2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-16 mx-6  ">
       <h1
-        className={`${arapey.className} font-normal 2xl:text-[48px] xl:text-[48px] lg:text-[48px] md:text-[38px] text-[28px] leading-12 text-black`}
+        className={`${inter.className} font-normal 2xl:text-[48px] xl:text-[48px] lg:text-[48px] md:text-[38px] text-[28px] leading-12 text-black`}
       >
         Fresh arrivals
       </h1>
@@ -48,7 +48,7 @@ export default function Arrival() {
               </button>
             </div>
             <h3
-              className={`${arapey.className} 2xl:text-[25.5px] xl:text-[25.5px] lg:text-[20px] md:text-[22px] text-[18px] text-black font-normal leading-[35.7px] 
+              className={`${interSec.className} 2xl:text-[25.5px] xl:text-[25.5px] lg:text-[20px] md:text-[22px] text-[18px] text-black font-normal leading-[35.7px] 
                 2xl:mt-6 xl:mt6 lg:mt-4 md:mt-3 mt-2 cursor-pointer `}
             >
               Chinese Money Plant

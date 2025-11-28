@@ -1,11 +1,11 @@
-import { Arapey, Open_Sans, Inter } from "next/font/google";
+import { Open_Sans, Inter } from "next/font/google";
 
-export const arapey = Arapey({
-  weight: "400",
+export const inter = Inter({
+  weight: "700",
   subsets: ["latin"],
 });
-export const inter = Inter({
-  weight: "800",
+export const interSec = Inter({
+  weight: "400",
   subsets: ["latin"],
 });
 
