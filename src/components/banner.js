@@ -8,11 +8,11 @@ export default function Banner() {
   return (
     <>
       <section className=" w-full max-w-[1500px] mx-auto 2xl:pb-220 xl:pb-190 lg:pb-170 md:pb-160 pb-75 relative">
-        <img id="bannerImg" src="/heroBanner.png" rel="preload" />
+        <img id="bannerImg" src="/heroBanner.png" rel="preload" className=" rounded-t-2xl " />
         <div className=" grid grid-cols-2 grid-rows-2 gap-x-6 gap-y-8 absolute left-[50%] translate-x-[-50%] 2xl:bottom-[45px] xl:bottom-[45px] lg:bottom-[35px] md:bottom-[45px] bottom-[25px] w-full 2xl:px-10 xl:px-10 lg:px-10 md:px-4 px-4 rounded-lg ">
           <Link
             href="/shop"
-            className=" 2xl:block xl:block lg:block md:block flex flex-col justify-center items-center bg-[#EBEEE3] 2xl:px-8 xl:px-8 lg:px-8 md:px-6 px-6 2xl:pb-8 xl:pb-8 lg:pb-8 md:pb-8 pb-0 2xl:pt-2 xl:pt-2 lg:pt-2 md:pt-2 pt-0 2xl:h-auto xl:h-auto lg:h-auto md:h-auto h-[140px] 2xl:shadow-none xl:shadow-none lg:shadow-none md:shadow-none shadow-md 2xl:drop-shadow-none xl:drop-shadow-none lg:drop-shadow-none md:drop-shadow-none drop-shadow-xl rounded-2xl select-none hover:shadow-xl hover:drop-shadow-2xl hover:bg-[#EBEEE3]/30 hover:backdrop-blur-xl hover:scale-[1.03] duration-200 ease-out relative "
+            className=" 2xl:block xl:block lg:block md:block flex flex-col justify-center items-center bg-[#EBEEE3] 2xl:px-8 xl:px-8 lg:px-8 md:px-6 px-7 2xl:pb-8 xl:pb-8 lg:pb-8 md:pb-8 pb-0 2xl:pt-2 xl:pt-2 lg:pt-2 md:pt-2 pt-0 2xl:h-auto xl:h-auto lg:h-auto md:h-auto h-[140px] 2xl:shadow-none xl:shadow-none lg:shadow-none md:shadow-none shadow-md 2xl:drop-shadow-none xl:drop-shadow-none lg:drop-shadow-none md:drop-shadow-none drop-shadow-xl rounded-2xl select-none hover:shadow-xl hover:drop-shadow-2xl hover:bg-[#EBEEE3]/30 hover:backdrop-blur-xl hover:scale-[1.03] duration-200 ease-out relative "
           >
             <h1
               className={` ${inter.className} font-normal 2xl:text-[50px] xl:text-[48px] lg:text-[45px] md:text-[38px] text-[20px] z-50 `}
@@ -43,7 +43,7 @@ export default function Banner() {
 
           <Link
             href="/shop"
-            className="2xl:block xl:block lg:block md:block flex flex-col justify-center items-center bg-[#EBEEE3] 2xl:px-8 xl:px-8 lg:px-8 md:px-6 px-6 2xl:pb-8 xl:pb-8 lg:pb-8 md:pb-8 pb-0 2xl:pt-2 xl:pt-2 lg:pt-2 md:pt-2 pt-0 2xl:h-auto xl:h-auto lg:h-auto md:h-auto h-[140px] 2xl:shadow-none xl:shadow-none lg:shadow-none md:shadow-none shadow-md 2xl:drop-shadow-none xl:drop-shadow-none lg:drop-shadow-none md:drop-shadow-none drop-shadow-xl rounded-2xl select-none hover:shadow-xl hover:drop-shadow-2xl hover:bg-[#EBEEE3]/30 hover:backdrop-blur-xl hover:scale-[1.03] duration-200 ease-out relative"
+            className="2xl:block xl:block lg:block md:block flex flex-col justify-center items-center bg-[#EBEEE3] 2xl:px-8 xl:px-8 lg:px-8 md:px-6 px-7 2xl:pb-8 xl:pb-8 lg:pb-8 md:pb-8 pb-0 2xl:pt-2 xl:pt-2 lg:pt-2 md:pt-2 pt-0 2xl:h-auto xl:h-auto lg:h-auto md:h-auto h-[140px] 2xl:shadow-none xl:shadow-none lg:shadow-none md:shadow-none shadow-md 2xl:drop-shadow-none xl:drop-shadow-none lg:drop-shadow-none md:drop-shadow-none drop-shadow-xl rounded-2xl select-none hover:shadow-xl hover:drop-shadow-2xl hover:bg-[#EBEEE3]/30 hover:backdrop-blur-xl hover:scale-[1.03] duration-200 ease-out relative"
           >
             <h1
               className={` ${inter.className} font-normal 2xl:text-[50px] xl:text-[48px] lg:text-[45px] md:text-[38px] text-[20px] z-50 `}
@@ -73,7 +73,7 @@ export default function Banner() {
 
           <Link
             href="/shop"
-            className="2xl:block xl:block lg:block md:block flex flex-col justify-center items-start bg-[#EBEEE3] 2xl:px-8 xl:px-8 lg:px-8 md:px-6 px-6 2xl:pb-8 xl:pb-8 lg:pb-8 md:pb-8 pb-0 2xl:pt-2 xl:pt-2 lg:pt-2 md:pt-2 pt-0 2xl:h-auto xl:h-auto lg:h-auto md:h-auto h-[140px] 2xl:shadow-none xl:shadow-none lg:shadow-none md:shadow-none shadow-md 2xl:drop-shadow-none xl:drop-shadow-none lg:drop-shadow-none md:drop-shadow-none drop-shadow-xl rounded-2xl select-none hover:shadow-xl hover:drop-shadow-2xl hover:bg-[#EBEEE3]/30 hover:backdrop-blur-xl hover:scale-[1.03] duration-200 ease-out relative "
+            className="2xl:block xl:block lg:block md:block flex flex-col justify-center items-start bg-[#EBEEE3] 2xl:px-8 xl:px-8 lg:px-8 md:px-6 px-7 2xl:pb-8 xl:pb-8 lg:pb-8 md:pb-8 pb-0 2xl:pt-2 xl:pt-2 lg:pt-2 md:pt-2 pt-0 2xl:h-auto xl:h-auto lg:h-auto md:h-auto h-[140px] 2xl:shadow-none xl:shadow-none lg:shadow-none md:shadow-none shadow-md 2xl:drop-shadow-none xl:drop-shadow-none lg:drop-shadow-none md:drop-shadow-none drop-shadow-xl rounded-2xl select-none hover:shadow-xl hover:drop-shadow-2xl hover:bg-[#EBEEE3]/30 hover:backdrop-blur-xl hover:scale-[1.03] duration-200 ease-out relative "
           >
             <h1
               className={` ${inter.className} font-normal 2xl:text-[50px] xl:text-[48px] lg:text-[45px] md:text-[38px] text-[20px] `}
@@ -103,7 +103,7 @@ export default function Banner() {
 
           <Link
             href="/shop"
-            className="2xl:block xl:block lg:block md:block flex flex-col justify-center items-start bg-[#EBEEE3] 2xl:px-8 xl:px-8 lg:px-8 md:px-6 px-6 2xl:pb-8 xl:pb-8 lg:pb-8 md:pb-8 pb-0 2xl:pt-2 xl:pt-2 lg:pt-2 md:pt-2 pt-0 2xl:h-auto xl:h-auto lg:h-auto md:h-auto h-[140px] 2xl:shadow-none xl:shadow-none lg:shadow-none md:shadow-none shadow-md 2xl:drop-shadow-none xl:drop-shadow-none lg:drop-shadow-none md:drop-shadow-none drop-shadow-xl rounded-2xl select-none hover:shadow-xl hover:drop-shadow-2xl hover:bg-[#EBEEE3]/30 hover:backdrop-blur-xl hover:scale-[1.03] duration-200 ease-out relative "
+            className="2xl:block xl:block lg:block md:block flex flex-col justify-center items-start bg-[#EBEEE3] 2xl:px-8 xl:px-8 lg:px-8 md:px-6 px-7 2xl:pb-8 xl:pb-8 lg:pb-8 md:pb-8 pb-0 2xl:pt-2 xl:pt-2 lg:pt-2 md:pt-2 pt-0 2xl:h-auto xl:h-auto lg:h-auto md:h-auto h-[140px] 2xl:shadow-none xl:shadow-none lg:shadow-none md:shadow-none shadow-md 2xl:drop-shadow-none xl:drop-shadow-none lg:drop-shadow-none md:drop-shadow-none drop-shadow-xl rounded-2xl select-none hover:shadow-xl hover:drop-shadow-2xl hover:bg-[#EBEEE3]/30 hover:backdrop-blur-xl hover:scale-[1.03] duration-200 ease-out relative "
           >
             <h1
               className={` ${inter.className} font-normal 2xl:text-[50px] xl:text-[48px] lg:text-[45px] md:text-[38px] text-[20px] `}
