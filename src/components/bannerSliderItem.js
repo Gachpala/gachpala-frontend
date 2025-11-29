@@ -12,7 +12,7 @@ export default function ({ bannerText, bannerTextSpan }) {
             2xl:w-[689px] xl:w-[650px] lg:w-[550px] md:w-[350px] w-40 2xl:b-10 xl:mb-10 lg:mb-10 md:mb-10 mb-4 `}
         >
           {bannerText}
-          <span className=" text-[#588456] ">{bannerTextSpan}</span>.
+          <span className=" text-[#00bf63] ">{bannerTextSpan}</span>.
         </h1>
         <Link
           href="/shop"
