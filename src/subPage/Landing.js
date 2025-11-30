@@ -1,18 +1,17 @@
 import Container from "@/components/container";
-import Journey from "@/components/journey";
 import Arrival from "@/components/arrival";
 import Banner from "@/components/banner";
-import PopularItems from "@/components/popularItems";
+import BestCollection from "@/components/bestCollection";
+import AutoPlayText from "@/components/autoPlayText";
 
 export default function Landing() {
   return (
     <>
       <Banner />
-
+      <AutoPlayText />
       <Container>
         <Arrival />
-        {/* <Collection /> */}
-        <PopularItems />
+        <BestCollection />
       </Container>
     </>
   );

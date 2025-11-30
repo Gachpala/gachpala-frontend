@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className=" mt-10 bg-[#EBEEE3] ">
+    <footer className=" mt-10 bg-[#EBEEE3] select-none ">
       <section className=" 2xl:px-0 xl:px-12 lg:px-8 md:px-8 mx-4 ">
         <Container className=" 2xl:py-[142.5px] xl:py-[142.5px] lg:py-[142.5px] md:py-[142.5px] py-12 grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-4 grid-cols-3 ">
           <div className={` col-span-2 select-none `}>

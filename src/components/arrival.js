@@ -17,7 +17,7 @@ export default function Arrival() {
   }
 
   return (
-    <section className="  2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-16 mx-6 mt-[30px] select-none ">
+    <section className="  2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-16 mx-6 mt-[50px] select-none ">
       <h1
         className={`${inter.className} font-normal 2xl:text-[48px] xl:text-[48px] lg:text-[48px] md:text-[38px] text-[28px] leading-12 text-black`}
       >
@@ -28,7 +28,7 @@ export default function Arrival() {
           <div key={i}>
             <div
               onClick={() => handleCartButton(i)}
-              className=" bg-[#EBEEE3] 2xl:px-11 xl:px-4 lg:px-2 md:px-2 px-1 2xl:py-[90.5px] xl:py-12 lg:py-8 md:py-10 py-6 select-none group relative "
+              className=" bg-[#EBEEE3] 2xl:px-11 xl:px-4 lg:px-2 md:px-2 px-1 2xl:py-[90.5px] xl:py-12 lg:py-8 md:py-10 py-6 select-none rounded-xl group relative "
             >
               <img
                 src="/plant.png"
@@ -48,7 +48,7 @@ export default function Arrival() {
               </button>
             </div>
             <h3
-              className={`${interSec.className} 2xl:text-[25.5px] xl:text-[25.5px] lg:text-[20px] md:text-[22px] text-[18px] text-black font-normal leading-[35.7px] 
+              className={`${interSec.className} 2xl:text-[25.5px] xl:text-[25.5px] lg:text-[20px] md:text-[22px] text-[14px] text-black font-normal leading-[35.7px] 
                 2xl:mt-6 xl:mt6 lg:mt-4 md:mt-3 mt-2 cursor-pointer `}
             >
               Chinese Money Plant
@@ -64,8 +64,8 @@ export default function Arrival() {
       </div>
       <button
         className={`${openSans.className} flex justify-center items-center gap-1 2xl:text-[13.5px] xl:text-[13.5px] md:text-[12px] text-[10px] font-normal text-white 
-          2xl:px-[35.44px] xl:px-[35'p.44px] lg:px-[35.44px] md:px-[30px] px-6 2xl:py-[21.25px] xl:py-[21.5px] lg:py-5 md:py-4 py-3 bg-[#00bf63] border-2 border-[#00bf63] rounded-lg 
-          mt-15 mx-auto cursor-pointer hover:bg-transparent hover:border-[#00bf63] hover:text-[#00bf63] duration-300 ease-out`}
+          2xl:px-[35.44px] xl:px-[35'p.44px] lg:px-[35.44px] md:px-[30px] px-6 2xl:py-[21.25px] xl:py-[21.5px] lg:py-5 md:py-4 py-3 bg-[#00bf63] rounded-lg border-2 border-[#00bf63] 
+          mt-15 mx-auto cursor-pointer hover:bg-transparent hover:border-[#00bf63] hover:text-[#00bf63] duration-300 ease-out  `}
       >
         Shop All <BsArrowRight />
       </button>
