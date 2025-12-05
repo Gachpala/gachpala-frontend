@@ -1,12 +1,21 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Leaf, Menu, X, ArrowRight, Flame, Trash2 } from "lucide-react";
+import {
+  Send,
+  Leaf,
+  Menu,
+  X,
+  ArrowRight,
+  Flame,
+  Trash2,
+} from "lucide-react";
 import {
   sendMessageStream,
   extractRecommendedProducts,
   initializeChat,
 } from "../../services/geminiService.js";
 import ChatMessage from "../../components/ChatMessage.jsx";
+import Link from "next/link";
 
 const SUGGESTIONS = [
   { text: "Best indoor plants? 🌿", label: "Indoor options" },
@@ -107,6 +116,10 @@ const App = () => {
 
   const messagesEndRef = useRef(null);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  });
+
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -116,6 +129,7 @@ const App = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
 
   const handleSend = async (text = input) => {
     if (!text.trim() || isLoading) return;
@@ -205,7 +219,10 @@ const App = () => {
   const filteredProducts = products;
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden font-sans text-neutral-900">
+    <div
+      className="flex h-screen bg-[#f6f7f2] overflow-hidden font-sans text-neutral-900 fixed 2xl:top-22 xl:top-22 lg:top-22 md:top-22 top-7 left-0 w-full "
+      id="nimDad"
+    >
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div
@@ -281,7 +298,7 @@ const App = () => {
           </div>
 
           {/* Collection Section */}
-          <div>
+          {/* <div>
             <div className="px-4 mb-4 flex items-center justify-between">
               <h2 className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest">
                 Collection
@@ -318,27 +335,30 @@ const App = () => {
                 </p>
               )}
             </div>
-          </div>
+          </div> */}
         </div>
 
-        <div className="p-6">
+        <div className="p-6 mb-28 ">
           <div className="bg-neutral-900 rounded-2xl p-4 text-white shadow-xl shadow-neutral-900/10 relative overflow-hidden group cursor-pointer">
             <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-110"></div>
             <p className="relative z-10 text-sm font-medium">New Arrival</p>
             <p className="relative z-10 text-xs text-neutral-400 mt-1">
               Check out our seasonal fruit saplings.
             </p>
-            <div className="mt-3 inline-flex items-center text-xs font-bold text-emerald-400">
-              Explore <ArrowRight size={12} className="ml-1" />
-            </div>
+            <Link
+              href="/shop"
+              className=" block mt-3 text-xs font-bold text-emerald-400"
+            >
+              Explore
+            </Link>
           </div>
         </div>
       </aside>
 
       {/* Main Chat Area */}
-      <main className="flex-1 flex flex-col h-full relative bg-white">
+      <main className="flex-1 flex flex-col h-full relative bg-[#f6f7f2]">
         {/* Header */}
-        <header className="h-16 flex items-center justify-between px-4 md:px-8 fixed top-0 left-0 right-0 md:relative bg-white/80 backdrop-blur-md z-30 border-b border-neutral-100">
+        <header className="h-16 flex items-center justify-between px-4 md:px-8 fixed 2xl:top-0 xl:top-0 lg:top-0 md:top-0 top-10 left-0 right-0 md:relative bg-[#f6f7f2] backdrop-blur-md z-30 border-b border-neutral-100">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSidebarOpen(true)}
@@ -365,7 +385,7 @@ const App = () => {
         <div className="flex-1 overflow-y-auto px-4 pt-20 pb-32 md:p-10 scrollbar-hide">
           <div className="max-w-3xl mx-auto w-full pb-8">
             {messages.map((msg) => (
-              <ChatMessage key={msg.id} message={msg} />
+              <ChatMessage ref={messagesEndRef} key={msg.id} message={msg} />
             ))}
 
             {/* Loading State */}
@@ -403,12 +423,11 @@ const App = () => {
               </div>
             )}
 
-            <div ref={messagesEndRef} />
           </div>
         </div>
 
         {/* Input Area */}
-        <div className="p-6 bg-gradient-to-t from-white via-white to-transparent fixed bottom-0 left-0 right-0 md:relative z-30">
+        <div className="p-6 bg-gradient-to-t from-white via-white to-transparent fixed 2xl:bottom-20 xl:bottom-20 lg:bottom-20 md:bottom-18 bottom-0 left-0 right-0 md:relative z-30">
           <div className="max-w-3xl mx-auto w-full relative">
             <div className="relative group">
               <input
@@ -417,7 +436,7 @@ const App = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 placeholder="Ask about plants..."
-                className="w-full pl-6 pr-14 py-4 bg-white border border-neutral-200 rounded-full text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/5 focus:border-neutral-300 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]"
+                className="w-full pl-6 pr-14 py-4 bg-white border border-neutral-500 rounded-full text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/5 focus:border-neutral-300 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]"
                 disabled={isLoading}
               />
               <button

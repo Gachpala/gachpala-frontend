@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import TreeCard from "./TreeCard.jsx";
 
-const ChatMessage = ({ message }) => {
+const ChatMessage = ({ message, ref }) => {
   const isBot = message.role === "model";
   const [formattedTime, setFormattedTime] = useState("");
 
@@ -50,6 +50,7 @@ const ChatMessage = ({ message }) => {
 
         {/* Message Bubble */}
         <div
+          ref={ref}
           className={`relative px-6 py-4 rounded-[2rem] text-sm md:text-[15px] leading-relaxed tracking-wide shadow-sm transition-all duration-300 ${
             isBot
               ? "bg-white text-neutral-700 border border-neutral-100 rounded-tl-md"
