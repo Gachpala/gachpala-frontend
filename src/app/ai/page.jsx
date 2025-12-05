@@ -34,7 +34,11 @@ const App = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:8080/products");
+        const response = await fetch("https://api.gachpala.com/products");
+        if (!response.ok) {
+          console.error("Failed to fetch products:", await response.text());
+          return;
+        }
         const data = await response.json();
 
         const mappedProducts = data.map((item) => ({
@@ -47,7 +51,7 @@ const App = () => {
           careLevel: "Moderate",
           imageUrl: item.image_url.startsWith("http")
             ? item.image_url
-            : `http://localhost:8080${item.image_url}`,
+            : `https://api.gachpala.com${item.image_url}`,
           benefits: [],
           popular: item.is_featured,
         }));
@@ -61,8 +65,15 @@ const App = () => {
     const fetchTopSelling = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/products/topselling"
+          "https://api.gachpala.com/products/topselling"
         );
+        if (!response.ok) {
+          console.error(
+            "Failed to fetch top selling products:",
+            await response.text()
+          );
+          return;
+        }
         const data = await response.json();
 
         const mappedTopSelling = data.map((item) => ({
@@ -75,7 +86,7 @@ const App = () => {
           careLevel: "Moderate",
           imageUrl: item.image_url.startsWith("http")
             ? item.image_url
-            : `http://localhost:8080${item.image_url}`,
+            : `https://api.gachpala.com${item.image_url}`,
           benefits: [],
           popular: item.is_featured,
         }));
