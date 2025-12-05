@@ -51,7 +51,7 @@ export default function Home() {
   // }, []);
 
   return (
-    <nav className=" relative z-50 select-none ">
+    <nav className=" relative z-50 select-none bg-[#f6f7f2] ">
       <div className=" xl:py-[23.5px] lg:py-[23.5px] md:py-[23.5px] py-4 xl:px-10 lg:px-10 md:px-8 px-4 flex flex-row justify-between items-center ">
         <Link href="/">
           <img

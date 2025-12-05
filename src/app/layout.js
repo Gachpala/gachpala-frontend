@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
         >
           <img src="/nim.gif" className="w-[80px] rounded-full " />
         </Link>
-        <Footer />
+        {/* <Footer /> */}
       </body>
     </html>
   );
