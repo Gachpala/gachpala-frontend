@@ -135,7 +135,7 @@ const App = () => {
 
       let fullResponse = "";
 
-      await sendMessageStream(text, (chunk) => {
+      await sendMessageStream(text, products, (chunk) => {
         fullResponse += chunk;
         setMessages((prev) =>
           prev.map((msg) =>

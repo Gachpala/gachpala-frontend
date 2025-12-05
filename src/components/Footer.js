@@ -23,11 +23,11 @@ export default function Footer() {
             </p>
           </div>
           <div>
-            <lable
+            <label
               className={` ${inter.className} font-normal 2xl:text-[27px] xl:text-[27px] lg:text-[27px] md:text-[24px] text-[20px] text-black leading-[33.8px] tracking-[1px] `}
             >
               Company
-            </lable>
+            </label>
             <div className=" flex flex-col justify-start items-start gap-3 2xl:py-[29px] xl:py-[29px] lg:py-[29px] md:py-6 py-3 2xl:pl-8 xl:pl-8 lg:pl-8 md:pl-0 pl-0 ">
               <Link
                 href={""}

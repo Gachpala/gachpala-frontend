@@ -1,9 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import TreeCard from "./TreeCard.jsx";
 
 const ChatMessage = ({ message }) => {
   const isBot = message.role === "model";
+  const [formattedTime, setFormattedTime] = useState("");
+
+  useEffect(() => {
+    if (message.timestamp) {
+      const date =
+        typeof message.timestamp === "string"
+          ? new Date(message.timestamp)
+          : message.timestamp;
+      setFormattedTime(
+        date.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
+    }
+  }, [message.timestamp]);
 
   return (
     <div
@@ -78,15 +94,7 @@ const ChatMessage = ({ message }) => {
             isBot ? "ml-2" : "mr-2"
           }`}
         >
-          {message.timestamp && typeof message.timestamp === "string"
-            ? new Date(message.timestamp).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : message.timestamp?.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+          {formattedTime}
         </span>
 
         {/* Recommended Products Grid */}

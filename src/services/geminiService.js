@@ -1,13 +1,13 @@
 // Client-side service for Gemini API calls
 
-export const sendMessageStream = async (message, onChunk) => {
+export const sendMessageStream = async (message, inventory, onChunk) => {
   try {
     const response = await fetch("/api/gemini", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message, inventory }),
     });
 
     if (!response.ok) {

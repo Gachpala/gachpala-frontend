@@ -21,9 +21,14 @@ export async function POST(request) {
 
     if (!chatSession) {
       const ai = getGenAI();
-      const model = ai.getGenerativeModel({ model: "gemini-pro" });
+      const model = ai.getGenerativeModel({
+        model: "gemini-2.5-flash",
+        systemInstruction: {
+          parts: [{ text: getSystemInstruction(inventory || []) }],
+          role: "system",
+        },
+      });
       chatSession = model.startChat({
-        systemInstruction: getSystemInstruction(inventory || []),
         generationConfig: {
           temperature: 0.7,
         },
