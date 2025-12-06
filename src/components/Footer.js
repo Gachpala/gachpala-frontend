@@ -1,8 +1,18 @@
+"use client";
 import { inter, openSans } from "@/lib/fonts";
 import Container from "./container";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  const hideOn = ["/ai"];
+
+  if (hideOn.includes(pathname)) {
+    return null;
+  }
+
   return (
     <footer className=" mt-10 bg-[#EBEEE3] select-none ">
       <section className=" 2xl:px-0 xl:px-12 lg:px-8 md:px-8 mx-4 ">
@@ -57,11 +67,11 @@ export default function Footer() {
           </div>
 
           <div className=" 2xl:mt-0 xl:mt-0 lg:mt-0 md:mt-0 mt-8  ">
-            <lable
+            <label
               className={` ${inter.className} font-normal 2xl:text-[27px] xl:text-[27px] lg:text-[27px] md:text-[24px] text-[20px] text-black leading-[33.8px] tracking-[1px]  `}
             >
               Support
-            </lable>
+            </label>
             <div className=" flex flex-col justify-start items-start gap-3 2xl:py-[29px] xl:py-[29px] lg:py-[29px] md:py-6 py-3 2xl:pl-8 xl:pl-8 lg:pl-8 md:pl-0 pl-0 w-max ">
               <Link
                 href={""}

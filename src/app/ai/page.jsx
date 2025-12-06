@@ -239,28 +239,8 @@ const App = () => {
             : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="p-8 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
-              <img
-                src="/lg.png"
-                alt="Gachpala Logo"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <span className="text-lg font-bold tracking-tight text-neutral-900">
-              Gachpala - NiM
-            </span>
-          </div>
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden text-neutral-400 hover:text-neutral-900 transition-colors"
-          >
-            <X size={20} />
-          </button>
-        </div>
 
-        <div className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-hide">
+        <div className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-hide mt-6 ">
           {/* Top Selling Section */}
           <div className="mb-8">
             <h2 className="px-4 text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-4 flex items-center gap-2">
