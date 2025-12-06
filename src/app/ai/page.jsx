@@ -347,7 +347,7 @@ const App = () => {
               <Menu size={20} />
             </button>
             <span className="font-semibold text-neutral-900 flex items-center gap-2">
-              Assistant
+              Gachpala NiM
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
             </span>
           </div>
