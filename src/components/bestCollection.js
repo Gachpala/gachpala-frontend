@@ -1,67 +1,36 @@
 "use client";
 import { inter, openSans } from "@/lib/fonts";
-import { useState } from "react";
 import { BsArrowRight } from "react-icons/bs";
+import Link from "next/link";
+import Product from "./product";
 
 export default function BestCollection() {
-  const items = Array.from({ length: 4 });
-  const [activeIndex, setActiveIndex] = useState(null);
-
-  function handleAddToCart(event, index) {
-    event.stopPropagation();
-    console.log("Add to cart clicked for index:", index);
-  }
-
-  function handleCartButton(index) {
-    setActiveIndex((prev) => (prev === index ? null : index));
-  }
-
   return (
-    <section className=" 2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-16 mx-6 mt-[50px] select-none ">
-      <h1
-        className={`${inter.className} font-normal 2xl:text-[48px] xl:text-[48px] lg:text-[48px] md:text-[38px] text-[28px] leading-12 text-black`}
-      >
-        Best Collections
-      </h1>
-      <div className=" grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-2 grid-cols-2 2xl:grid-rows-none xl:grid-rows-none lg:grid-rows-none md:grid-rows-2 grid-rows-2 gap-6 mt-[25px] ">
-        {items.map((_, i) => (
-          <div key={i}>
-            <div
-              onClick={() => handleCartButton(i)}
-              className=" bg-[#EBEEE3] 2xl:px-11 xl:px-4 lg:px-2 md:px-2 px-1 2xl:py-[90.5px] xl:py-12 lg:py-8 md:py-10 py-6 select-none rounded-xl group relative "
+    <section className="py-8 md:py-20 border-t border-gray-100">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 md:mb-10 gap-2 md:gap-4 px-2 md:px-0">
+         <div className="text-center md:text-left">
+            <h1
+            className={`${inter.className} text-2xl md:text-5xl font-medium text-gray-900 mb-1 md:mb-2`}
             >
-              <img
-                src="/plant.png"
-                alt={`plant-${i}`}
-                className=" mx-auto 2xl:w-auto xl:w-[80%] lg:w-[70%] md:w-[60%] w-[60%] "
-              />
-              <button
-                onClick={(e) => handleAddToCart(e, i)}
-                className={`${openSans.className} ${
-                  activeIndex === i
-                    ? "opacity-100 border-black text-black 2xl:bottom-8 xl:bottom-4 lg:bottom-2 md:bottom-4 bottom-[9px] duration-300 ease-out "
-                    : "opacity-0 border-transparent "
-                } w-fit font-medium 2xl:text-[12px] xl:text-[12px] lg:text-[12px] md:text-[12px] text-[10px] 2xl:px-5 xl:px-5 lg:px-3 md:px-2 px-1.5 2xl:py-2 xl:py-2 lg:py-1 py-0.5 border-2 border-black rounded-lg 
-                absolute left-[50%] translate-x-[-50%] bottom-10 cursor-pointer group-hover:opacity-100 group-hover:border-gray-500 group-hover:text-gray-500 group-hover:bg-transparent duration-300 ease-out `}
-              >
-                Add to cart
-              </button>
-            </div>
-            <h3
-              className={`${openSans.className} 2xl:text-[25.5px] xl:text-[25.5px] lg:text-[20px] md:text-[22px] text-[14px] text-black font-normal leading-[35.7px] 
-                2xl:mt-6 xl:mt6 lg:mt-4 md:mt-3 mt-2 cursor-pointer `}
-            >
-              Chinese Money Plant
-            </h3>
-            <p
-              className={`${openSans.className} font-normal 2xl:text-[19.5px] xl:text-[18px] lg:text-[16px] md:text-[14px] text-[12px] text-[#00bf63] 
-                2xl:leading-[29.3px] xl:leading-7 lg:leading-6 md:leading-4 leading-2 `}
-            >
-              $ 23.00
-            </p>
-          </div>
+            Best Collections
+            </h1>
+            <p className={`${openSans.className} text-sm md:text-base text-gray-500`}>Customer favorites and top rated picks</p>
+        </div>
+        
+        <Link href="/shop" className="hidden md:flex items-center gap-2 text-green-700 hover:text-green-800 transition-colors font-medium group border-b-2 border-transparent hover:border-green-700 pb-0.5">
+          View All Products <BsArrowRight className="group-hover:translate-x-1 transition-transform" />
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 lg:gap-8">
+        {[1, 2, 3, 4].map((_, i) => (
+          <Product key={i} />
         ))}
       </div>
+
+      <Link href="/shop" className="md:hidden w-full mt-6 md:mt-8 flex justify-center items-center gap-2 bg-green-700 text-white py-3 rounded-lg font-medium active:scale-95 transition-transform text-sm">
+        View All Products <BsArrowRight />
+      </Link>
     </section>
   );
 }
