@@ -5,10 +5,11 @@ import React, { use, useEffect, useRef, useState } from "react";
 import { BiUser } from "react-icons/bi";
 import { CiMenuBurger } from "react-icons/ci";
 import { FiLogOut } from "react-icons/fi";
-import { HiOutlineShoppingBag, HiShoppingBag } from "react-icons/hi";
-import { LiaSearchSolid } from "react-icons/lia";
+import { HiOutlineShoppingBag } from "react-icons/hi";
 import { easeOut, motion } from "framer-motion";
 import { pre } from "framer-motion/client";
+import { FaRegHeart } from "react-icons/fa";
+import { GoSearch } from "react-icons/go";
 
 export default function Home() {
   const listItems =
@@ -110,7 +111,7 @@ export default function Home() {
           </div>
           <ul className=" flex flex-row justify-center items-center xl:gap-5 lg:gap-5 gap-4 ">
             <li className={`${listItemsSec} cursor-pointer relative`}>
-              <LiaSearchSolid
+              <GoSearch
                 onClick={handleOpenSearch}
                 className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] "
               />
@@ -179,6 +180,11 @@ export default function Home() {
                 </motion.button>
               </motion.div>
             </li>
+            <Link href="/favourite">
+              <li>
+                <FaRegHeart className=" xl:text-[22px] lg:text-[22px] text-[20px] text-[#58575B]" />
+              </li>
+            </Link>
 
             <Link href="/cart" className=" relative">
               <li className={`${listItemsSec} `}>

@@ -1,20 +1,25 @@
 "use client";
-import { inter,  openSans, interSec } from "@/lib/fonts";
+import { inter, openSans, interSec } from "@/lib/fonts";
+import axios from "axios";
 import { useState } from "react";
-import { BsArrowRight } from "react-icons/bs";
+import { BsArrowRight, BsBagHeart } from "react-icons/bs";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 export default function Arrival() {
   const items = Array.from({ length: 4 });
   const [activeIndex, setActiveIndex] = useState(null);
 
   function handleAddToCart(event, index) {
-    event.stopPropagation(); 
+    event.stopPropagation();
     console.log("Add to cart clicked for index:", index);
   }
 
   function handleCartButton(index) {
     setActiveIndex((prev) => (prev === index ? null : index));
   }
+
+
+ 
 
   return (
     <section className="  2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-16 mx-6 mt-[50px] select-none ">
@@ -25,7 +30,7 @@ export default function Arrival() {
       </h1>
       <div className=" grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-2 grid-cols-2 2xl:grid-rows-none xl:grid-rows-none lg:grid-rows-none md:grid-rows-2 grid-rows-2 gap-6 mt-[25px] ">
         {items.map((_, i) => (
-          <div key={i}>
+          <div key={i} className=" relative ">
             <div
               onClick={() => handleCartButton(i)}
               className=" bg-[#EBEEE3] 2xl:px-11 xl:px-4 lg:px-2 md:px-2 px-1 2xl:py-[90.5px] xl:py-12 lg:py-8 md:py-10 py-6 select-none rounded-xl group relative "
@@ -59,6 +64,10 @@ export default function Arrival() {
             >
               $ 23.00
             </p>
+            <button className=" absolute right-3 top-3 z-50 p-2 rounded-full bg-white group cursor-pointer ">
+              <FaRegHeart className=" block group-hover:hidden " />
+              <FaHeart className=" hidden group-hover:block " />
+            </button>
           </div>
         ))}
       </div>

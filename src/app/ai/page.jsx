@@ -1,14 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import {
-  Send,
-  Leaf,
-  Menu,
-  X,
-  ArrowRight,
-  Flame,
-  Trash2,
-} from "lucide-react";
+import { Send, Leaf, Menu, X, ArrowRight, Flame, Trash2 } from "lucide-react";
 import {
   sendMessageStream,
   extractRecommendedProducts,
@@ -130,7 +122,6 @@ const App = () => {
     scrollToBottom();
   }, [messages]);
 
-
   const handleSend = async (text = input) => {
     if (!text.trim() || isLoading) return;
 
@@ -239,7 +230,6 @@ const App = () => {
             : "-translate-x-full md:translate-x-0"
         }`}
       >
-
         <div className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-hide mt-6 ">
           {/* Top Selling Section */}
           <div className="mb-8">
@@ -248,32 +238,53 @@ const App = () => {
               <Flame size={12} className="text-orange-500 fill-orange-500" />
             </h2>
             <div className="space-y-3">
-              {topSelling.map((product, index) => (
-                <button
-                  key={product.id}
-                  onClick={() => handleProductSelect(product)}
-                  className="w-full text-left group px-4 py-3 bg-white rounded-xl shadow-sm border border-neutral-100 hover:border-neutral-200 hover:shadow-md transition-all duration-300 flex items-center gap-3 relative overflow-hidden"
-                >
-                  <div className="absolute top-0 right-0 w-8 h-8 bg-neutral-50 rounded-bl-xl text-[10px] font-bold text-neutral-400 flex items-center justify-center">
-                    #{index + 1}
-                  </div>
-                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0">
-                    <img
-                      src={product.imageUrl}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      alt=""
-                    />
-                  </div>
-                  <div className="pr-4">
-                    <p className="text-sm font-semibold text-neutral-800 leading-tight group-hover:text-emerald-700 transition-colors">
-                      {product.name}
-                    </p>
-                    <p className="text-[11px] text-neutral-400 mt-0.5 font-medium">
-                      ${product.price.toFixed(2)}
-                    </p>
-                  </div>
-                </button>
-              ))}
+              {topSelling.length === 0 ? (
+                // Loading skeleton cards
+                <>
+                  {[1, 2, 3, 4, 5, 6].map((index) => (
+                    <div
+                      key={`skeleton-${index}`}
+                      className="w-full px-4 py-3 bg-white rounded-xl shadow-sm border border-neutral-100 flex items-center gap-3 relative overflow-hidden"
+                    >
+                      <div className="absolute top-0 right-0 w-8 h-8 bg-neutral-50 rounded-bl-xl text-[10px] font-bold text-neutral-400 flex items-center justify-center">
+                        #{index}
+                      </div>
+                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-200 flex-shrink-0 animate-pulse"></div>
+                      <div className="flex-1 pr-4">
+                        <div className="h-4 bg-neutral-200 rounded animate-pulse mb-2"></div>
+                        <div className="h-3 bg-neutral-100 rounded animate-pulse w-16"></div>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                topSelling.map((product, index) => (
+                  <button
+                    key={product.id}
+                    onClick={() => handleProductSelect(product)}
+                    className="w-full text-left group px-4 py-3 bg-white rounded-xl shadow-sm border border-neutral-100 hover:border-neutral-200 hover:shadow-md transition-all duration-300 flex items-center gap-3 relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 w-8 h-8 bg-neutral-50 rounded-bl-xl text-[10px] font-bold text-neutral-400 flex items-center justify-center">
+                      #{index + 1}
+                    </div>
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0">
+                      <img
+                        src={product.imageUrl}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        alt=""
+                      />
+                    </div>
+                    <div className="pr-4">
+                      <p className="text-sm font-semibold text-neutral-800 leading-tight group-hover:text-emerald-700 transition-colors">
+                        {product.name}
+                      </p>
+                      <p className="text-[11px] text-neutral-400 mt-0.5 font-medium">
+                        ${product.price.toFixed(2)}
+                      </p>
+                    </div>
+                  </button>
+                ))
+              )}
             </div>
           </div>
 
@@ -402,7 +413,6 @@ const App = () => {
                 ))}
               </div>
             )}
-
           </div>
         </div>
 

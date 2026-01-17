@@ -2,6 +2,7 @@
 
 import { inter, openSans } from "@/lib/fonts";
 import { useState } from "react";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 export default function Product() {
   const [isActive, setIsActive] = useState(false);
@@ -17,7 +18,7 @@ export default function Product() {
 
   return (
     <>
-      <div>
+      <div className=" relative " >
         <div
           onClick={handleCartButton}
           className="w-fit bg-[#EBEEE3] 2xl:px-11 xl:px-4 lg:px-2 md:px-2 px-1 2xl:py-[90.5px] xl:py-12 lg:py-8 md:py-10 py-6 select-none group relative "
@@ -51,6 +52,10 @@ export default function Product() {
         >
           $ 23.00
         </p>
+        <button className=" absolute right-3 top-3 z-50 p-2 rounded-full bg-white group cursor-pointer ">
+          <FaRegHeart className=" block group-hover:hidden " />
+          <FaHeart className=" hidden group-hover:block " />
+        </button>
       </div>
     </>
   );
