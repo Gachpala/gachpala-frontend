@@ -16,15 +16,18 @@ export default function Landing() {
   let dispatch = useDispatch();
 
   async function getAllProducts() {
-    let data = await axios.get("https://dummyjson.com/products");
-    setAllProducts(data.data.products);
-    dispatch(productReducer(data.data.products));
-    // console.log(data.data.products);
+    try {
+      let data = await axios.get("https://dummyjson.com/products");
+      setAllProducts(data.data.products);
+      dispatch(productReducer(data.data.products));
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
   }
 
   useEffect(() => {
     getAllProducts();
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     scrollTo(0, 0);

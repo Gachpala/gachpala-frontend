@@ -1,11 +1,21 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { inter, openSans } from "@/lib/fonts";
 import { FaRegHeart } from "react-icons/fa";
 import { IoHeart } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  cartReducer,
+  addToFavorites,
+  removeFromFavorites,
+} from "@/app/slices/products_slices";
 
-export default function Product({ img, alt, title, price }) {
+export default function Product({ id, img, alt, title, price }) {
   const [isActive, setIsActive] = useState(false);
+  const dispatch = useDispatch();
+  const reduxProducts = useSelector((state) => state.products.product);
+  const favorites = useSelector((state) => state.products.favorites);
+  const isFavorited = favorites?.some((item) => item.id === id) || false;
 
   const handleCartButton = () => {
     setIsActive((prev) => !prev);
@@ -13,7 +23,68 @@ export default function Product({ img, alt, title, price }) {
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    console.log("Added to cart:", title);
+
+    // Find the product in Redux to get all details
+    const product = reduxProducts?.find((p) => p.id === id);
+
+    if (product) {
+      const newItem = {
+        id: product.id,
+        name: product.title,
+        price: product.price,
+        quantity: 1,
+        image: product.thumbnail,
+        size: "Standard",
+      };
+      dispatch(cartReducer(newItem));
+      console.log("Added to cart:", title, "ID:", id);
+    } else {
+      // Fallback if product not in Redux
+      const newItem = {
+        id,
+        name: title,
+        price: parseFloat(price),
+        quantity: 1,
+        image: img,
+        size: "Standard",
+      };
+      dispatch(cartReducer(newItem));
+      console.log("Added to cart:", title, "ID:", id);
+    }
+  };
+
+  const handleAddToFavorites = (e) => {
+    e.stopPropagation();
+
+    // Find the product in Redux to get all details
+    const product = reduxProducts?.find((p) => p.id === id);
+
+    if (isFavorited) {
+      // Remove from favorites
+      dispatch(removeFromFavorites(id));
+      console.log("Removed from favorites:", title, "ID:", id);
+    } else {
+      // Add to favorites
+      if (product) {
+        const newItem = {
+          id: product.id,
+          name: product.title,
+          price: product.price,
+          image: product.thumbnail,
+        };
+        dispatch(addToFavorites(newItem));
+      } else {
+        // Fallback if product not in Redux
+        const newItem = {
+          id,
+          name: title,
+          price: parseFloat(price),
+          image: img,
+        };
+        dispatch(addToFavorites(newItem));
+      }
+      console.log("Added to favorites:", title, "ID:", id);
+    }
   };
 
   return (
@@ -60,7 +131,16 @@ export default function Product({ img, alt, title, price }) {
         </p>
       </div>
       <div className=" p-1.5 bg-white w-fit rounded-full absolute right-2 top-2 ">
-        <IoHeart className=" text-[18px] " />
+        <button
+          onClick={handleAddToFavorites}
+          className="flex items-center justify-center cursor-pointer"
+        >
+          {isFavorited ? (
+            <IoHeart className="text-[18px] text-green-500" />
+          ) : (
+            <FaRegHeart className="text-[18px] text-gray-400" />
+          )}
+        </button>
       </div>
     </div>
   );

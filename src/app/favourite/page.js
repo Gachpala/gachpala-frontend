@@ -1,69 +1,19 @@
 "use client";
 import Container from "@/components/container";
 import Product from "@/components/product";
+import ProductSkeleton from "@/components/productSkeleton";
 import { inter, interSec } from "@/lib/fonts";
-import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 
 export default function Favourite() {
-  // Mock data - replace with actual favourite items from your state management
-  const [favourites] = useState([
-    {
-      id: 1,
-      image: "/plant.png",
-      title: "Chinese Money Plant",
-      price: "23.00",
-      rating: 4,
-    },
-    {
-      id: 2,
-      image: "/plant.png",
-      title: "Snake Plant",
-      price: "19.99",
-      rating: 5,
-    },
-    {
-      id: 3,
-      image: "/plant.png",
-      title: "Monstera Deliciosa",
-      price: "45.00",
-      rating: 4,
-    },
-    {
-      id: 4,
-      image: "/plant.png",
-      title: "Pothos Plant",
-      price: "15.99",
-      rating: 4,
-    },
-    {
-      id: 5,
-      image: "/plant.png",
-      title: "Peace Lily",
-      price: "28.50",
-      rating: 5,
-    },
-    {
-      id: 6,
-      image: "/plant.png",
-      title: "Spider Plant",
-      price: "12.99",
-      rating: 4,
-    },
-    {
-      id: 7,
-      image: "/plant.png",
-      title: "Spider Plant",
-      price: "12.99",
-      rating: 4,
-    },
-    {
-      id: 7,
-      image: "/plant.png",
-      title: "Spider Plant",
-      price: "12.99",
-      rating: 5,
-    },
-  ]);
+  const favorites = useSelector((state) => state.products.favorites);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading state for initial render
+    setIsLoading(false);
+  }, []);
 
   return (
     <section>
@@ -85,15 +35,22 @@ export default function Favourite() {
 
       {/* Products Section */}
       <Container>
-        {favourites.length > 0 ? (
-          <div className=" grid grid-cols-4 gap-6 mb-20 ">
-            {favourites.map((product) => (
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 mb-20">
+            {[...Array(8)].map((_, i) => (
+              <ProductSkeleton key={i} />
+            ))}
+          </div>
+        ) : favorites && favorites.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 mb-20">
+            {favorites.map((product) => (
               <Product
                 key={product.id}
-                image={product.image}
-                title={product.title}
-                price={product.price}
-                rating={product.rating}
+                id={product.id}
+                img={product.image}
+                alt={product.name}
+                title={product.name}
+                price={`${product.price}`}
               />
             ))}
           </div>

@@ -1,12 +1,21 @@
 "use client";
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BsArrowRight } from "react-icons/bs";
 import Product from "./product";
+import ProductSkeleton from "./productSkeleton";
 
 export default function BestCollection({ products }) {
-  let productData = products;
+  const [isLoading, setIsLoading] = useState(
+    !products || products.length === 0,
+  );
+
+  useEffect(() => {
+    if (products && products.length > 0) {
+      setIsLoading(false);
+    }
+  }, [products]);
 
   return (
     <section className=" 2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-16 mx-6 mt-[50px] select-none ">
@@ -16,17 +25,26 @@ export default function BestCollection({ products }) {
         Best Collections
       </h1>
       <div className=" grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-2 grid-cols-2 2xl:grid-rows-none xl:grid-rows-none lg:grid-rows-none md:grid-rows-2 grid-rows-2 gap-6 mt-[25px] ">
-        {Array.isArray(productData) &&
-          productData.slice(0, 4).map((item) => (
+        {isLoading ? (
+          <>
+            {[...Array(4)].map((_, i) => (
+              <ProductSkeleton key={i} />
+            ))}
+          </>
+        ) : (
+          Array.isArray(products) &&
+          products.slice(0, 4).map((item) => (
             <div key={item.id}>
               <Product
+                id={item.id}
                 img={item.thumbnail}
                 alt={item.title}
                 title={item.title}
                 price={`${item.price}`}
               />
             </div>
-          ))}
+          ))
+        )}
       </div>
 
       <Link

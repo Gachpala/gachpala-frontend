@@ -1,13 +1,32 @@
 "use client";
-import React from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import Container from "./container";
 import Product from "./product";
+import ProductSkeleton from "./productSkeleton";
 import { IoFlash } from "react-icons/io5";
+import ReactDOM from "react-dom";
+import Countdown from "react-countdown";
 
 export default function FlashSale({ products }) {
-  console.log(products);
+  const [isLoading, setIsLoading] = useState(
+    !products || products.length === 0,
+  );
+
+  useEffect(() => {
+    if (products && products.length > 0) {
+      setIsLoading(false);
+    }
+  }, [products]);
+
+  const COUNTDOWN_END_TIME = new Date("2026-01-20 23:59:59 UTC");
+
+  const countdownDate = useMemo(() => {
+    return COUNTDOWN_END_TIME.getTime();
+  }, []);
+
+  const Completionist = () => <span>Flash Sale is over!</span>;
 
   return (
     <section className="py-8 bg-white border-b border-gray-100">
@@ -19,11 +38,13 @@ export default function FlashSale({ products }) {
             >
               Flash Sale <IoFlash className="animate-pulse" />
             </h2>
-            <div className="hidden md:flex items-center gap-2 text-gray-500 font-semibold text-sm bg-gray-100 px-3 py-1 rounded-md">
-              <span>Ending in</span>
-              <span className="bg-orange-500 text-white px-1 rounded">12</span>:
-              <span className="bg-orange-500 text-white px-1 rounded">45</span>:
-              <span className="bg-orange-500 text-white px-1 rounded">22</span>
+            <div className="hidden md:flex items-center gap-2 text-gray-500 font-semibold text-sm bg-gray-100 px-3 py-1 rounded-md select-none ">
+              <Countdown
+                date={countdownDate}
+                className=" text-lg text-orange-600 "
+              >
+                <Completionist />
+              </Countdown>
             </div>
           </div>
 
@@ -36,18 +57,27 @@ export default function FlashSale({ products }) {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {Array.isArray(products) &&
+          {isLoading ? (
+            <>
+              {[...Array(5)].map((_, i) => (
+                <ProductSkeleton key={i} />
+              ))}
+            </>
+          ) : (
+            Array.isArray(products) &&
             products
               .slice(0, 5)
               .map((product) => (
                 <Product
                   key={product.id}
+                  id={product.id}
                   img={product.thumbnail}
                   alt={product.title}
                   title={product.title}
                   price={`${product.price}`}
                 />
-              ))}
+              ))
+          )}
         </div>
       </Container>
     </section>

@@ -11,8 +11,11 @@ import { easeOut, motion } from "framer-motion";
 import { pre } from "framer-motion/client";
 import { FaRegHeart } from "react-icons/fa";
 import { GoSearch } from "react-icons/go";
+import { useSelector } from "react-redux";
 
 export default function Home() {
+  const cartItems = useSelector((state) => state.products.cart);
+  const cartCount = cartItems?.length || 0;
   const listItems =
     "xl:text-[17px] lg:text-[17px] text-[14px] text-[#58575B] font-normal ";
   const listItemsSec = " text-[20px] text-[#111111] ";
@@ -182,7 +185,7 @@ export default function Home() {
                 <HiOutlineShoppingBag className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] " />
               </li>
               <div className=" text-[12px] text-white bg-[#588456] w-5 h-5 rounded-full flex justify-center items-center absolute left-3 top-3 ">
-                12
+                {cartCount}
               </div>
             </Link>
             <li className={` xl:hidden lg:hidden md:hidden block `}>
@@ -190,7 +193,6 @@ export default function Home() {
             </li>
           </ul>
         </div>
-
 
         <motion.div
           initial={{ height: 0, opacity: 0 }}
