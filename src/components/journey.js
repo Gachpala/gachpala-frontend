@@ -1,47 +1,52 @@
 import { inter, openSans } from "@/lib/fonts";
-import { BsArrowBarRight, BsArrowRight, BsArrowUpRight } from "react-icons/bs";
-import { FaArrowRight } from "react-icons/fa";
 
 export default function Journey() {
   return (
-    <section className="2xl:my-[112.5px] xl:my-[112.5px] lg:my-[112.5px] my-20 flex 2xl:flex-row xl:flex-row lg:flex-row md:flex-col flex-col justify-between items-center gap-[30px] 2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-2 mx-2 select-none ">
-      <img
-        src="/Container.png"
-        className=" w-auto lg:w-[60%] 2xl:px-0 xl:px-0 lg:px-0 md:px-15 px-4 mr-auto "
-      />
-      <div className=" select-none 2xl:px-0 xl:px-0 lg:px-0 md:px-15 px-4 2xl:mt-0 xl:mt-0 lg:mt-0 md:mt-6 ">
-        <h1
-          className={` ${inter.className} font-normal 2xl:text-[48px] xl:text-[48px] lg:text-[48px] md:text-[38px] text-[28px] leading-12 text-black 
-            2xl:mb-6 xl:mb-6 lg:mb-6 md:mb-4 mb-2 `}
-        >
-          Our journey
-        </h1>
-        <p
-          className={` ${openSans.className} font-normal 2xl:text-[15px] xl:text-[15px] lg:text-[15px] md:text-[15px] text-[12px] text-[#58575B] leading-[22.5px]
-             2xl:w-[498px] xl:w-[458px] lg:w-[320px] md:w-full   `}
-        >
-          Quis eleifend orci nunc, blandit massa, vitae. Dui nulla augue in id
-          enim non. Venenatis aenean suscipit facilisis amet. Pellentesque
-          nullam mi vitae neque ipsum. Quis in vitae est eu pulvinar sed. Netus
-          lorem sit turpis tristique pharetra sit. Tortor ornare libero semper
-          cursus. Mollis erat augue egestas laoreet est auctor.
-          <br />
-          <br />
-          Dui nulla augue in id enim non. Venenatis aenean suscipit facilisis
-          amet. Pellentesque nullam mi vitae neque ipsum. Sem magna ut pharetra
-          vitae duis eu senectus sem risus. Morbi non, semper vestibulum euismod
-          accumsan augue.
-        </p>
-        <button
-          className={` ${openSans.className} font-normal 2xl;text-[13.5px] xl:text-[13.5px] md:text-[12px] text-[10px] text-white
-             2xl:px-[35.44px] xl:px-[35.44px] lg:px-[35.44px] md:px-[30px] px-6 2xl:py-[21.25px] xl:py-[21.5px] lg:py-5 md:py-4 py-3 bg-black
-             border-2 border-black rounded-lg 2xl:mt-[35px] xl:mt-[35px] lg:mt-[35px] md:mt-[30px] mt-6
-             flex justify-center items-center gap-2 cursor-pointer
-             hover:bg-transparent hover:text-black hover:border-black duration-300 ease-out `}
-        >
-          Read More
-          <BsArrowRight className=" text-[16px] " />
-        </button>
+    <section className="py-16 md:py-24">
+      <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+        <div className="w-full lg:w-1/2 relative">
+           <div className="absolute -top-4 -left-4 w-full h-full border-[3px] border-green-100 rounded-3xl -z-10 transform -rotate-2"></div>
+           <img
+            src="/Container.png"
+            className="w-full h-auto rounded-2xl shadow-lg object-cover"
+            alt="Our Journey"
+           />
+           <div className="absolute bottom-6 right-6 bg-white p-4 rounded-xl shadow-lg max-w-[200px] hidden md:block">
+              <p className={`${inter.className} text-3xl font-bold text-green-600`}>10+</p>
+              <p className={`${openSans.className} text-sm text-gray-500`}>Years of connecting nature with people</p>
+           </div>
+        </div>
+
+        <div className="w-full lg:w-1/2 text-left">
+          <span className={`${openSans.className} text-green-600 font-semibold tracking-wider text-sm uppercase mb-2 block`}>Our Story</span>
+          <h2
+            className={`${inter.className} text-3xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight`}
+          >
+            Growing Green <br/> Since 2014
+          </h2>
+          <div className={`${openSans.className} text-gray-600 space-y-4 text-lg`}>
+            <p>
+              It all started with a single seed and a simple idea: to bring the tranquility of nature into the bustling lives of city dwellers. GachPala was born from a small balcony garden in Dhaka, fueled by a passion for greenery and sustainable living.
+            </p>
+            <p>
+              We realized that finding quality plants and gardening tools wasn't just hard—it was intimidating for beginners. We wanted to change that.
+            </p>
+            <p>
+              Today, GachPala is more than just a marketplace; it's a community of plant lovers. We connect local nurseries with enthusiasts across the country, ensuring that every plant finds a loving home.
+            </p>
+          </div>
+          
+          <div className="mt-8 flex gap-8">
+              <div>
+                  <h4 className={`${inter.className} text-2xl font-bold text-gray-900`}>15k+</h4>
+                  <p className="text-gray-500">Plants Delivered</p>
+              </div>
+              <div>
+                  <h4 className={`${inter.className} text-2xl font-bold text-gray-900`}>50+</h4>
+                  <p className="text-gray-500">Partner Nurseries</p>
+              </div>
+          </div>
+        </div>
       </div>
     </section>
   );

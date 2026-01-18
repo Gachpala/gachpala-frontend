@@ -1,11 +1,12 @@
 "use client";
-import { arapey, openSans } from "@/lib/fonts";
+import { arapey, inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import React, { use, useEffect, useRef, useState } from "react";
 import { BiUser } from "react-icons/bi";
 import { CiMenuBurger } from "react-icons/ci";
 import { FiLogOut } from "react-icons/fi";
-import { HiOutlineShoppingBag } from "react-icons/hi";
+import { HiOutlineShoppingBag, HiShoppingBag } from "react-icons/hi";
+import { LiaSearchSolid } from "react-icons/lia";
 import { easeOut, motion } from "framer-motion";
 import { pre } from "framer-motion/client";
 import { FaRegHeart } from "react-icons/fa";
@@ -115,21 +116,6 @@ export default function Home() {
                 onClick={handleOpenSearch}
                 className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] "
               />
-              <motion.input
-                initial={{ opacity: 0, height: 0 }}
-                whileInView={{ opacity: 1, height: 30 }}
-                transition={{ duration: 0.2, ease: easeOut }}
-                type="text"
-                placeholder="Search"
-                className={` ${
-                  (openSans.className,
-                  openSearch
-                    ? "block absolute xl:right-0 lg:left-0 md:-left-2.5 top-10 "
-                    : "hidden")
-                } font-normal text-[14px] bg-black/10 backdrop-blur-2xl outline-2 outline-black/10 p-2 w-[100px] placeholder:${
-                  openSans.className
-                } placeholder:text-[#58575B] `}
-              />
             </li>
             <li className=" relative ">
               <button
@@ -142,42 +128,45 @@ export default function Home() {
               >
                 <BiUser className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] " />
               </button>
+              
+              {/* Profile Dropdown */}
               <motion.div
-                initial={{ opacity: 0, scale: 0, top: -20 }}
-                whileInView={{ opacity: 1, scale: 1, top: 35 }}
+                initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                animate={{ 
+                    opacity: toogleProfile ? 1 : 0, 
+                    scale: toogleProfile ? 1 : 0.95, 
+                    y: toogleProfile ? 0 : -10,
+                    display: toogleProfile ? "block" : "none"
+                }}
                 transition={{ duration: 0.2, ease: easeOut }}
-                className={` ${
-                  toogleProfile
-                    ? "flex flex-col justify-center items-center xl:gap-3 lg:gap-3 md:gap-3 gap-1 absolute xl:left-[-60px] lg:left-[-60px] md:left-[-45px] -left-8 top-10  "
-                    : "hidden"
-                } bg-black/10 backdrop-blur-2xl xl:w-[150px] lg:w-[150px] md:w-[110px] w-[110px] xl:h-[150px] lg:h-[150px] md:h-[120px] h-[110px] drop-shadow-xl shadow-xl `}
+                className="absolute right-0 top-12 w-64 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 origin-top-right"
               >
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.2, delay: 0.1, ease: easeOut }}
-                  className=" flex flex-col justify-center items-center gap-1 "
-                >
-                  <img src="/boy.jpg" className=" w-8 rounded-full " />
-                  <label
-                    className={` ${openSans.className} font-normal xl:text-[20px] lg:text-[17px] text-[15px] text-black `}
-                  >
-                    Name
-                  </label>
-                </motion.div>
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.2, delay: 0.1, ease: easeOut }}
-                  className=" flex justify-center items-center xl:gap-2 lg:gap-2 md:gap-2 gap-1 cursor-pointer "
-                >
-                  <FiLogOut className=" xl:text-[20px] lg:text-[17px] text-[15px] text-black " />
-                  <h1
-                    className={` ${openSans.className} font-normal xl:text-[20px] lg:text-[17px] text-[15px] text-black `}
-                  >
-                    Sign out
-                  </h1>
-                </motion.button>
+                <div className="p-4 border-b border-gray-50 bg-gray-50/50">
+                    <p className={`${inter.className} font-bold text-gray-900`}>Sakib Al Hasan</p>
+                    <p className={`${openSans.className} text-xs text-gray-500`}>sakib@example.com</p>
+                </div>
+                
+                <div className="p-2">
+                    <Link 
+                        href="/profile" 
+                        onClick={() => setToogleProfile(false)}
+                        className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors"
+                    >
+                        <BiUser /> My Profile
+                    </Link>
+                    <Link 
+                        href="/profile" 
+                        onClick={() => setToogleProfile(false)}
+                        className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors"
+                    >
+                        <HiOutlineShoppingBag /> My Orders
+                    </Link>
+                    <button 
+                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left"
+                    >
+                        <FiLogOut /> Sign Out
+                    </button>
+                </div>
               </motion.div>
             </li>
             <Link href="/favourite">
@@ -199,6 +188,29 @@ export default function Home() {
             </li>
           </ul>
         </div>
+
+        {/* Full Width Search Bar */}
+        <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: openSearch ? "auto" : 0, opacity: openSearch ? 1 : 0 }}
+            transition={{ duration: 0.3, ease: easeOut }}
+            className="absolute top-full left-0 w-full bg-white shadow-lg overflow-hidden border-t border-gray-100 z-40"
+        >
+            <div className="xl:px-10 lg:px-10 md:px-8 px-4 py-8 flex items-center justify-center">
+                <div className="w-full max-w-4xl relative flex items-center">
+                    <LiaSearchSolid className="absolute left-4 text-2xl text-gray-400" />
+                    <input
+                        type="text"
+                        placeholder="Search for plants..."
+                        className={`${openSans.className} w-full bg-gray-50 py-4 pl-14 pr-12 rounded-full text-lg outline-none focus:ring-2 focus:ring-green-500/20 transition-all text-gray-700 placeholder-gray-400`}
+                    />
+                    <FiX 
+                        className="absolute right-6 text-xl text-gray-400 cursor-pointer hover:text-red-500 transition-colors" 
+                        onClick={() => setOpenSearch(false)}
+                    />
+                </div>
+            </div>
+        </motion.div>
       </div>
     </nav>
   );

@@ -2,23 +2,11 @@
 
 import { inter, openSans } from "@/lib/fonts";
 import { useState } from "react";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
 
-export default function Product() {
-  const [isActive, setIsActive] = useState(false);
-
-  function handleCartButton() {
-    setIsActive((prev) => !prev);
-  }
-
-  function handleAddToCart(event) {
-    event.stopPropagation();
-    console.log("Add to cart clicked for this product");
-  }
-
+export default function Product({ image = "/plant.png", title = "Chinese Money Plant", price = "23.00", isHot = false, rating = 4 }) {
   return (
     <>
-      <div className=" relative " >
+      <div>
         <div
           onClick={handleCartButton}
           className="w-fit bg-[#EBEEE3] 2xl:px-11 xl:px-4 lg:px-2 md:px-2 px-1 2xl:py-[90.5px] xl:py-12 lg:py-8 md:py-10 py-6 select-none group relative "
@@ -40,11 +28,13 @@ export default function Product() {
             Add to cart
           </button>
         </div>
+      </div>
+
+      <div className="mt-3 md:mt-4 text-left">
         <h3
-          className={`${inter.className} 2xl:text-[25.5px] xl:text-[25.5px] lg:text-[20px] md:text-[22px] text-[18px] text-black font-normal leading-[35.7px] 
-                  2xl:mt-6 xl:mt6 lg:mt-4 md:mt-3 mt-2 cursor-pointer `}
+          className={`${inter.className} text-sm md:text-xl text-gray-900 font-medium group-hover:text-green-700 transition-colors line-clamp-1`}
         >
-          Chinese Money Plant
+          {title}
         </h3>
         <p
           className={`${openSans.className} font-normal 2xl:text-[19.5px] xl:text-[18px] lg:text-[16px] md:text-[14px] text-[12px] text-[#00bf63] 
@@ -52,11 +42,7 @@ export default function Product() {
         >
           $ 23.00
         </p>
-        <button className=" absolute right-3 top-3 z-50 p-2 rounded-full bg-white group cursor-pointer ">
-          <FaRegHeart className=" block group-hover:hidden " />
-          <FaHeart className=" hidden group-hover:block " />
-        </button>
       </div>
-    </>
+    </div>
   );
 }
