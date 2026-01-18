@@ -7,7 +7,7 @@ import { BsArrowLeft, BsTrash } from "react-icons/bs";
 import { FaMinus, FaPlus } from "react-icons/fa";
 
 export default function Cart() {
-  // Mock Data
+  
   const [cartItems, setCartItems] = useState([
     {
       id: 1,
@@ -30,7 +30,7 @@ export default function Cart() {
       name: "Ceramic Pot - White",
       price: 800,
       quantity: 1,
-      image: "/b3.gif", // Using placeholder available in context
+      image: "/b3.gif", 
       size: "Large",
     },
   ]);

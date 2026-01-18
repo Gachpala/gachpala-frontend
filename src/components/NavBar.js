@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { use, useEffect, useRef, useState } from "react";
 import { BiUser } from "react-icons/bi";
 import { CiMenuBurger } from "react-icons/ci";
-import { FiLogOut } from "react-icons/fi";
+import { FiLogOut, FiX } from "react-icons/fi";
 import { HiOutlineShoppingBag, HiShoppingBag } from "react-icons/hi";
 import { LiaSearchSolid } from "react-icons/lia";
 import { easeOut, motion } from "framer-motion";
@@ -128,44 +128,46 @@ export default function Home() {
               >
                 <BiUser className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] " />
               </button>
-              
+
               {/* Profile Dropdown */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                animate={{ 
-                    opacity: toogleProfile ? 1 : 0, 
-                    scale: toogleProfile ? 1 : 0.95, 
-                    y: toogleProfile ? 0 : -10,
-                    display: toogleProfile ? "block" : "none"
+                animate={{
+                  opacity: toogleProfile ? 1 : 0,
+                  scale: toogleProfile ? 1 : 0.95,
+                  y: toogleProfile ? 0 : -10,
+                  display: toogleProfile ? "block" : "none",
                 }}
                 transition={{ duration: 0.2, ease: easeOut }}
                 className="absolute right-0 top-12 w-64 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 origin-top-right"
               >
                 <div className="p-4 border-b border-gray-50 bg-gray-50/50">
-                    <p className={`${inter.className} font-bold text-gray-900`}>Sakib Al Hasan</p>
-                    <p className={`${openSans.className} text-xs text-gray-500`}>sakib@example.com</p>
+                  <p className={`${inter.className} font-bold text-gray-900`}>
+                    Sakib Al Hasan
+                  </p>
+                  <p className={`${openSans.className} text-xs text-gray-500`}>
+                    sakib@example.com
+                  </p>
                 </div>
-                
+
                 <div className="p-2">
-                    <Link 
-                        href="/profile" 
-                        onClick={() => setToogleProfile(false)}
-                        className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors"
-                    >
-                        <BiUser /> My Profile
-                    </Link>
-                    <Link 
-                        href="/profile" 
-                        onClick={() => setToogleProfile(false)}
-                        className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors"
-                    >
-                        <HiOutlineShoppingBag /> My Orders
-                    </Link>
-                    <button 
-                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left"
-                    >
-                        <FiLogOut /> Sign Out
-                    </button>
+                  <Link
+                    href="/profile"
+                    onClick={() => setToogleProfile(false)}
+                    className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors"
+                  >
+                    <BiUser /> My Profile
+                  </Link>
+                  <Link
+                    href="/profile"
+                    onClick={() => setToogleProfile(false)}
+                    className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors"
+                  >
+                    <HiOutlineShoppingBag /> My Orders
+                  </Link>
+                  <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left">
+                    <FiLogOut /> Sign Out
+                  </button>
                 </div>
               </motion.div>
             </li>
@@ -189,27 +191,30 @@ export default function Home() {
           </ul>
         </div>
 
-        {/* Full Width Search Bar */}
+
         <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: openSearch ? "auto" : 0, opacity: openSearch ? 1 : 0 }}
-            transition={{ duration: 0.3, ease: easeOut }}
-            className="absolute top-full left-0 w-full bg-white shadow-lg overflow-hidden border-t border-gray-100 z-40"
+          initial={{ height: 0, opacity: 0 }}
+          animate={{
+            height: openSearch ? "auto" : 0,
+            opacity: openSearch ? 1 : 0,
+          }}
+          transition={{ duration: 0.3, ease: easeOut }}
+          className="absolute top-full left-0 w-full bg-white shadow-lg overflow-hidden border-t border-gray-100 z-40"
         >
-            <div className="xl:px-10 lg:px-10 md:px-8 px-4 py-8 flex items-center justify-center">
-                <div className="w-full max-w-4xl relative flex items-center">
-                    <LiaSearchSolid className="absolute left-4 text-2xl text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder="Search for plants..."
-                        className={`${openSans.className} w-full bg-gray-50 py-4 pl-14 pr-12 rounded-full text-lg outline-none focus:ring-2 focus:ring-green-500/20 transition-all text-gray-700 placeholder-gray-400`}
-                    />
-                    <FiX 
-                        className="absolute right-6 text-xl text-gray-400 cursor-pointer hover:text-red-500 transition-colors" 
-                        onClick={() => setOpenSearch(false)}
-                    />
-                </div>
+          <div className="xl:px-10 lg:px-10 md:px-8 px-4 py-8 flex items-center justify-center">
+            <div className="w-full max-w-4xl relative flex items-center">
+              <LiaSearchSolid className="absolute left-4 text-2xl text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search for plants..."
+                className={`${openSans.className} w-full bg-gray-50 py-4 pl-14 pr-12 rounded-full text-lg outline-none focus:ring-2 focus:ring-green-500/20 transition-all text-gray-700 placeholder-gray-400`}
+              />
+              <FiX
+                className="absolute right-6 text-xl text-gray-400 cursor-pointer hover:text-red-500 transition-colors"
+                onClick={() => setOpenSearch(false)}
+              />
             </div>
+          </div>
         </motion.div>
       </div>
     </nav>

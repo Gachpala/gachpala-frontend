@@ -41,7 +41,7 @@ export default function Banner() {
   const CategoryCard = ({ title, subtitle, cta, icon, images, href }) => (
     <Link
       href={href}
-      className="group block bg-[#EBEEE3] rounded-xl shadow-sm hover:shadow-xl hover:bg-[#EBEEE3]/90 transition-all duration-300 ease-out transform hover:-translate-y-1 overflow-hidden relative p-6 flex flex-col items-center text-center h-full"
+      className="group  bg-[#EBEEE3] rounded-xl shadow-sm hover:shadow-xl hover:bg-[#EBEEE3]/90 transition-all duration-300 ease-out transform hover:-translate-y-1 overflow-hidden relative p-6 flex flex-col items-center text-center h-full"
     >
       <div className="flex md:hidden items-center justify-between w-full mb-2">
         <h2 className={`${inter.className} text-xl font-medium text-gray-900`}>
@@ -66,7 +66,7 @@ export default function Banner() {
 
         <div className="flex justify-center items-center w-full gap-2 lg:gap-4 px-2 mb-4">
           {images.map((img, idx) => (
-            <div key={idx} className="relative w-1/3 aspect-[3/4] overflow-hidden rounded-lg">
+            <div key={idx} className="relative w-1/3 aspect-3/4 overflow-hidden rounded-lg">
                <img src={img} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" alt="" />
             </div>
           ))}

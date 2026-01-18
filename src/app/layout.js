@@ -1,7 +1,8 @@
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
-import Link from "next/link";
+import AIButton from "@/components/aiButton";
+import { Providers } from "./providers";
 
 export const metadata = {
   title: "GachPala",
@@ -13,15 +14,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <NavBar />
-        {children}
-        <AIButton />
-        <Footer />
+        <Providers>
+          <NavBar />
+          {children}
+          <AIButton />
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
 }
-
-// app/layout.js
-import "./globals.css";
-import AIButton from "@/components/aiButton";

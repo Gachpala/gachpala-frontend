@@ -1,3 +1,4 @@
+"use client";
 import Container from "@/components/container";
 import Arrival from "@/components/arrival";
 import HeroSection from "@/components/heroSection";
@@ -5,45 +6,54 @@ import CategorySection from "@/components/categorySection";
 import FlashSale from "@/components/flashSale";
 import BestCollection from "@/components/bestCollection";
 import AutoPlayText from "@/components/autoPlayText";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { productReducer } from "@/app/slices/products_slices";
 
 export default function Landing() {
-
+  const [allProducts, setAllProducts] = useState([]);
+  let dispatch = useDispatch();
 
   async function getAllProducts() {
     let data = await axios.get("https://dummyjson.com/products");
-    console.log(data);
+    setAllProducts(data.data.products);
+    dispatch(productReducer(data.data.products));
+    // console.log(data.data.products);
   }
 
   useEffect(() => {
     getAllProducts();
   }, []);
 
+  useEffect(() => {
+    scrollTo(0, 0);
+  });
+
   return (
     <div className="bg-[#f5f5f5] min-h-screen">
       <HeroSection />
-      
+
       <CategorySection />
-      
+
       <div className="space-y-6 pb-12">
-        <FlashSale />
-        
+        <FlashSale products={allProducts} />
+
         <Container>
-            <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm">
-                 <Arrival />
-            </div>
+          <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm">
+            <Arrival products={allProducts} />
+          </div>
         </Container>
-        
+
         <Container>
-            <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm">
-                <BestCollection />
-            </div>
+          <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm">
+            <BestCollection products={allProducts} />
+          </div>
         </Container>
       </div>
-      
+
       <div className="mt-0 mb-0 bg-white">
-          <AutoPlayText /> 
+        <AutoPlayText />
       </div>
     </div>
   );
