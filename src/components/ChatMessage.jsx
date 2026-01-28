@@ -51,7 +51,7 @@ const ChatMessage = ({ message, ref }) => {
         {/* Message Bubble */}
         <div
           ref={ref}
-          className={`relative px-6 py-4 rounded-[2rem] text-sm md:text-[15px] leading-relaxed tracking-wide shadow-sm transition-all duration-300 ${
+          className={`relative px-6 py-4 rounded-8 text-sm md:text-[15px] leading-relaxed tracking-wide shadow-sm transition-all duration-300 ${
             isBot
               ? "bg-white text-neutral-700 border border-neutral-100 rounded-tl-md"
               : "bg-neutral-900 text-neutral-50 rounded-tr-md shadow-lg shadow-neutral-900/5"

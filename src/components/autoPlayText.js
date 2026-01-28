@@ -22,12 +22,16 @@ export default function AutoPlayText() {
 
   return (
     <div className="py-12 bg-[#fcfdfa]">
-        <div className="text-center mb-10">
-            <h2 className={`${inter.className} text-3xl font-bold mb-2 flex items-center justify-center gap-2`}> 
-                <FaInstagram className="text-green-600"/> @GachPala
-            </h2>
-            <p className={`${openSans.className} text-gray-500`}>Join our community of plant lovers</p>
-        </div>
+      <div className="text-center mb-10">
+        <h2
+          className={`${inter.className} text-3xl font-bold mb-2 flex items-center justify-center gap-2`}
+        >
+          <FaInstagram className="text-green-600" /> @GachPala
+        </h2>
+        <p className={`${openSans.className} text-gray-500`}>
+          Join our community of plant lovers
+        </p>
+      </div>
       <Marquee
         direction="left"
         speed={60}

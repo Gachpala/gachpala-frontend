@@ -66,8 +66,15 @@ export default function Banner() {
 
         <div className="flex justify-center items-center w-full gap-2 lg:gap-4 px-2 mb-4">
           {images.map((img, idx) => (
-            <div key={idx} className="relative w-1/3 aspect-3/4 overflow-hidden rounded-lg">
-               <img src={img} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" alt="" />
+            <div
+              key={idx}
+              className="relative w-1/3 aspect-3/4 overflow-hidden rounded-lg"
+            >
+              <img
+                src={img}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                alt=""
+              />
             </div>
           ))}
         </div>
@@ -84,7 +91,7 @@ export default function Banner() {
   return (
     <section className="relative w-full max-w-[1920px] mx-auto md:pb-[250px] lg:pb-[300px]">
       <BannerSlider />
-      
+
       <div className="relative md:absolute md:left-1/2 md:-translate-x-1/2 md:bottom-12 w-full px-4 sm:px-6 lg:px-8 max-w-[1600px] z-10 -mt-16 md:mt-0 pb-8 md:pb-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {categories.map((cat, idx) => (

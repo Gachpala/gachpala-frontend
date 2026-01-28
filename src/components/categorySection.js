@@ -3,8 +3,11 @@ import React from "react";
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import Container from "./container";
+import { useSelector } from "react-redux";
 
 export default function CategorySection() {
+  let categoryData = useSelector((state) => state.products.product);
+
   const displayCats = [
     { name: "Indoor", img: "/indoor.png", category: "beauty" },
     { name: "Outdoor", img: "/outdoor.png", category: "groceries" },
@@ -15,6 +18,7 @@ export default function CategorySection() {
     { name: "Seeds", img: "/outdoor2.jpg", category: "seeds" },
     { name: "Sale", img: "/gift3.jpg", category: "sale" },
   ];
+
 
   return (
     <section className="py-8 bg-white">
@@ -41,7 +45,7 @@ export default function CategorySection() {
               <span
                 className={`${openSans.className} text-sm font-medium text-gray-700 group-hover:text-green-600 text-center`}
               >
-                {cat.name}
+                {cat.category}
               </span>
             </Link>
           ))}

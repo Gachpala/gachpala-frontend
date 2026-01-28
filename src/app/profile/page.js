@@ -181,6 +181,7 @@ export default function Profile() {
                         <div className="space-y-4">
                             <input type="password" placeholder="Current Password" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none" />
                             <input type="password" placeholder="New Password" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none" />
+                            <input type="password" placeholder="Confirm Password" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none" />
                         </div>
                     </div>
 
@@ -199,7 +200,7 @@ export default function Profile() {
       <Container>
          {/* Profile Header */}
          <div className="bg-white rounded-2xl shadow-sm p-8 mb-8 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
-             <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-green-600 to-green-400 opacity-10"></div>
+             <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-[#000000] to-[#ebeee3] opacity-10"></div>
              
              <div className="relative group">
                  <div className="w-28 h-28 rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-200">
@@ -212,20 +213,13 @@ export default function Profile() {
              
              <div className="text-center md:text-left z-10 flex-grow">
                  <h1 className={`${inter.className} text-3xl font-bold text-gray-900`}>{user.name}</h1>
-                 <p className={`${openSans.className} text-gray-500 mb-2`}>{user.email}</p>
-                 <span className="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
-                     Platinum Member
-                 </span>
+                 <p className={`${openSans.className} text-gray-500 mt-1`}>{user.email}</p>
              </div>
 
              <div className="flex gap-4 z-10">
                  <div className="text-center px-4 md:border-r border-gray-200">
                      <div className="text-2xl font-bold text-gray-900">12</div>
                      <div className="text-xs text-gray-500 uppercase">Orders</div>
-                 </div>
-                 <div className="text-center px-4">
-                     <div className="text-2xl font-bold text-gray-900">1050</div>
-                     <div className="text-xs text-gray-500 uppercase">Points</div>
                  </div>
              </div>
          </div>

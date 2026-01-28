@@ -38,7 +38,9 @@ export default function Features() {
               <div className="transform group-hover:scale-110 transition-transform duration-300">
                 {feature.icon}
               </div>
-              <h3 className={`${inter.className} text-lg font-bold text-gray-900 mb-2`}>
+              <h3
+                className={`${inter.className} text-lg font-bold text-gray-900 mb-2`}
+              >
                 {feature.title}
               </h3>
               <p className={`${openSans.className} text-gray-500 text-sm`}>

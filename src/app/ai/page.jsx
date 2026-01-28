@@ -66,12 +66,12 @@ const App = () => {
     const fetchTopSelling = async () => {
       try {
         const response = await fetch(
-          "https://api.gachpala.com/products/topselling"
+          "https://api.gachpala.com/products/topselling",
         );
         if (!response.ok) {
           console.error(
             "Failed to fetch top selling products:",
-            await response.text()
+            await response.text(),
           );
           return;
         }
@@ -155,22 +155,22 @@ const App = () => {
         fullResponse += chunk;
         setMessages((prev) =>
           prev.map((msg) =>
-            msg.id === botMessageId ? { ...msg, content: fullResponse } : msg
-          )
+            msg.id === botMessageId ? { ...msg, content: fullResponse } : msg,
+          ),
         );
       });
 
       const recommendations = extractRecommendedProducts(
         fullResponse,
-        products
+        products,
       );
 
       setMessages((prev) =>
         prev.map((msg) =>
           msg.id === botMessageId
             ? { ...msg, relatedProducts: recommendations }
-            : msg
-        )
+            : msg,
+        ),
       );
     } catch (error) {
       console.error("Failed to generate response", error);

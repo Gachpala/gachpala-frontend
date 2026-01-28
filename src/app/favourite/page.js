@@ -24,10 +24,10 @@ export default function Favourite() {
             <p
               className={`${inter.className} text-xl font-bold text-gray-800 mb-2`}
             >
-              My Favourites
+              Wishlist
             </p>
             <p className={` ${interSec.className} text-md `}>
-              home / <span className="text-gray-600">favourites</span>
+              home / <span className="text-gray-600">wishlist</span>
             </p>
           </div>
         </Container>

@@ -12,6 +12,7 @@ import { pre } from "framer-motion/client";
 import { FaRegHeart } from "react-icons/fa";
 import { GoSearch } from "react-icons/go";
 import { useSelector } from "react-redux";
+import SignInUpPage from "@/app/signInUp/page";
 
 export default function Home() {
   const cartItems = useSelector((state) => state.products.cart);
@@ -23,6 +24,7 @@ export default function Home() {
   const [toggle, setToggle] = React.useState(false);
   const [toogleProfile, setToogleProfile] = React.useState(false);
   const [openSearch, setOpenSearch] = React.useState(false);
+  const [SignInUp, setSignInUp] = React.useState(false);
   // const profileRef = useRef(null);
 
   const handleToggle = () => {
@@ -40,6 +42,16 @@ export default function Home() {
     setToogleProfile(false);
     setToggle(false);
   };
+
+  const handleToogleSignInUp = () => {
+    setSignInUp(true);
+  };
+
+  // const handleToogleDetails = () => {
+  //   setToogleProfile((prev) => !prev); laterrrrrrrrrrrrr
+  //   setOpenSearch(false);
+  //   setToggle(false);
+  // };
 
   // useEffect(() => {
   //   const handleClickOutside = (event) => {
@@ -122,11 +134,7 @@ export default function Home() {
             </li>
             <li className=" relative ">
               <button
-                onClick={() => {
-                  setToogleProfile((prev) => !prev);
-                  setOpenSearch(false);
-                  setToggle(false);
-                }}
+                onClick={handleToogleSignInUp}
                 className={`${listItemsSec} cursor-pointer block `}
               >
                 <BiUser className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] " />
@@ -219,6 +227,9 @@ export default function Home() {
           </div>
         </motion.div>
       </div>
+      <SignInUpPage
+        className={` ${SignInUp ? "block" : "hidden"} absolute left-[50%] top-[500px] translate-x-[-50%] z-50 `}
+      />
     </nav>
   );
 }

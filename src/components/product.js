@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { inter, openSans } from "@/lib/fonts";
 import { FaRegHeart } from "react-icons/fa";
 import { IoHeart } from "react-icons/io5";
@@ -9,13 +9,24 @@ import {
   addToFavorites,
   removeFromFavorites,
 } from "@/app/slices/products_slices";
+import { BiPlus } from "react-icons/bi";
 
 export default function Product({ id, img, alt, title, price }) {
   const [isActive, setIsActive] = useState(false);
+  const [isCartAdded, setIsCartAdded] = useState(false);
   const dispatch = useDispatch();
   const reduxProducts = useSelector((state) => state.products.product);
   const favorites = useSelector((state) => state.products.favorites);
   const isFavorited = favorites?.some((item) => item.id === id) || false;
+
+  useEffect(() => {
+    if (isCartAdded) {
+      const timer = setTimeout(() => {
+        setIsCartAdded(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isCartAdded]);
 
   const handleCartButton = () => {
     setIsActive((prev) => !prev);
@@ -39,7 +50,6 @@ export default function Product({ id, img, alt, title, price }) {
       dispatch(cartReducer(newItem));
       console.log("Added to cart:", title, "ID:", id);
     } else {
-      // Fallback if product not in Redux
       const newItem = {
         id,
         name: title,
@@ -51,6 +61,8 @@ export default function Product({ id, img, alt, title, price }) {
       dispatch(cartReducer(newItem));
       console.log("Added to cart:", title, "ID:", id);
     }
+
+    setIsCartAdded(true);
   };
 
   const handleAddToFavorites = (e) => {
@@ -87,8 +99,12 @@ export default function Product({ id, img, alt, title, price }) {
     }
   };
 
+  const handleDetails = (e) => {
+    e.stopPropagation();
+    window.location.href = `/productDetails?id=${id}`;
+  };
   return (
-    <div className=" relative ">
+    <div onClick={handleDetails} className=" relative ">
       <div
         onClick={handleCartButton}
         className="w-fit bg-[#EBEEE3] 2xl:px-11 xl:px-4 lg:px-2 md:px-2 px-1 2xl:py-[90.5px] xl:py-12 lg:py-8 md:py-10 py-6 select-none rounded-xl group relative"
@@ -101,17 +117,12 @@ export default function Product({ id, img, alt, title, price }) {
 
         <button
           onClick={handleAddToCart}
-          className={`${openSans.className} ${
-            isActive
-              ? "opacity-100 border-black text-black 2xl:bottom-8 xl:bottom-4 lg:bottom-2 md:bottom-4 bottom-[9px]"
-              : "opacity-0 border-transparent"
-          } w-fit font-medium 2xl:text-[12px] xl:text-[12px] lg:text-[12px] md:text-[12px] text-[10px]
-          2xl:px-5 xl:px-5 lg:px-3 md:px-2 px-1.5 2xl:py-2 xl:py-2 lg:py-1 py-0.5
-          border-2 rounded-lg absolute left-1/2 -translate-x-1/2 bottom-10
-          cursor-pointer group-hover:opacity-100 group-hover:border-black group-hover:text-black
-          duration-300 ease-out`}
+          className={`${openSans.className} w-fit font-medium 2xl:text-[16px] xl:text-[14px] lg:text-[12px] md:text-[12px] text-[10px] flex justify-center items-center gap-1
+             absolute left-[50%] translate-x-[-50%] bottom-4 cursor-pointer transition-colors duration-300 ${
+               isCartAdded ? "text-green-500" : "text-current"
+             }`}
         >
-          Add to cart
+          Add to cart <BiPlus />
         </button>
       </div>
 
@@ -136,7 +147,7 @@ export default function Product({ id, img, alt, title, price }) {
           className="flex items-center justify-center cursor-pointer"
         >
           {isFavorited ? (
-            <IoHeart className="text-[18px] text-green-500" />
+            <IoHeart className="text-[18px] text-red-500" />
           ) : (
             <FaRegHeart className="text-[18px] text-gray-400" />
           )}
