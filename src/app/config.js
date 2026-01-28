@@ -1,5 +1,5 @@
 const CONFIG = {
     API: {
-        BASE_URL: "https://api.gachpala.com"
+        BASE_URL: "http://localhost:7575",
     }
 };
