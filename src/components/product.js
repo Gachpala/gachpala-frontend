@@ -11,7 +11,7 @@ import {
 } from "@/app/slices/products_slices";
 import { BiPlus } from "react-icons/bi";
 
-export default function Product({ id, img, alt, title, price }) {
+export default function Product({ id, img, alt, title, price, description, stock, category_id, category_name, is_featured, created_at, status, weight, dimensions }) {
   const [isActive, setIsActive] = useState(false);
   const [isCartAdded, setIsCartAdded] = useState(false);
   const dispatch = useDispatch();
@@ -35,32 +35,26 @@ export default function Product({ id, img, alt, title, price }) {
   const handleAddToCart = (e) => {
     e.stopPropagation();
 
-    // Find the product in Redux to get all details
-    const product = reduxProducts?.find((p) => p.id === id);
-
-    if (product) {
-      const newItem = {
-        id: product.id,
-        name: product.title,
-        price: product.price,
-        quantity: 1,
-        image: product.thumbnail,
-        size: "Standard",
-      };
-      dispatch(cartReducer(newItem));
-      console.log("Added to cart:", title, "ID:", id);
-    } else {
-      const newItem = {
-        id,
-        name: title,
-        price: parseFloat(price),
-        quantity: 1,
-        image: img,
-        size: "Standard",
-      };
-      dispatch(cartReducer(newItem));
-      console.log("Added to cart:", title, "ID:", id);
-    }
+    // Use props directly for cart item
+    const newItem = {
+      id,
+      name: title,
+      price: parseFloat(price),
+      quantity: 1,
+      image: img,
+      size: "Standard",
+      description,
+      stock,
+      category_id,
+      category_name,
+      is_featured,
+      created_at,
+      status,
+      weight,
+      dimensions,
+    };
+    dispatch(cartReducer(newItem));
+    console.log("Added to cart:", title, "ID:", id);
 
     setIsCartAdded(true);
   };
@@ -68,33 +62,28 @@ export default function Product({ id, img, alt, title, price }) {
   const handleAddToFavorites = (e) => {
     e.stopPropagation();
 
-    // Find the product in Redux to get all details
-    const product = reduxProducts?.find((p) => p.id === id);
-
     if (isFavorited) {
       // Remove from favorites
       dispatch(removeFromFavorites(id));
       console.log("Removed from favorites:", title, "ID:", id);
     } else {
-      // Add to favorites
-      if (product) {
-        const newItem = {
-          id: product.id,
-          name: product.title,
-          price: product.price,
-          image: product.thumbnail,
-        };
-        dispatch(addToFavorites(newItem));
-      } else {
-        // Fallback if product not in Redux
-        const newItem = {
-          id,
-          name: title,
-          price: parseFloat(price),
-          image: img,
-        };
-        dispatch(addToFavorites(newItem));
-      }
+      // Add to favorites using props
+      const newItem = {
+        id,
+        name: title,
+        price: parseFloat(price),
+        image: img,
+        description,
+        stock,
+        category_id,
+        category_name,
+        is_featured,
+        created_at,
+        status,
+        weight,
+        dimensions,
+      };
+      dispatch(addToFavorites(newItem));
       console.log("Added to favorites:", title, "ID:", id);
     }
   };
@@ -103,55 +92,57 @@ export default function Product({ id, img, alt, title, price }) {
     e.stopPropagation();
     window.location.href = `/productDetails?id=${id}`;
   };
+  // Prepend base URL if img is a relative path
+  let imageSrc = img;
+  if (img && img.startsWith("/")) {
+    imageSrc = `http://localhost:7575${img}`;
+  }
   return (
-    <div onClick={handleDetails} className=" relative ">
-      <div
-        onClick={handleCartButton}
-        className="w-fit bg-[#EBEEE3] 2xl:px-11 xl:px-4 lg:px-2 md:px-2 px-1 2xl:py-[90.5px] xl:py-12 lg:py-8 md:py-10 py-6 select-none rounded-xl group relative"
+    <div
+      onClick={handleDetails}
+      className="relative bg-white rounded-2xl shadow group border border-gray-100 flex flex-col cursor-pointer min-h-[370px] max-w-xs mx-auto hover:shadow-lg transition-all duration-200"
+    >
+      {/* Favorite icon */}
+      <button
+        onClick={handleAddToFavorites}
+        className="absolute right-3 top-3 z-10 bg-white rounded-full p-2 shadow hover:bg-gray-100"
+        tabIndex={-1}
       >
-        <img
-          src={img}
-          alt={alt}
-          className="mx-auto 2xl:w-auto xl:w-[80%] lg:w-[70%] md:w-[60%] w-[60%]"
-        />
+        {isFavorited ? (
+          <IoHeart className="text-[22px] text-red-500" />
+        ) : (
+          <FaRegHeart className="text-[22px] text-gray-400" />
+        )}
+      </button>
 
-        <button
-          onClick={handleAddToCart}
-          className={`${openSans.className} w-fit font-medium 2xl:text-[16px] xl:text-[14px] lg:text-[12px] md:text-[12px] text-[10px] flex justify-center items-center gap-1
-             absolute left-[50%] translate-x-[-50%] bottom-4 cursor-pointer transition-colors duration-300 ${
-               isCartAdded ? "text-green-500" : "text-current"
-             }`}
-        >
-          Add to cart <BiPlus />
-        </button>
+      {/* Image */}
+      <div className="w-full aspect-square bg-gray-100 rounded-t-2xl flex items-center justify-center overflow-hidden">
+        <img
+          src={imageSrc}
+          alt={alt}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          style={{ maxHeight: 220, maxWidth: '100%' }}
+        />
       </div>
 
-      <div className="mt-3 md:mt-4 text-left">
+      {/* Info */}
+      <div className="flex-1 flex flex-col px-4 py-3 gap-1">
         <h3
-          className={`${inter.className} text-sm md:text-xl text-gray-900 font-medium line-clamp-1`}
+          className={`${inter.className} text-base font-semibold text-gray-900 mb-0 line-clamp-1`}
         >
           {title}
         </h3>
-
-        <p
-          className={`${openSans.className} font-normal
-          2xl:text-[19.5px] xl:text-[18px] lg:text-[16px] md:text-[14px] text-[12px]
-          text-[#00bf63]`}
-        >
-          $ {price}
-        </p>
-      </div>
-      <div className=" p-1.5 bg-white w-fit rounded-full absolute right-2 top-2 ">
-        <button
-          onClick={handleAddToFavorites}
-          className="flex items-center justify-center cursor-pointer"
-        >
-          {isFavorited ? (
-            <IoHeart className="text-[18px] text-red-500" />
-          ) : (
-            <FaRegHeart className="text-[18px] text-gray-400" />
-          )}
-        </button>
+        <p className="text-xs text-gray-500 line-clamp-2 min-h-[32px] mb-1">{description}</p>
+        <div className="flex items-center justify-between mt-auto pt-2">
+          <span className="text-lg font-bold text-green-600">${price}</span>
+          <button
+            onClick={(e) => { e.stopPropagation(); handleAddToCart(e); }}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs font-semibold shadow hover:bg-green-700 transition-colors"
+          >
+            <BiPlus className="text-base" />
+            <span className="hidden sm:inline">Add to cart</span>
+          </button>
+        </div>
       </div>
     </div>
   );

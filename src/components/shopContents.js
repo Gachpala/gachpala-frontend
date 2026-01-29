@@ -16,6 +16,9 @@ export default function ShopContents() {
   const selectedCategory = searchParams.get("category");
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(!productData);
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 20;
 
   console.log(productData, selectedCategory);
 
@@ -24,8 +27,8 @@ export default function ShopContents() {
       if (!productData) {
         try {
           setIsLoading(true);
-          let data = await axios.get("https://dummyjson.com/products");
-          dispatch(productReducer(data.data.products));
+          let data = await axios.get("http://localhost:7575/products");
+          dispatch(productReducer(data.data));
         } catch (error) {
           console.error("Failed to fetch products:", error);
           setIsLoading(false);
@@ -41,16 +44,24 @@ export default function ShopContents() {
       if (selectedCategory) {
         const filtered = productData.filter(
           (product) =>
-            product.category &&
-            product.category.toLowerCase() === selectedCategory.toLowerCase(),
+            product.category_name &&
+            product.category_name.toLowerCase() === selectedCategory.toLowerCase(),
         );
         setFilteredProducts(filtered);
       } else {
         setFilteredProducts(productData);
       }
       setIsLoading(false);
+      setCurrentPage(1); // Reset to first page on filter change
     }
   }, [productData, selectedCategory]);
+
+  // Pagination calculations
+  const totalProducts = filteredProducts.length;
+  const totalPages = Math.ceil(totalProducts / productsPerPage);
+  const startIdx = (currentPage - 1) * productsPerPage;
+  const endIdx = startIdx + productsPerPage;
+  const currentProducts = filteredProducts.slice(startIdx, endIdx);
 
   return (
     <section>
@@ -65,31 +76,41 @@ export default function ShopContents() {
             <p className={` ${interSec.className} text-md `}>
               home / <span className="text-gray-600">shop</span>
             </p>
+            <p className="mt-2 text-gray-700 text-sm">
+              Showing {startIdx + 1}-{Math.min(endIdx, totalProducts)} of {totalProducts} products
+            </p>
           </div>
         </Container>
       </div>
 
       <Container>
-        <div className=" grid grid-cols-4 gap-6 ">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {isLoading ? (
             // Show skeleton loaders while loading
-            Array.from({ length: 20 }).map((_, i) => (
+            Array.from({ length: productsPerPage }).map((_, i) => (
               <ProductSkeleton key={i} />
             ))
-          ) : Array.isArray(filteredProducts) && filteredProducts.length > 0 ? (
+          ) : Array.isArray(currentProducts) && currentProducts.length > 0 ? (
             // Show products when loaded
-            filteredProducts
-              .slice(0, 20)
-              .map((product) => (
-                <Product
-                  key={product.id}
-                  id={product.id}
-                  img={product.thumbnail}
-                  alt={product.title}
-                  title={product.title}
-                  price={`${product.price}`}
-                />
-              ))
+            currentProducts.map((product) => (
+              <Product
+                key={product.id}
+                id={product.id}
+                img={product.image_url}
+                alt={product.name}
+                title={product.name}
+                price={`${product.price}`}
+                description={product.description}
+                stock={product.stock}
+                category_id={product.category_id}
+                category_name={product.category_name}
+                is_featured={product.is_featured}
+                created_at={product.created_at}
+                status={product.status}
+                weight={product.weight}
+                dimensions={product.dimensions}
+              />
+            ))
           ) : (
             // Show empty state when no products
             <div className="col-span-4 text-center py-10">
@@ -97,6 +118,28 @@ export default function ShopContents() {
             </div>
           )}
         </div>
+        {/* Pagination controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-8">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span className="mx-2 text-gray-700">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </Container>
     </section>
   );

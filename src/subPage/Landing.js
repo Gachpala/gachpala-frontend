@@ -17,10 +17,10 @@ export default function Landing() {
 
   async function getAllProducts() {
     try {
-      let data = await axios.get("https://dummyjson.com/products");
-      setAllProducts(data.data.products);
+      let data = await axios.get("http://localhost:7575/products");
+      setAllProducts(data.data);
       console.log(data);
-      dispatch(productReducer(data.data.products));
+      dispatch(productReducer(data.data));
     } catch (error) {
       console.error("Error fetching products:", error);
     }

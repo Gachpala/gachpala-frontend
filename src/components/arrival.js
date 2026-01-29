@@ -37,10 +37,19 @@ export default function Arrival({ products }) {
             <div key={item.id}>
               <Product
                 id={item.id}
-                img={item.thumbnail}
-                alt={item.title}
-                title={item.title}
+                img={item.image_url}
+                alt={item.name}
+                title={item.name}
                 price={`${item.price}`}
+                description={item.description}
+                stock={item.stock}
+                category_id={item.category_id}
+                category_name={item.category_name}
+                is_featured={item.is_featured}
+                created_at={item.created_at}
+                status={item.status}
+                weight={item.weight}
+                dimensions={item.dimensions}
               />
             </div>
           ))
