@@ -1,12 +1,42 @@
 "use client";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { inter } from "@/lib/fonts";
 import Link from "next/link";
 
+const API_BASE = "http://localhost:7575";
+const PLACEHOLDER = "/plant-placeholder.png";
+
 export default function HeroSection() {
+  const [banners, setBanners] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/banners`);
+        if (!res.ok) throw new Error(`Failed to load banners: ${res.status}`);
+        const data = await res.json();
+        setBanners(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Hero banner fetch error", err);
+        setBanners([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchBanners();
+  }, []);
+
+  const slides = useMemo(() => {
+    if (!isLoading && banners.length === 0) {
+      return [{ title: "", imageurl: PLACEHOLDER }];
+    }
+    return banners;
+  }, [banners, isLoading]);
+
   const settings = {
     dots: true,
     infinite: true,
@@ -25,22 +55,29 @@ export default function HeroSection() {
     ),
   };
 
+  const resolveImage = (url) => {
+    if (!url) return PLACEHOLDER;
+    if (url.startsWith("http")) return url;
+    return `${API_BASE}${url}`;
+  };
+
   return (
     <section className="pt-4 pb-8">
       <div className="w-full max-w-[1320px] mx-auto px-4 md:px-6 lg:px-8">
         {/* Main Slider - Full Width */}
         <div className="rounded-2xl overflow-hidden shadow-sm relative group">
           <Slider {...settings} className="h-full slick-hero">
-            {["/heroBanner.png", "/b2.gif", "/b3.gif", "/b4.gif"].map(
-              (img, i) => (
+            {(isLoading ? [{ title: "", imageurl: PLACEHOLDER }] : slides).map(
+              (banner, i) => (
                 <div
-                  key={i}
+                  key={banner.imageurl ?? i}
                   className="relative aspect-16/8 md:aspect-21/9 w-full outline-none bg-gray-100"
                 >
                   <img
-                    src={img}
+                    src={resolveImage(banner.imageurl)}
                     className="w-full h-full object-cover block"
-                    alt={`Banner ${i + 1}`}
+                    alt={banner.title || `Banner ${i + 1}`}
+                    loading="lazy"
                   />
                 </div>
               ),

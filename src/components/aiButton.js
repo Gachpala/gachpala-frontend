@@ -16,7 +16,7 @@ export default function AIButton() {
       href="/ai"
       className={` h-fit text-[20px] rounded-full text-white fixed right-10 bottom-10 z-50 select-none `}
     >
-      <img src="/nim.gif" className="w-20 rounded-full " />
+      <img src="/nim.gif" className="w-20 rounded-full " alt="NiM logo" />
     </Link>
   );
 }

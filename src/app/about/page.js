@@ -78,41 +78,6 @@ export default function About() {
             </Container>
         </section>
 
-        {/* Team Section */}
-        <section className="py-20 lg:py-28">
-            <Container>
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-                    <div className="max-w-xl">
-                        <h2 className={`${inter.className} text-3xl md:text-4xl font-bold text-gray-900 mb-4`}>
-                            Meet the Growers
-                        </h2>
-                        <p className={`${openSans.className} text-gray-600`}>
-                            The passionate team working behind the scenes to bring nature to your doorstep.
-                        </p>
-                    </div>
-                   <button className={`${openSans.className} text-green-600 font-semibold hover:text-green-700 flex items-center gap-2 group`}>
-                       Join our team <span className="group-hover:translate-x-1 transition-transform">→</span>
-                   </button>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {[1, 2, 3, 4].map((member) => (
-                        <div key={member} className="group">
-                            <div className="bg-gray-100 rounded-2xl aspect-[3/4] mb-4 overflow-hidden relative">
-                                <div className="absolute inset-0 bg-slate-200 animate-pulse group-hover:bg-slate-300 transition-colors"></div>
-                                {/* Placeholder for Team Image */}
-                                <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                                    <FaUsers className="text-4xl opacity-20" />
-                                </div>
-                            </div>
-                            <h3 className={`${inter.className} text-lg font-bold text-gray-900`}>Team Member {member}</h3>
-                            <p className={`${openSans.className} text-sm text-green-600`}>Position Title</p>
-                        </div>
-                    ))}
-                </div>
-            </Container>
-        </section>
-
         {/* CTA Section */}
         <section className="bg-green-600 py-20">
             <Container>

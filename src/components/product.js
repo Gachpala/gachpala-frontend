@@ -14,6 +14,7 @@ import { BiPlus } from "react-icons/bi";
 export default function Product({ id, img, alt, title, price, description, stock, category_id, category_name, is_featured, created_at, status, weight, dimensions }) {
   const [isActive, setIsActive] = useState(false);
   const [isCartAdded, setIsCartAdded] = useState(false);
+  const [usePlaceholder, setUsePlaceholder] = useState(!img);
   const dispatch = useDispatch();
   const reduxProducts = useSelector((state) => state.products.product);
   const favorites = useSelector((state) => state.products.favorites);
@@ -92,15 +93,28 @@ export default function Product({ id, img, alt, title, price, description, stock
     e.stopPropagation();
     window.location.href = `/productDetails?id=${id}`;
   };
-  // Prepend base URL if img is a relative path
-  let imageSrc = img;
-  if (img && img.startsWith("/")) {
-    imageSrc = `http://localhost:7575${img}`;
+  const placeholder = "/plant-placeholder.png";
+  // Choose src based on whether we should force placeholder
+  let imageSrc = usePlaceholder ? placeholder : img;
+  // Prepend base URL only for real product images that are relative
+  if (!usePlaceholder && imageSrc && imageSrc.startsWith("/")) {
+    imageSrc = `http://localhost:7575${imageSrc}`;
   }
+  const isPlaceholder = usePlaceholder;
+
+  const handleImgError = () => {
+    if (!usePlaceholder) {
+      setUsePlaceholder(true);
+    }
+  };
+  const imageContainerClass = `relative w-full aspect-[4/5] rounded-2xl overflow-hidden flex items-center justify-center ${
+    isPlaceholder ? "bg-gray-50" : "bg-gray-100"
+  }`;
+
   return (
     <div
       onClick={handleDetails}
-      className="relative bg-white rounded-2xl shadow group border border-gray-100 flex flex-col cursor-pointer min-h-[370px] max-w-xs mx-auto hover:shadow-lg transition-all duration-200"
+      className="relative bg-white rounded-2xl shadow group border border-gray-100 flex flex-col cursor-pointer min-h-[370px] h-full w-full hover:shadow-lg transition-all duration-200"
     >
       {/* Favorite icon */}
       <button
@@ -116,12 +130,13 @@ export default function Product({ id, img, alt, title, price, description, stock
       </button>
 
       {/* Image */}
-      <div className="w-full aspect-square bg-gray-100 rounded-t-2xl flex items-center justify-center overflow-hidden">
+      <div className={imageContainerClass}>
         <img
           src={imageSrc}
           alt={alt}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          style={{ maxHeight: 220, maxWidth: '100%' }}
+          onError={handleImgError}
+          className={`${isPlaceholder ? "w-[80px] h-[80px] object-contain opacity-90" : "w-full h-full object-cover"} group-hover:scale-105 transition-transform duration-300`}
+          loading="lazy"
         />
       </div>
 
@@ -134,7 +149,7 @@ export default function Product({ id, img, alt, title, price, description, stock
         </h3>
         <p className="text-xs text-gray-500 line-clamp-2 min-h-[32px] mb-1">{description}</p>
         <div className="flex items-center justify-between mt-auto pt-2">
-          <span className="text-lg font-bold text-green-600">${price}</span>
+          <span className="text-lg font-bold text-green-600">Tk {price}</span>
           <button
             onClick={(e) => { e.stopPropagation(); handleAddToCart(e); }}
             className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs font-semibold shadow hover:bg-green-700 transition-colors"

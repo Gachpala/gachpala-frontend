@@ -2,6 +2,9 @@ import React from "react";
 import { Leaf } from "lucide-react";
 
 const TreeCard = ({ product, onSelect }) => {
+  const placeholder = "/plant-placeholder.png";
+  const imageSrc = product.imageUrl || placeholder;
+
   return (
     <div
       className="group relative bg-white rounded-3xl overflow-hidden border border-neutral-100 hover:border-neutral-200 transition-all duration-500 cursor-pointer h-full flex flex-col"
@@ -10,8 +13,12 @@ const TreeCard = ({ product, onSelect }) => {
       {/* Image Container */}
       <div className="relative aspect-4/3 overflow-hidden bg-neutral-50">
         <img
-          src={product.imageUrl}
+          src={imageSrc}
           alt={product.name}
+          onError={(e) => {
+            if (e?.target?.src.endsWith(placeholder)) return;
+            e.target.src = placeholder;
+          }}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute top-3 left-3">
@@ -32,7 +39,7 @@ const TreeCard = ({ product, onSelect }) => {
               {product.scientificName}
             </p>
           </div>
-          <p className="font-bold text-neutral-900">${product.price}</p>
+          <p className="font-bold text-neutral-900">Tk {product.price}</p>
         </div>
 
         <p className="text-neutral-500 text-sm leading-relaxed line-clamp-2 mb-4 flex-grow">
