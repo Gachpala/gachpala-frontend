@@ -47,6 +47,10 @@ export default function Home() {
     setSignInUp(true);
   };
 
+  const handleCloseSignInUp = () => {
+    setSignInUp(false);
+  };
+
   // const handleToogleDetails = () => {
   //   setToogleProfile((prev) => !prev); laterrrrrrrrrrrrr
   //   setOpenSearch(false);
@@ -227,9 +231,7 @@ export default function Home() {
           </div>
         </motion.div>
       </div>
-      <SignInUpPage
-        className={` ${SignInUp ? "block" : "hidden"} absolute left-[50%] top-[500px] translate-x-[-50%] z-50 `}
-      />
+      <SignInUpPage isOpen={SignInUp} onClose={handleCloseSignInUp} />
     </nav>
   );
 }

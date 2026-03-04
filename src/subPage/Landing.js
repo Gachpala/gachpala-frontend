@@ -17,7 +17,7 @@ export default function Landing() {
 
   async function getAllProducts() {
     try {
-      let data = await axios.get("http://localhost:7575/products");
+      let data = await axios.get("https://api.gachpala.com/products");
       setAllProducts(data.data);
       console.log(data);
       dispatch(productReducer(data.data));
