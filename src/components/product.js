@@ -11,7 +11,22 @@ import {
 } from "@/app/slices/products_slices";
 import { BiPlus } from "react-icons/bi";
 
-export default function Product({ id, img, alt, title, price, description, stock, category_id, category_name, is_featured, created_at, status, weight, dimensions }) {
+export default function Product({
+  id,
+  img,
+  alt,
+  title,
+  price,
+  description,
+  stock,
+  category_id,
+  category_name,
+  is_featured,
+  created_at,
+  status,
+  weight,
+  dimensions,
+}) {
   const [isActive, setIsActive] = useState(false);
   const [isCartAdded, setIsCartAdded] = useState(false);
   const [usePlaceholder, setUsePlaceholder] = useState(!img);
@@ -98,7 +113,7 @@ export default function Product({ id, img, alt, title, price, description, stock
   let imageSrc = usePlaceholder ? placeholder : img;
   // Prepend base URL only for real product images that are relative
   if (!usePlaceholder && imageSrc && imageSrc.startsWith("/")) {
-    imageSrc = `http://localhost:7575${imageSrc}`;
+    imageSrc = `https://api.gachpala.com${imageSrc}`;
   }
   const isPlaceholder = usePlaceholder;
 
@@ -147,11 +162,16 @@ export default function Product({ id, img, alt, title, price, description, stock
         >
           {title}
         </h3>
-        <p className="text-xs text-gray-500 line-clamp-2 min-h-[32px] mb-1">{description}</p>
+        <p className="text-xs text-gray-500 line-clamp-2 min-h-[32px] mb-1">
+          {description}
+        </p>
         <div className="flex items-center justify-between mt-auto pt-2">
           <span className="text-lg font-bold text-green-600">Tk {price}</span>
           <button
-            onClick={(e) => { e.stopPropagation(); handleAddToCart(e); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAddToCart(e);
+            }}
             className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs font-semibold shadow hover:bg-green-700 transition-colors"
           >
             <BiPlus className="text-base" />

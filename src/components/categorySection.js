@@ -5,7 +5,7 @@ import Link from "next/link";
 import Container from "./container";
 import { useMemo } from "react";
 
-const API_BASE = "http://localhost:7575";
+const API_BASE = "https://api.gachpala.com";
 const PLACEHOLDER = "/plant-placeholder.png";
 
 export default function CategorySection() {
@@ -16,7 +16,8 @@ export default function CategorySection() {
     const fetchCategories = async () => {
       try {
         const res = await fetch(`${API_BASE}/categories`);
-        if (!res.ok) throw new Error(`Failed to load categories: ${res.status}`);
+        if (!res.ok)
+          throw new Error(`Failed to load categories: ${res.status}`);
         const data = await res.json();
         setCategories(Array.isArray(data) ? data : []);
       } catch (err) {

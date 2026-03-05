@@ -27,7 +27,7 @@ export default function ShopContents() {
       if (!productData) {
         try {
           setIsLoading(true);
-          let data = await axios.get("http://localhost:7575/products");
+          let data = await axios.get("https://api.gachpala.com/products");
           dispatch(productReducer(data.data));
         } catch (error) {
           console.error("Failed to fetch products:", error);
@@ -45,7 +45,8 @@ export default function ShopContents() {
         const filtered = productData.filter(
           (product) =>
             product.category_name &&
-            product.category_name.toLowerCase() === selectedCategory.toLowerCase(),
+            product.category_name.toLowerCase() ===
+              selectedCategory.toLowerCase(),
         );
         setFilteredProducts(filtered);
       } else {
@@ -77,7 +78,8 @@ export default function ShopContents() {
               home / <span className="text-gray-600">shop</span>
             </p>
             <p className="mt-2 text-gray-700 text-sm">
-              Showing {startIdx + 1}-{Math.min(endIdx, totalProducts)} of {totalProducts} products
+              Showing {startIdx + 1}-{Math.min(endIdx, totalProducts)} of{" "}
+              {totalProducts} products
             </p>
           </div>
         </Container>

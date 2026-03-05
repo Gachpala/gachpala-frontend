@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Container from "@/components/container";
 import { inter, openSans } from "@/lib/fonts";
@@ -15,7 +15,7 @@ import {
 } from "@/app/slices/products_slices";
 import axios from "axios";
 
-export default function ProductDetails() {
+function ProductDetailsContent() {
   const searchParams = useSearchParams();
   const productId = searchParams.get("id");
 
@@ -244,5 +244,19 @@ export default function ProductDetails() {
         </div>
       </Container>
     </div>
+  );
+}
+
+export default function ProductDetailsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center min-h-screen">
+          Loading...
+        </div>
+      }
+    >
+      <ProductDetailsContent />
+    </Suspense>
   );
 }

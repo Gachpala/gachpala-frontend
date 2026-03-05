@@ -4,7 +4,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-const API_BASE = "http://localhost:7575";
+const API_BASE = "https://api.gachpala.com";
 const PLACEHOLDER = "/plant-placeholder.png";
 
 export default function BannerSlider() {

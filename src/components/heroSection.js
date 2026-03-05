@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { inter } from "@/lib/fonts";
 import Link from "next/link";
 
-const API_BASE = "http://localhost:7575";
+const API_BASE = "https://api.gachpala.com";
 const PLACEHOLDER = "/plant-placeholder.png";
 
 export default function HeroSection() {
