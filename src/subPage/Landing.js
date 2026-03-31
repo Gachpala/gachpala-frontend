@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { productReducer } from "@/app/slices/products_slices";
+import ProductCard from "@/components/product";
 
 export default function Landing() {
   const [allProducts, setAllProducts] = useState([]);
@@ -35,8 +36,9 @@ export default function Landing() {
   });
 
   return (
-    <div className="bg-[#f5f5f5] min-h-screen">
+    <div className="bg-[#f5f5f5] -z-50 min-h-screen">
       <HeroSection />
+      <ProductCard />
 
       <CategorySection />
 
