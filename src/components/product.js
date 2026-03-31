@@ -129,7 +129,7 @@ export default function Product({
   return (
     <div
       onClick={handleDetails}
-      className="relative bg-white rounded-2xl shadow group border border-gray-100 flex flex-col cursor-pointer min-h-[370px] h-full w-full hover:shadow-lg transition-all duration-200"
+      className="relative bg-white rounded-2xl shadow group border border-gray-100 flex flex-col cursor-none min-h-[370px] h-full w-full hover:shadow-lg transition-all duration-200"
     >
       {/* Favorite icon */}
       <button

@@ -92,19 +92,19 @@ function SignInUpPageComponent({ isOpen = true, onClose }) {
                 {isPasswordVisible ? (
                   <FaEyeSlash
                     onClick={handlePasswordToggle}
-                    className="absolute right-4 top-0 cursor-pointer hover:text-gray-600"
+                    className="absolute right-4 top-0 cursor-none hover:text-gray-600"
                   />
                 ) : (
                   <FaEye
                     onClick={handlePasswordToggle}
-                    className="absolute right-4 top-[50%] translate-y-[-50%] cursor-pointer hover:text-gray-600"
+                    className="absolute right-4 top-[50%] translate-y-[-50%] cursor-none hover:text-gray-600"
                   />
                 )}
               </div>
 
               <button
                 className=" w-full px-5 bg-green-600 text-white p-3 rounded-full mt-4
-           hover:bg-green-700 transition-colors duration-300 select-none cursor-pointer"
+           hover:bg-green-700 transition-colors duration-300 select-none cursor-none"
               >
                 Sign In
               </button>
@@ -120,7 +120,7 @@ function SignInUpPageComponent({ isOpen = true, onClose }) {
                 Don't have an account?
                 <button
                   onClick={handleToogleSwitch}
-                  className={` ${inter.className} font-bold text-green-600 ml-2 underline select-none cursor-pointer `}
+                  className={` ${inter.className} font-bold text-green-600 ml-2 underline select-none cursor-none `}
                 >
                   Sign Up
                 </button>
@@ -128,7 +128,7 @@ function SignInUpPageComponent({ isOpen = true, onClose }) {
             </div>
             <button
               onClick={handleClosePage}
-              className=" absolute right-4 top-4 bg-white p-1 rounded-full cursor-pointer select-none hover:bg-green-600 duration-300 ease-out "
+              className=" absolute right-4 top-4 bg-white p-1 rounded-full cursor-none select-none hover:bg-green-600 duration-300 ease-out "
             >
               <IoCloseSharp className=" text-[16px] text-lack  " />
             </button>
@@ -173,12 +173,12 @@ function SignInUpPageComponent({ isOpen = true, onClose }) {
                 {isPasswordVisible ? (
                   <FaEyeSlash
                     onClick={handlePasswordToggle}
-                    className=" absolute right-4 top-[50%] translate-y-[-50%] cursor-pointer hover:text-gray-600"
+                    className=" absolute right-4 top-[50%] translate-y-[-50%] cursor-none hover:text-gray-600"
                   />
                 ) : (
                   <FaEye
                     onClick={handlePasswordToggle}
-                    className=" absolute right-4 top-[50%] translate-y-[-50%] cursor-pointer hover:text-gray-600"
+                    className=" absolute right-4 top-[50%] translate-y-[-50%] cursor-none hover:text-gray-600"
                   />
                 )}
               </div>
@@ -191,12 +191,12 @@ function SignInUpPageComponent({ isOpen = true, onClose }) {
                 {isPasswordVisible ? (
                   <FaEyeSlash
                     onClick={handlePasswordToggle}
-                    className="absolute right-4 cursor-pointer hover:text-gray-600"
+                    className="absolute right-4 cursor-none hover:text-gray-600"
                   />
                 ) : (
                   <FaEye
                     onClick={handlePasswordToggle}
-                    className="absolute right-4 cursor-pointer hover:text-gray-600"
+                    className="absolute right-4 cursor-none hover:text-gray-600"
                   />
                 )}
               </div>
@@ -233,7 +233,7 @@ function SignInUpPageComponent({ isOpen = true, onClose }) {
             </form>
             <button
               className="w-full px-5 bg-green-600 text-white p-3 rounded-full mt-4
-                hover:bg-green-700 transition-colors duration-300 select-none cursor-pointer"
+                hover:bg-green-700 transition-colors duration-300 select-none cursor-none"
             >
               Sign Up
             </button>
@@ -247,7 +247,7 @@ function SignInUpPageComponent({ isOpen = true, onClose }) {
                 Already have an account?
                 <button
                   onClick={handleToogleSwitch}
-                  className={` ${inter.className} font-bold text-green-600 ml-2 underline select-none cursor-pointer `}
+                  className={` ${inter.className} font-bold text-green-600 ml-2 underline select-none cursor-none `}
                 >
                   Sign In
                 </button>
@@ -255,7 +255,7 @@ function SignInUpPageComponent({ isOpen = true, onClose }) {
             </div>
             <button
               onClick={handleClosePage}
-              className=" absolute right-4 top-4 bg-white p-1 rounded-full cursor-pointer select-none hover:bg-green-600 duration-300 ease-out "
+              className=" absolute right-4 top-4 bg-white p-1 rounded-full cursor-none select-none hover:bg-green-600 duration-300 ease-out "
             >
               <IoCloseSharp className=" text-[16px] text-lack  " />
             </button>

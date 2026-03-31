@@ -7,7 +7,7 @@ const TreeCard = ({ product, onSelect }) => {
 
   return (
     <div
-      className="group relative bg-white rounded-3xl overflow-hidden border border-neutral-100 hover:border-neutral-200 transition-all duration-500 cursor-pointer h-full flex flex-col"
+      className="group relative bg-white rounded-3xl overflow-hidden border border-neutral-100 hover:border-neutral-200 transition-all duration-500 cursor-none h-full flex flex-col"
       onClick={() => onSelect && onSelect(product)}
     >
       {/* Image Container */}

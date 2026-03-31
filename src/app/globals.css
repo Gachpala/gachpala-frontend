@@ -41,3 +41,60 @@ body {
   background: url(../../public/indoor1.jpg) no-repeat center;
   background-size: cover;
 } */
+
+/* custom cursor css */
+/* Add this to your globals.css file!
+  Make sure you define --accent, or replace it with your specific hex code (e.g., #c9a96e)
+*/
+
+body {
+  /* Hide the default cursor for non-touch devices */
+  cursor: none;
+}
+
+a,
+button,
+.hover-target {
+  cursor: none; /* Let the custom cursor handle hover state */
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  background-color: var(--accent, #01bf62);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+    height 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+    background-color 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.cursor-dot.hovering {
+  width: 40px;
+  height: 40px;
+  background-color: #2b2b2b52 ;
+  /* You can change the color of the sides (border) here. 
+     (mix-blend-mode: difference; was removed because it inverted the green border into red on light backgrounds) */
+  border: 1px solid var(--hover-border-color, #01bf62);
+}
+
+@media (max-width: 768px) {
+  /* Hide custom cursor completely on mobile/touch devices */
+  .cursor-dot {
+    display: none;
+  }
+  /* Restore normal pointer events for touch */
+  body,
+  a,
+  button,
+  .hover-target {
+    cursor: auto;
+  }
+}
+/* custom cursor css */

@@ -130,7 +130,7 @@ export default function Home() {
             </a>
           </div>
           <ul className=" flex flex-row justify-center items-center xl:gap-5 lg:gap-5 gap-4 ">
-            <li className={`${listItemsSec} cursor-pointer relative`}>
+            <li className={`${listItemsSec} cursor-none relative`}>
               <GoSearch
                 onClick={handleOpenSearch}
                 className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] "
@@ -139,7 +139,7 @@ export default function Home() {
             <li className=" relative ">
               <button
                 onClick={handleToogleSignInUp}
-                className={`${listItemsSec} cursor-pointer block `}
+                className={`${listItemsSec} cursor-none block `}
               >
                 <BiUser className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] " />
               </button>
@@ -224,7 +224,7 @@ export default function Home() {
                 className={`${openSans.className} w-full bg-gray-50 py-4 pl-14 pr-12 rounded-full text-lg outline-none focus:ring-2 focus:ring-green-500/20 transition-all text-gray-700 placeholder-gray-400`}
               />
               <FiX
-                className="absolute right-6 text-xl text-gray-400 cursor-pointer hover:text-red-500 transition-colors"
+                className="absolute right-6 text-xl text-gray-400 cursor-none hover:text-red-500 transition-colors"
                 onClick={() => setOpenSearch(false)}
               />
             </div>

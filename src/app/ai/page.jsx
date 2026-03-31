@@ -330,7 +330,7 @@ const App = () => {
         </div>
 
         <div className="p-6 mb-28 ">
-          <div className="bg-neutral-900 rounded-2xl p-4 text-white shadow-xl shadow-neutral-900/10 relative overflow-hidden group cursor-pointer">
+          <div className="bg-neutral-900 rounded-2xl p-4 text-white shadow-xl shadow-neutral-900/10 relative overflow-hidden group cursor-none">
             <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-110"></div>
             <p className="relative z-10 text-sm font-medium">New Arrival</p>
             <p className="relative z-10 text-xs text-neutral-400 mt-1">

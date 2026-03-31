@@ -3,6 +3,7 @@ import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import AIButton from "@/components/aiButton";
 import { Providers } from "./providers";
+import CustomCursor from "@/components/customCursor";
 
 export const metadata = {
   title: "GachPala",
@@ -17,6 +18,7 @@ export default function RootLayout({ children }) {
         <Providers>
           <NavBar />
           {children}
+          <CustomCursor />
           <AIButton />
           <Footer />
         </Providers>
