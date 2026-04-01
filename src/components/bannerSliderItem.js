@@ -18,7 +18,7 @@ export default function ({ bannerText, bannerTextSpan }) {
           href="/shop"
           className={` ${openSans.className} w-fit font-normal 2xl;text-[13.5px] xl:text-[13.5px] md:text-[12px] text-[10px] text-[#FFFFFF] bg-[#111111]
              2xl:px-[35.44px] xl:px-[35.44px] lg:px-[35.44px] md:px-[30px] px-6 2xl:py-[21.25px] xl:py-[21.5px] lg:py-5 md:py-4 py-3 border-2 border-black
-              rounded-lg flex justify-center items-center cursor-none hover:bg-transparent hover:text-black hover:border-black duration-300 ease-out `}
+            rounded-lg flex justify-center items-center hover:bg-transparent hover:text-black hover:border-black duration-300 ease-out `}
         >
           Shop collection
           <IoIosArrowRoundForward className=" text-[22px] " />

@@ -1,105 +1,218 @@
 import Container from "@/components/container";
-import Journey from "@/components/journey";
-import { inter, openSans } from "@/lib/fonts";
-import { FaLeaf, FaHandHoldingHeart, FaTruck, FaUsers } from "react-icons/fa";
+import Link from "next/link";
+import { arapey, inter, openSans } from "@/lib/fonts";
+import { FaLeaf, FaTruck, FaHandshake, FaSeedling } from "react-icons/fa";
+
+const PRINCIPLES = [
+  {
+    title: "Quiet Quality",
+    description:
+      "Every plant is selected for health, shape, and seasonal readiness before it reaches your home.",
+    icon: FaLeaf,
+  },
+  {
+    title: "Care With Clarity",
+    description:
+      "Simple guidance, clear after-sales support, and practical advice that helps plants thrive long-term.",
+    icon: FaSeedling,
+  },
+  {
+    title: "Reliable Delivery",
+    description:
+      "Protective packaging and controlled handover keep each order fresh, stable, and ready to settle in.",
+    icon: FaTruck,
+  },
+  {
+    title: "Trusted Partnership",
+    description:
+      "We work closely with respected nurseries and growers to preserve consistency and authenticity.",
+    icon: FaHandshake,
+  },
+];
 
 export default function About() {
   return (
-    <>
-      <main className="bg-white">
-        {/* Simple Hero Section */}
-        <section className="bg-green-50 py-20 lg:py-28 relative overflow-hidden">
-             {/* Decorative Background Elements */}
-             <div className="absolute top-0 right-0 w-64 h-64 bg-green-100 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2"></div>
-             <div className="absolute bottom-0 left-0 w-96 h-96 bg-green-100 rounded-full blur-3xl opacity-50 translate-y-1/3 -translate-x-1/3"></div>
-             
-             <Container className="relative z-10 text-center">
-                <span className={`${openSans.className} text-green-600 font-semibold tracking-widest text-sm uppercase mb-4 block`}>About GachPala</span>
-                <h1 className={`${inter.className} text-4xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight`}>
-                    Cultivating Nature <br className="hidden md:block" /> for Your Home
-                </h1>
-                <p className={`${openSans.className} text-gray-600 max-w-2xl mx-auto text-lg md:text-xl leading-relaxed`}>
-                    We are on a mission to make plant parenting easy, accessible, and delightful for everyone in Bangladesh.
-                </p>
-             </Container>
-        </section>
+    <main className="bg-[#f6f7f2] text-neutral-900">
+      <section className="relative overflow-hidden pt-24 pb-20 md:pt-30 md:pb-26">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,rgba(1,191,98,0.2),transparent_38%),radial-gradient(circle_at_80%_10%,rgba(2,106,55,0.18),transparent_42%),linear-gradient(180deg,#f8faf5_0%,#f3f5ee_100%)]" />
+        <div className="absolute -right-16 top-14 h-64 w-64 rounded-full border border-[#acd8bf] opacity-60" />
+        <div className="absolute -left-20 bottom-8 h-72 w-72 rounded-full border border-[#badfcb] opacity-50" />
 
-        {/* Journey Section */}
-        <Container>
-           <Journey />
+        <Container className="relative z-10">
+          <div className="mx-auto max-w-4xl text-center">
+            <p
+              className={`${inter.className} mb-5 inline-flex rounded-full border border-[#b7d9c5] bg-white/80 px-5 py-2 text-[11px] uppercase tracking-[0.2em] text-[#187747] backdrop-blur-sm`}
+            >
+              About GachPala
+            </p>
+            <h1
+              className={`${arapey.className} text-5xl leading-[1.02] text-[#102118] sm:text-6xl md:text-7xl`}
+            >
+              A refined way to live
+              <br className="hidden sm:block" />
+              with nature
+            </h1>
+            <p
+              className={`${openSans.className} mx-auto mt-7 max-w-2xl text-base leading-8 text-[#43524a] md:text-lg`}
+            >
+              GachPala curates plants and botanical essentials for modern homes.
+              Every detail, from selection to delivery, is designed to feel
+              calm, premium, and effortless.
+            </p>
+          </div>
         </Container>
+      </section>
 
-        {/* Values / Features Section */}
-        <section className="bg-gray-50 py-20 lg:py-28">
-            <Container>
-                <div className="text-center max-w-3xl mx-auto mb-16">
-                    <h2 className={`${inter.className} text-3xl md:text-4xl font-bold text-gray-900 mb-4`}>
-                        Why We Are Different
-                    </h2>
-                    <p className={`${openSans.className} text-gray-600`}>
-                        We don't just sell plants; we nurture relationships. Here is what makes GachPala the preferred choice for plant lovers.
+      <section className="pb-20 md:pb-24">
+        <Container>
+          <div className="grid gap-6 lg:grid-cols-5">
+            <article className="lg:col-span-3 rounded-3xl border border-[#dce6df] bg-white p-8 shadow-[0_12px_40px_-28px_rgba(16,33,24,0.35)] md:p-10">
+              <p
+                className={`${inter.className} text-xs uppercase tracking-[0.18em] text-[#2d7d53]`}
+              >
+                Our Story
+              </p>
+              <h2
+                className={`${inter.className} mt-4 text-2xl font-bold leading-tight text-[#18291f] md:text-4xl`}
+              >
+                Minimal spaces deserve living elegance.
+              </h2>
+              <div
+                className={`${openSans.className} mt-6 space-y-4 text-[15px] leading-7 text-[#4d5b53] md:text-base`}
+              >
+                <p>
+                  We started with a simple idea: greenery should not feel noisy,
+                  complicated, or random. It should feel intentional.
+                </p>
+                <p>
+                  Today we collaborate with trusted growers and nurseries to
+                  bring healthy plants, carefully chosen textures, and timeless
+                  forms to homes across Bangladesh.
+                </p>
+                <p>
+                  Our aim is not to sell more pieces. It is to help you build a
+                  calmer environment that grows better with time.
+                </p>
+              </div>
+            </article>
+
+            <div className="lg:col-span-2 grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
+              <article className="rounded-3xl border border-[#dce6df] bg-[linear-gradient(155deg,#ffffff_0%,#edf7f0_100%)] p-7 shadow-[0_12px_36px_-28px_rgba(16,33,24,0.45)]">
+                <p
+                  className={`${inter.className} text-xs uppercase tracking-[0.16em] text-[#2d7d53]`}
+                >
+                  Since
+                </p>
+                <p
+                  className={`${inter.className} mt-3 text-4xl font-black text-[#12251a]`}
+                >
+                  2025
+                </p>
+                <p
+                  className={`${openSans.className} mt-2 text-sm text-[#4b5f54]`}
+                >
+                  Designing greener, softer, premium living experiences.
+                </p>
+              </article>
+
+              <article className="rounded-3xl border border-[#dce6df] bg-[#102118] p-7 text-white shadow-[0_16px_40px_-24px_rgba(16,33,24,0.75)]">
+                <p
+                  className={`${inter.className} text-xs uppercase tracking-[0.16em] text-[#9dd3b4]`}
+                >
+                  Community
+                </p>
+                <p className={`${inter.className} mt-3 text-4xl font-black`}>
+                  0
+                </p>
+                <p
+                  className={`${openSans.className} mt-2 text-sm leading-6 text-[#d6e7dc]`}
+                >
+                  Homes served with healthy plants and personalized care.
+                </p>
+              </article>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="pb-20 md:pb-24">
+        <Container>
+          <div className="mb-10 md:mb-12">
+            <p
+              className={`${inter.className} text-xs uppercase tracking-[0.18em] text-[#2d7d53]`}
+            >
+              What Defines Us
+            </p>
+            <h2
+              className={`${inter.className} mt-3 max-w-2xl text-3xl font-bold leading-tight text-[#17271e] md:text-4xl`}
+            >
+              A premium standard in every step.
+            </h2>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            {PRINCIPLES.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <article
+                  key={item.title}
+                  className="group relative overflow-hidden rounded-3xl border border-[#d7e2db] bg-white p-7 transition duration-500 hover:-translate-y-1 hover:shadow-[0_20px_45px_-30px_rgba(16,33,24,0.45)] md:p-8"
+                  style={{ animationDelay: `${idx * 80}ms` }}
+                >
+                  <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-[#ecf6ef] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                  <div className="relative z-10">
+                    <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e8f4eb] text-xl text-[#20784b]">
+                      <Icon />
+                    </div>
+                    <h3
+                      className={`${inter.className} text-xl font-bold text-[#1a2c22]`}
+                    >
+                      {item.title}
+                    </h3>
+                    <p
+                      className={`${openSans.className} mt-3 text-sm leading-7 text-[#51655a] md:text-[15px]`}
+                    >
+                      {item.description}
                     </p>
-                </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </Container>
+      </section>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-                     {/* Feature 1 */}
-                     <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
-                        <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center text-green-600 text-2xl mb-6">
-                            <FaLeaf />
-                        </div>
-                        <h3 className={`${inter.className} text-xl font-bold text-gray-900 mb-3`}>Quality Guaranteed</h3>
-                        <p className={`${openSans.className} text-gray-500 leading-relaxed`}>
-                            Every plant is hand-picked from top nurseries. We ensure you receive healthy, vibrant plants ready to thrive.
-                        </p>
-                     </div>
+      <section className="pb-22 md:pb-28">
+        <Container>
+          <div className="relative overflow-hidden rounded-[2rem] border border-[#d7e4dc] bg-[linear-gradient(120deg,#12261a_0%,#1b3d2a_52%,#26613f_100%)] px-7 py-12 text-white shadow-[0_25px_60px_-35px_rgba(16,33,24,0.8)] md:px-12 md:py-14">
+            <div className="absolute -right-14 top-1/2 h-52 w-52 -translate-y-1/2 rounded-full border border-white/25" />
+            <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full border border-white/15" />
 
-                     {/* Feature 2 */}
-                     <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
-                        <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center text-green-600 text-2xl mb-6">
-                            <FaHandHoldingHeart />
-                        </div>
-                        <h3 className={`${inter.className} text-xl font-bold text-gray-900 mb-3`}>Expert Support</h3>
-                        <p className={`${openSans.className} text-gray-500 leading-relaxed`}>
-                            Not sure how to care for your new green friend? Our team of horticulturists is just a message away.
-                        </p>
-                     </div>
+            <div className="relative z-10 flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
+              <div className="max-w-2xl">
+                <h3
+                  className={`${inter.className} text-3xl font-bold leading-tight md:text-4xl`}
+                >
+                  Bring premium greenery home.
+                </h3>
+                <p
+                  className={`${openSans.className} mt-3 text-sm leading-7 text-[#d4e9db] md:text-base`}
+                >
+                  Discover curated plants, elevated essentials, and calm design
+                  choices made for modern living.
+                </p>
+              </div>
 
-                     {/* Feature 3 */}
-                     <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
-                        <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center text-green-600 text-2xl mb-6">
-                            <FaTruck />
-                        </div>
-                        <h3 className={`${inter.className} text-xl font-bold text-gray-900 mb-3`}>Secure Delivery</h3>
-                        <p className={`${openSans.className} text-gray-500 leading-relaxed`}>
-                            Our specialized packaging ensures your plants arrive safely at your doorstep, no matter the distance.
-                        </p>
-                     </div>
-                </div>
-            </Container>
-        </section>
-
-        {/* CTA Section */}
-        <section className="bg-green-600 py-20">
-            <Container>
-                <div className="flex flex-col md:flex-row items-center justify-between gap-10">
-                    <div className="text-white max-w-2xl">
-                        <h2 className={`${inter.className} text-3xl md:text-4xl font-bold mb-4`}>
-                            Ready to transform your space?
-                        </h2>
-                        <p className={`${openSans.className} text-green-100 text-lg`}>
-                            Explore our diverse collection of plants and accessories today.
-                        </p>
-                    </div>
-                    <div>
-                        <a href="/shop" className={`${inter.className} bg-white text-green-600 px-8 py-4 rounded-xl font-bold hover:bg-green-50 transition-colors shadow-lg inline-block`}>
-                            Start Shopping
-                        </a>
-                    </div>
-                </div>
-            </Container>
-        </section>
-
-      </main>
-    </>
+              <Link
+                href="/shop"
+                className={`${inter.className} inline-flex items-center rounded-xl bg-white px-7 py-3 text-sm font-bold uppercase tracking-[0.12em] text-[#164b2f] transition hover:bg-[#ecf5ef]`}
+              >
+                Explore Collection
+              </Link>
+            </div>
+          </div>
+        </Container>
+      </section>
+    </main>
   );
 }

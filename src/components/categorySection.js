@@ -68,7 +68,7 @@ export default function CategorySection() {
               <Link
                 key={cat.id ?? idx}
                 href={`/shop?category=${query}`}
-                className="flex flex-col items-start group cursor-none"
+                className="flex flex-col items-start group"
               >
                 <div className=" flex flex-col justify-center items-center  ">
                   <div

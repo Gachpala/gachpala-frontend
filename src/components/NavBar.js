@@ -12,9 +12,16 @@ import { pre } from "framer-motion/client";
 import { FaRegHeart } from "react-icons/fa";
 import { GoSearch } from "react-icons/go";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import SignInUpPage from "@/app/signInUp/page";
+import {
+  AUTH_MODAL_EVENT,
+  clearAuthStorage,
+  isAuthenticated,
+} from "@/lib/authGate";
 
 export default function Home() {
+  const router = useRouter();
   const cartItems = useSelector((state) => state.products.cart);
   const cartCount = cartItems?.length || 0;
   const listItems =
@@ -44,12 +51,43 @@ export default function Home() {
   };
 
   const handleToogleSignInUp = () => {
+    if (isAuthenticated()) {
+      setToogleProfile((prev) => !prev);
+      setOpenSearch(false);
+      setToggle(false);
+      return;
+    }
     setSignInUp(true);
   };
 
   const handleCloseSignInUp = () => {
     setSignInUp(false);
   };
+
+  const handleSignOut = () => {
+    clearAuthStorage();
+    setToogleProfile(false);
+    setSignInUp(false);
+    router.push("/");
+  };
+
+  useEffect(() => {
+    const handleOpenAuthModal = () => {
+      if (isAuthenticated()) {
+        return;
+      }
+      setSignInUp(true);
+      setToogleProfile(false);
+      setOpenSearch(false);
+      setToggle(false);
+    };
+
+    window.addEventListener(AUTH_MODAL_EVENT, handleOpenAuthModal);
+
+    return () => {
+      window.removeEventListener(AUTH_MODAL_EVENT, handleOpenAuthModal);
+    };
+  }, []);
 
   // const handleToogleDetails = () => {
   //   setToogleProfile((prev) => !prev); laterrrrrrrrrrrrr
@@ -130,16 +168,16 @@ export default function Home() {
             </a>
           </div>
           <ul className=" flex flex-row justify-center items-center xl:gap-5 lg:gap-5 gap-4 ">
-            <li className={`${listItemsSec} cursor-none relative`}>
+            <li className={`${listItemsSec} relative`}>
               <GoSearch
                 onClick={handleOpenSearch}
-                className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] "
+                className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] cursor-pointer "
               />
             </li>
             <li className=" relative ">
               <button
                 onClick={handleToogleSignInUp}
-                className={`${listItemsSec} cursor-none block `}
+                className={`${listItemsSec} block `}
               >
                 <BiUser className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] " />
               </button>
@@ -180,7 +218,10 @@ export default function Home() {
                   >
                     <HiOutlineShoppingBag /> My Orders
                   </Link>
-                  <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left">
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left"
+                  >
                     <FiLogOut /> Sign Out
                   </button>
                 </div>
@@ -215,16 +256,16 @@ export default function Home() {
           transition={{ duration: 0.3, ease: easeOut }}
           className="absolute top-full left-0 w-full bg-white shadow-lg overflow-hidden border-t border-gray-100 z-40"
         >
-          <div className="xl:px-10 lg:px-10 md:px-8 px-4 py-8 flex items-center justify-center">
-            <div className="w-full max-w-4xl relative flex items-center">
-              <LiaSearchSolid className="absolute left-4 text-2xl text-gray-400" />
+          <div className="xl:px-10 lg:px-10 md:px-8 px-4 py-5 flex items-center justify-center">
+            <div className="w-full max-w-2xl relative flex items-center">
+              <LiaSearchSolid className="absolute left-4 text-lg text-gray-400" />
               <input
                 type="text"
                 placeholder="Search for plants..."
-                className={`${openSans.className} w-full bg-gray-50 py-4 pl-14 pr-12 rounded-full text-lg outline-none focus:ring-2 focus:ring-green-500/20 transition-all text-gray-700 placeholder-gray-400`}
+                className={`${openSans.className} w-full bg-gray-50 py-3 pl-11 pr-10 rounded-full text-base outline-none focus:ring-2 focus:ring-green-500/20 transition-all text-gray-700 placeholder-gray-400`}
               />
               <FiX
-                className="absolute right-6 text-xl text-gray-400 cursor-none hover:text-red-500 transition-colors"
+                className="absolute right-4 text-lg text-gray-400 hover:text-red-500 transition-colors"
                 onClick={() => setOpenSearch(false)}
               />
             </div>

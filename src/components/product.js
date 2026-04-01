@@ -7,6 +7,7 @@ import {
   addToFavorites,
   removeFromFavorites,
 } from "@/app/slices/products_slices";
+import { requireAuthOrRun } from "@/lib/authGate";
 
 const ProductCard = ({
   id,
@@ -23,7 +24,7 @@ const ProductCard = ({
   status,
   weight,
   dimensions,
-  className
+  className,
 }) => {
   const [isActive, setIsActive] = useState(false);
   const [isCartAdded, setIsCartAdded] = useState(false);
@@ -32,7 +33,6 @@ const ProductCard = ({
   const reduxProducts = useSelector((state) => state.products.product);
   const favorites = useSelector((state) => state.products.favorites);
   const isFavorited = favorites?.some((item) => item.id === id) || false;
-
 
   useEffect(() => {
     if (isCartAdded) {
@@ -50,44 +50,14 @@ const ProductCard = ({
   const handleAddToCart = (e) => {
     e.stopPropagation();
 
-    // Use props directly for cart item
-    const newItem = {
-      id,
-      name: title,
-      price: parseFloat(price),
-      quantity: 1,
-      image: img,
-      size: "Standard",
-      description,
-      stock,
-      category_id,
-      category_name,
-      is_featured,
-      created_at,
-      status,
-      weight,
-      dimensions,
-    };
-    dispatch(cartReducer(newItem));
-    console.log("Added to cart:", title, "ID:", id);
-
-    setIsCartAdded(true);
-  };
-
-  const handleAddToFavorites = (e) => {
-    e.stopPropagation();
-
-    if (isFavorited) {
-      // Remove from favorites
-      dispatch(removeFromFavorites(id));
-      console.log("Removed from favorites:", title, "ID:", id);
-    } else {
-      // Add to favorites using props
+    requireAuthOrRun(() => {
       const newItem = {
         id,
         name: title,
         price: parseFloat(price),
+        quantity: 1,
         image: img,
+        size: "Standard",
         description,
         stock,
         category_id,
@@ -98,9 +68,40 @@ const ProductCard = ({
         weight,
         dimensions,
       };
-      dispatch(addToFavorites(newItem));
-      console.log("Added to favorites:", title, "ID:", id);
-    }
+      dispatch(cartReducer(newItem));
+      console.log("Added to cart:", title, "ID:", id);
+
+      setIsCartAdded(true);
+    }, "product-card:add-to-cart");
+  };
+
+  const handleAddToFavorites = (e) => {
+    e.stopPropagation();
+
+    requireAuthOrRun(() => {
+      if (isFavorited) {
+        dispatch(removeFromFavorites(id));
+        console.log("Removed from favorites:", title, "ID:", id);
+      } else {
+        const newItem = {
+          id,
+          name: title,
+          price: parseFloat(price),
+          image: img,
+          description,
+          stock,
+          category_id,
+          category_name,
+          is_featured,
+          created_at,
+          status,
+          weight,
+          dimensions,
+        };
+        dispatch(addToFavorites(newItem));
+        console.log("Added to favorites:", title, "ID:", id);
+      }
+    }, "product-card:wishlist");
   };
 
   const handleDetails = (e) => {
@@ -121,8 +122,9 @@ const ProductCard = ({
       setUsePlaceholder(true);
     }
   };
-  const imageContainerClass = `relative w-full aspect-[4/5] rounded-2xl overflow-hidden flex items-center justify-center ${isPlaceholder ? "bg-gray-50" : "bg-gray-100"
-    }`;
+  const imageContainerClass = `relative w-full aspect-[4/5] rounded-2xl overflow-hidden flex items-center justify-center ${
+    isPlaceholder ? "bg-gray-50" : "bg-gray-100"
+  }`;
 
   const textShorter = (text, maxLength) => {
     if (!text) return "";
@@ -131,15 +133,26 @@ const ProductCard = ({
       : text;
   };
 
-
-
   return (
-    <div className={` group w-75 h-100 max-w-[420px] bg-[#f8f8f8] rounded-2xl p-4  shadow-xl transition-all duration-300 z-10 relative ${className} `}>
+    <div
+      onClick={handleDetails}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleDetails(e);
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      className={` group w-75 h-100 max-w-[420px] bg-[#f8f8f8] rounded-2xl p-4  shadow-xl transition-all duration-300 z-10 relative cursor-pointer ${className} `}
+    >
       {/* Image & Badges Section */}
       <div className="relative bg-[#ebebeb] rounded-2xl flex flex-col justify-between overflow-hidden">
         {/* Discount Badge */}
-        <div className="absolute top-2 left-2 z-50 bg-[#00be62] text-white rounded-full w-12 h-12 flex flex-col items-center justify-center
-         text-sm font-bold leading-tight shadow-sm">
+        <div
+          className="absolute top-2 left-2 z-50 bg-[#00be62] text-white rounded-full w-12 h-12 flex flex-col items-center justify-center
+         text-sm font-bold leading-tight shadow-sm"
+        >
           <span>15%</span>
           <span>OFF</span>
         </div>
@@ -150,7 +163,7 @@ const ProductCard = ({
               This forces the text to sit ABOVE the shadows cast by the corner helpers below. 
             */}
           <div className="relative z-10 text-xl font-medium text-[#2b2b2b]">
-            {price} <span className=" text-sm text-[#00be62] " >BDT</span>
+            {price} <span className=" text-sm text-[#00be62] ">BDT</span>
           </div>
 
           {/* Smooth Curve - Top Left */}
@@ -180,16 +193,21 @@ const ProductCard = ({
           </h2>
           <button
             type="button"
+            onClick={handleAddToFavorites}
             aria-label="Add to wishlist"
-            className="text-black hover:text-[#c00000] hover:bg-gray-100 p-1.5 rounded-full transition-colors shrink-0 mb-1"
+            className={`p-1.5 rounded-full transition-colors shrink-0 mb-1 ${
+              isFavorited
+                ? "text-[#c00000] bg-red-50"
+                : "text-black hover:text-[#c00000] hover:bg-gray-100"
+            }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              fill="none"
+              fill={isFavorited ? "currentColor" : "none"}
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6 hover:fill-[#c00000]"
+              className="w-6 h-6"
             >
               <path
                 strokeLinecap="round"
@@ -213,13 +231,14 @@ const ProductCard = ({
       <div className="absolute left-0 -bottom-5 w-full h-14">
         <button
           type="button"
+          onClick={handleAddToCart}
           className="w-full h-full bg-[#00be62] text-white font-semibold text-lg py-3 rounded-b-2xl transition-colors shadow-md flex items-center justify-center
            hover:bg-green-600 duration-400 ease-in-out "
         >
           Add to Cart
         </button>
       </div>
-      <div className=" w-7 h-7 bg-[#f8f9f9] absolute top-2 right-2 " > </div>
+      <div className=" w-7 h-7 bg-[#f8f9f9] absolute top-2 right-2 "> </div>
     </div>
   );
 };

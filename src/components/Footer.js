@@ -4,6 +4,27 @@ import Container from "./container";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+const footerColumns = [
+  {
+    title: "Explore",
+    links: [
+      { label: "Shop", href: "/shop" },
+      { label: "About", href: "/about" },
+      { label: "Contact", href: "/contact" },
+      { label: "AI Assistant", href: "/ai" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { label: "My Profile", href: "/profile" },
+      { label: "Favorites", href: "/favourite" },
+      { label: "Cart", href: "/cart" },
+      { label: "Sign In", href: "/signInUp" },
+    ],
+  },
+];
+
 export default function Footer() {
   const pathname = usePathname();
 
@@ -14,95 +35,63 @@ export default function Footer() {
   }
 
   return (
-    <footer className=" mt-10 bg-[#EBEEE3] select-none ">
-      <section className=" 2xl:px-0 xl:px-12 lg:px-8 md:px-8 mx-4 ">
-        <Container className=" 2xl:py-[142.5px] xl:py-[142.5px] lg:py-[142.5px] md:py-[142.5px] py-12 grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-4 grid-cols-3 ">
-          <div className={` col-span-2 select-none `}>
-            <img
-              src={`/logo.png`}
-              className=" 2xl:w-[140px] xl:w-[140px] lg:w-[140px] md:w-[120px] w-[120px] "
-            />
-            <p
-              className={` ${openSans.className} 2xl:text-[15px] xl:text-[15px] lg:text-[15px] md:text-[15px] text-[12px] text-[#58575B] font-normal leading-[22.5px]
-                 2xl:w-[300px] xl:w-[300px] lg:w-[300px] md:w-[260px] w-[200px]
-                 2xl:mt-[29px] xl:mt-[29px] lg:mt-[29px] md:mt-6 mt-4 `}
-            >
-              Gatchpala brings nature closer to you with a curated collection of
-              plants, gardening tools, and green gifts — making every space
-              bloom with life. 🌿
-            </p>
-          </div>
-          <div>
-            <label
-              className={` ${inter.className} font-normal 2xl:text-[27px] xl:text-[27px] lg:text-[27px] md:text-[24px] text-[20px] text-black leading-[33.8px] tracking-[1px] `}
-            >
-              Company
-            </label>
-            <div className=" flex flex-col justify-start items-start gap-3 2xl:py-[29px] xl:py-[29px] lg:py-[29px] md:py-6 py-3 2xl:pl-8 xl:pl-8 lg:pl-8 md:pl-0 pl-0 ">
-              <Link
-                href={""}
-                className={` ${openSans.className} font-normal text-[#58575B] 2xl:text-[15px] xl:text-[15px] lg:text-[15px] md:text-[15px] text-[12px] `}
+    <footer className="mt-12 border-t border-[#d7ddd2] bg-[#ebeee3] select-none">
+      <section className="2xl:px-0 xl:px-12 lg:px-8 md:px-8 mx-4">
+        <Container className="py-14 md:py-18">
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+            <div className="md:col-span-2 lg:col-span-2">
+              <img src="/logo.png" className="w-32 md:w-36" alt="GachPala" />
+              <p
+                className={`${openSans.className} mt-5 max-w-[440px] text-sm leading-7 text-[#516057] md:text-[15px]`}
               >
-                About
-              </Link>
+                GachPala curates healthy plants and thoughtful green essentials
+                for modern homes, helping every space feel calm, fresh, and
+                alive.
+              </p>
               <Link
-                href={""}
-                className={` ${openSans.className} font-normal text-[#58575B] 2xl:text-[15px] xl:text-[15px] lg:text-[15px] md:text-[15px] text-[12px] `}
+                href="/shop"
+                className={`${inter.className} mt-6 inline-flex rounded-xl bg-[#1d6b43] px-5 py-3 text-xs tracking-[0.12em] text-white transition hover:bg-[#165335]`}
               >
-                Our Plantations
-              </Link>
-              <Link
-                href={""}
-                className={` ${openSans.className} font-normal text-[#58575B] 2xl:text-[15px] xl:text-[15px] lg:text-[15px] md:text-[15px] text-[12px] `}
-              >
-                Our vision
-              </Link>
-              <Link
-                href={""}
-                className={` ${openSans.className} font-normal text-[#58575B] 2xl:text-[15px] xl:text-[15px] lg:text-[15px] md:text-[15px] text-[12px] `}
-              >
-                Installations
+                SHOP COLLECTION
               </Link>
             </div>
+
+            {footerColumns.map((column) => (
+              <div key={column.title}>
+                <h3
+                  className={`${inter.className} text-base font-bold uppercase tracking-[0.08em] text-[#1f2b23]`}
+                >
+                  {column.title}
+                </h3>
+                <div className="mt-4 flex flex-col items-start gap-3">
+                  {column.links.map((link) => (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className={`${openSans.className} text-sm text-[#5c6b62] transition hover:text-[#1d6b43]`}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
 
-          <div className=" 2xl:mt-0 xl:mt-0 lg:mt-0 md:mt-0 mt-8  ">
-            <label
-              className={` ${inter.className} font-normal 2xl:text-[27px] xl:text-[27px] lg:text-[27px] md:text-[24px] text-[20px] text-black leading-[33.8px] tracking-[1px]  `}
-            >
-              Support
-            </label>
-            <div className=" flex flex-col justify-start items-start gap-3 2xl:py-[29px] xl:py-[29px] lg:py-[29px] md:py-6 py-3 2xl:pl-8 xl:pl-8 lg:pl-8 md:pl-0 pl-0 w-max ">
-              <Link
-                href={""}
-                className={` ${openSans.className} font-normal text-[#58575B] 2xl:text-[15px] xl:text-[15px] lg:text-[15px] md:text-[15px] text-[12px] `}
-              >
-                Customer FAQs
+          <div className="mt-12 flex flex-col gap-3 border-t border-[#d5dccc] pt-6 text-xs text-[#66756b] md:flex-row md:items-center md:justify-between md:text-sm">
+            <p className={openSans.className}>
+              © 2026 GachPala. All rights reserved.
+            </p>
+            <div className="flex items-center gap-5">
+              <Link href="/contact" className="transition hover:text-[#1d6b43]">
+                Contact
               </Link>
-              <Link
-                href={""}
-                className={` ${openSans.className} font-normal text-[#58575B] 2xl:text-[15px] xl:text-[15px] lg:text-[15px] md:text-[15px] text-[12px] `}
-              >
-                Shipping & Returns
-              </Link>
-              <Link
-                href={""}
-                className={` ${openSans.className} font-normal text-[#58575B] 2xl:text-[15px] xl:text-[15px] lg:text-[15px] md:text-[15px] text-[12px] `}
-              >
-                Contact Us
-              </Link>
-              <Link
-                href={""}
-                className={` ${openSans.className} font-normal text-[#58575B] 2xl:text-[15px] xl:text-[15px] lg:text-[15px] md:text-[15px] text-[12px] `}
-              >
-                Privacy Policy
+              <Link href="/about" className="transition hover:text-[#1d6b43]">
+                About
               </Link>
             </div>
           </div>
         </Container>
-        <div className=" 2xl:text-[15px] xl:text-[15px] lg:text-[15px] md:text-[15px] text-[12px] text-center text-[#58575B] 2xl:py-[60px] xl:py-[60px] lg:py-[50px] md:py-[30px] py-5 border-t-2 border-gray-300 ">
-          <p>© 2025 GachPala. All rights reserved.</p>
-        </div>
       </section>
     </footer>
   );
