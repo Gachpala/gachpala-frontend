@@ -20,11 +20,11 @@ export default function Arrival({ products }) {
   return (
     <section className=" py-10 select-none ">
       <h1
-        className={`${inter.className} font-normal 2xl:text-[48px] xl:text-[48px] lg:text-[48px] md:text-[38px] text-[28px] leading-12 text-black`}
+        className={`${inter.className} font-normal 2xl:text-[48px] xl:text-[48px] lg:text-[48px] md:text-[38px] text-[28px] leading-[1.2] text-black`}
       >
         Fresh arrivals
       </h1>
-      <div className=" grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-2 grid-cols-2 2xl:grid-rows-none xl:grid-rows-none lg:grid-rows-none md:grid-rows-2 grid-rows-2 gap-6 mt-[25px] ">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mt-[25px]">
         {isLoading ? (
           <>
             {[...Array(4)].map((_, i) => (

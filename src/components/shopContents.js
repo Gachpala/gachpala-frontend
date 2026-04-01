@@ -67,7 +67,7 @@ export default function ShopContents() {
 
   return (
     <section>
-      <div className=" bg-[#ebeee3] p-18 mb-[130px] ">
+      <div className="bg-[#ebeee3] px-4 sm:px-6 md:px-10 py-10 md:py-14 mb-10 md:mb-[90px]">
         <Container>
           <div className=" bg-[#ebeee3]  ">
             <p
@@ -86,18 +86,18 @@ export default function ShopContents() {
         </Container>
       </div>
 
-      <Container className=" max-w-[1400px]! bg-[#ebeee3] rounded-2xl ">
-        <div className="grid grid-cols-4 mx-auto p-x-4 py-14 ">
+      <Container className="max-w-[1400px]! bg-[#ebeee3] rounded-2xl">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-auto px-3 sm:px-4 py-10 md:py-14 gap-3 sm:gap-6">
           {isLoading ? (
             // Show skeleton loaders while loading
             Array.from({ length: productsPerPage }).map((_, i) => (
-              <ProductSkeleton key={i} className={` my-8 `} />
+              <ProductSkeleton key={i} className={`my-4 sm:my-6 mx-auto`} />
             ))
           ) : Array.isArray(currentProducts) && currentProducts.length > 0 ? (
             // Show products when loaded
             currentProducts.map((product) => (
               <Product
-                className="my-8 mx-auto "
+                className="my-4 sm:my-6 mx-auto"
                 key={product.id}
                 id={product.id}
                 img={
@@ -121,7 +121,7 @@ export default function ShopContents() {
             ))
           ) : (
             // Show empty state when no products
-            <div className="col-span-4 text-center py-10">
+            <div className="col-span-full text-center py-10">
               <p className="text-gray-500">No products found</p>
             </div>
           )}

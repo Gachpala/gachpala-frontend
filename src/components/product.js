@@ -202,7 +202,7 @@ const ProductCard = ({
       }}
       role="button"
       tabIndex={0}
-      className={` group w-75 h-100 max-w-[420px] bg-[#f8f8f8] rounded-2xl p-4  shadow-xl transition-all duration-300 z-10 relative cursor-pointer ${className} `}
+      className={` group w-full md:w-75 h-auto md:h-100 max-w-[420px] bg-[#f8f8f8] rounded-2xl p-3 sm:p-4 shadow-xl transition-all duration-300 z-10 relative cursor-pointer ${className} `}
     >
       {/* Image & Badges Section */}
       <div className="relative bg-[#ebebeb] rounded-2xl flex flex-col justify-between overflow-hidden">
@@ -225,10 +225,10 @@ const ProductCard = ({
           </div>
 
           {/* Smooth Curve - Top Left */}
-          <div className="absolute top-0 -left-8 w-8 h-8 bg-transparent rounded-tr-[2rem] shadow-[1rem_-1rem_0_1rem_#f8f8f8] pointer-events-none "></div>
+          <div className="absolute top-0 -left-8 w-8 h-8 bg-transparent rounded-tr-4xl shadow-[1rem_-1rem_0_1rem_#f8f8f8] pointer-events-none "></div>
 
           {/* Smooth Curve - Bottom Right */}
-          <div className="absolute -bottom-8 right-0 w-8 h-8 bg-transparent rounded-tr-[2rem] shadow-[1rem_-1rem_0_1rem_#f8f8f8] pointer-events-none "></div>
+          <div className="absolute -bottom-8 right-0 w-8 h-8 bg-transparent rounded-tr-4xl shadow-[1rem_-1rem_0_1rem_#f8f8f8] pointer-events-none "></div>
         </div>
 
         {/* Product Image */}
@@ -239,14 +239,14 @@ const ProductCard = ({
             onError={(e) => {
               e.target.src = "/plant-placeholder.png";
             }}
-            className="w-full h-50 object-cover rounded-xl drop-shadow-2xl scale-100 group-hover:scale-105 duration-300 ease-out "
+            className="w-full h-40 sm:h-50 object-cover rounded-xl drop-shadow-2xl scale-100 group-hover:scale-105 duration-300 ease-out "
           />
         </div>
       </div>
 
-      <div className="pt-2 px-3">
+      <div className="pt-2 px-2 sm:px-3">
         <div className="flex justify-between items-end mb-1 ">
-          <h2 className="text-2xl font-medium text-black tracking-tight">
+          <h2 className="text-lg sm:text-2xl font-medium text-black tracking-tight line-clamp-1">
             {title}
           </h2>
           <button
@@ -277,7 +277,7 @@ const ProductCard = ({
         </div>
 
         {/* Description */}
-        <p className="text-gray-800 text-md leading-snug mb-4 pr-4">
+        <p className="text-gray-800 text-sm sm:text-md leading-snug mb-4 pr-2 sm:pr-4">
           {textShorter(description, 55)}
         </p>
 
@@ -286,11 +286,11 @@ const ProductCard = ({
           <span className="font-semibold">Available Stock:</span> {stock}
         </div>
       </div>
-      <div className="absolute left-0 -bottom-5 w-full h-14">
+      <div className="mt-4 md:mt-0 md:absolute left-0 md:-bottom-5 w-full h-12 md:h-14">
         <button
           type="button"
           onClick={handleAddToCart}
-          className="w-full h-full bg-[#00be62] text-white font-semibold text-lg py-3 rounded-b-2xl transition-colors shadow-md flex items-center justify-center
+          className="w-full h-full bg-[#00be62] text-white font-semibold text-sm sm:text-base md:text-lg py-2 md:py-3 rounded-xl md:rounded-b-2xl transition-colors shadow-md flex items-center justify-center
            hover:bg-green-600 duration-400 ease-in-out "
         >
           Add to Cart

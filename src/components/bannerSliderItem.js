@@ -4,19 +4,19 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 
 export default function ({ bannerText, bannerTextSpan }) {
   return (
-    <div className=" flex justify-center items-center gap-10 cursor-grab 2xl:mx-0 xl:mx-0 lg:mx-8 md:mx-2 mx-2 ">
-      <div className=" 2xl:pt-[50px] xl:pt-[50px] lg:pt-10 md:pt-[30px] pt-2.5 ">
+    <div className="flex flex-col-reverse md:flex-row justify-center items-center gap-4 md:gap-8 lg:gap-10 cursor-grab mx-2 sm:mx-4 md:mx-2 lg:mx-8 xl:mx-0">
+      <div className="pt-2.5 md:pt-[30px] lg:pt-10 xl:pt-[50px]">
         <h1
-          className={` ${inter.className} font-normal 2xl:text-[75px] xl:text-[70px] lg:text-[60px] md:text-[40px] text-[24px] text-[#0B0B0D]
-             2xl:leading-[105px] xl:leading-[105px] lg:leading-20 
-            2xl:w-[689px] xl:w-[650px] lg:w-[550px] md:w-[350px] w-40 2xl:b-10 xl:mb-10 lg:mb-10 md:mb-10 mb-4 `}
+          className={` ${inter.className} font-normal 2xl:text-[75px] xl:text-[70px] lg:text-[60px] md:text-[40px] text-[28px] sm:text-[32px] text-[#0B0B0D]
+             2xl:leading-[105px] xl:leading-[95px] lg:leading-20 md:leading-[52px] leading-[38px]
+            max-w-72 sm:max-w-96 md:max-w-88 lg:max-w-136 xl:max-w-160 2xl:max-w-172 mb-4 md:mb-10 `}
         >
           {bannerText}
           <span className=" text-[#00bf63] ">{bannerTextSpan}</span>.
         </h1>
         <Link
           href="/shop"
-          className={` ${openSans.className} w-fit font-normal 2xl;text-[13.5px] xl:text-[13.5px] md:text-[12px] text-[10px] text-[#FFFFFF] bg-[#111111]
+          className={` ${openSans.className} w-fit font-normal 2xl:text-[13.5px] xl:text-[13.5px] md:text-[12px] text-[11px] text-[#FFFFFF] bg-[#111111]
              2xl:px-[35.44px] xl:px-[35.44px] lg:px-[35.44px] md:px-[30px] px-6 2xl:py-[21.25px] xl:py-[21.5px] lg:py-5 md:py-4 py-3 border-2 border-black
             rounded-lg flex justify-center items-center hover:bg-transparent hover:text-black hover:border-black duration-300 ease-out `}
         >
@@ -24,14 +24,14 @@ export default function ({ bannerText, bannerTextSpan }) {
           <IoIosArrowRoundForward className=" text-[22px] " />
         </Link>
       </div>
-      <div className=" flex justify-center 2xl:gap-6 xl:gap-6 md:gap-6 gap-2 items-start -z-50! ">
+      <div className="flex justify-center gap-2 md:gap-6 items-start -z-50! w-full md:w-auto">
         <img
           src={`/banner1.png`}
-          className=" 2xl:h-[701px] xl:h-[601px] lg:h-[420px] md:h-80 h-40  "
+          className="h-[220px] sm:h-[280px] md:h-80 lg:h-[420px] xl:h-[601px] 2xl:h-[701px] w-auto"
         />
         <img
           src={`/bannerS1.png`}
-          className=" 2xl:w-[170px] xl:w-[150px] lg:w-[150px] md:w-[100px] w-[70px] 2xl:mt-14 xl:mt-12 lg:mt-10 md:mt-10 mt-5 "
+          className="w-[90px] sm:w-[100px] md:w-[100px] lg:w-[150px] xl:w-[150px] 2xl:w-[170px] mt-5 md:mt-10 lg:mt-10 xl:mt-12 2xl:mt-14"
         />
       </div>
     </div>

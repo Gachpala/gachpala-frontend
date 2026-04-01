@@ -27,8 +27,8 @@ export default function Home() {
   const cartItems = useSelector((state) => state.products.cart);
   const [cartCount, setCartCount] = useState(cartItems?.length || 0);
   const listItems =
-    "xl:text-[17px] lg:text-[17px] text-[14px] text-[#58575B] font-normal ";
-  const listItemsSec = " text-[20px] text-[#111111] ";
+    "xl:text-[17px] lg:text-[17px] text-[13px] md:text-[14px] text-[#58575B] font-normal ";
+  const listItemsSec = " text-[18px] md:text-[20px] text-[#111111] ";
 
   const [toggle, setToggle] = React.useState(false);
   const [toogleProfile, setToogleProfile] = React.useState(false);
@@ -155,12 +155,12 @@ export default function Home() {
 
   return (
     <nav className=" relative z-50 select-none bg-[#f6f7f2] ">
-      <div className=" xl:py-[23.5px] lg:py-[23.5px] md:py-[23.5px] py-4 xl:px-10 lg:px-10 md:px-8 px-4 flex flex-row justify-between items-center ">
+      <div className=" xl:py-[23.5px] lg:py-[23.5px] md:py-[23.5px] py-4 xl:px-10 lg:px-10 md:px-8 px-3 sm:px-4 flex flex-row justify-between items-center gap-3 ">
         <Link href="/">
           <img
             src="/logo.png"
             alt="gachpala_logo"
-            className=" 2xl:w-40 xl:w-36 lg:w-32 md:w-28 w-23 "
+            className=" 2xl:w-40 xl:w-36 lg:w-32 md:w-28 w-24 "
           />
         </Link>
 
@@ -211,11 +211,11 @@ export default function Home() {
               Contact
             </a>
           </div>
-          <ul className=" flex flex-row justify-center items-center xl:gap-5 lg:gap-5 gap-4 ">
+          <ul className=" flex flex-row justify-center items-center xl:gap-5 lg:gap-5 gap-3 sm:gap-4 ">
             <li className={`${listItemsSec} relative`}>
               <GoSearch
                 onClick={handleOpenSearch}
-                className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] cursor-pointer "
+                className=" xl:text-[24px] lg:text-[24px] text-[18px] sm:text-[20px] text-[#58575B] cursor-pointer "
               />
             </li>
             <li className=" relative ">
@@ -223,7 +223,7 @@ export default function Home() {
                 onClick={handleToogleSignInUp}
                 className={`${listItemsSec} block `}
               >
-                <BiUser className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] " />
+                <BiUser className=" xl:text-[24px] lg:text-[24px] text-[18px] sm:text-[20px] text-[#58575B] " />
               </button>
 
               {/* Profile Dropdown */}
@@ -273,15 +273,15 @@ export default function Home() {
             </li>
             <Link href="/favourite">
               <li>
-                <FaRegHeart className=" xl:text-[22px] lg:text-[22px] text-[20px] text-[#58575B]" />
+                <FaRegHeart className=" xl:text-[22px] lg:text-[22px] text-[18px] sm:text-[20px] text-[#58575B]" />
               </li>
             </Link>
 
             <Link href="/cart" className=" relative">
               <li className={`${listItemsSec} `}>
-                <HiOutlineShoppingBag className=" xl:text-[24px] lg:text-[24px] text-[20px] text-[#58575B] " />
+                <HiOutlineShoppingBag className=" xl:text-[24px] lg:text-[24px] text-[18px] sm:text-[20px] text-[#58575B] " />
               </li>
-              <div className=" text-[12px] text-white bg-[#588456] w-5 h-5 rounded-full flex justify-center items-center absolute left-3 top-3 ">
+              <div className=" text-[10px] sm:text-[12px] text-white bg-[#588456] w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full flex justify-center items-center absolute left-2.5 top-2.5 sm:left-3 sm:top-3 ">
                 {cartCount}
               </div>
             </Link>

@@ -1,9 +1,27 @@
 @import "tailwindcss";
 
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+}
+
 body {
   scroll-behavior: smooth;
   background: #f6f7f2;
   overflow-x: hidden;
+}
+
+img,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
 }
 
 button {
