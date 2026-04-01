@@ -14,8 +14,10 @@ import { GoSearch } from "react-icons/go";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import SignInUpPage from "@/app/signInUp/page";
+import { API_BASE_URL } from "@/app/config";
 import {
   AUTH_MODAL_EVENT,
+  AUTH_TOKEN_KEY,
   clearAuthStorage,
   isAuthenticated,
 } from "@/lib/authGate";
@@ -23,7 +25,7 @@ import {
 export default function Home() {
   const router = useRouter();
   const cartItems = useSelector((state) => state.products.cart);
-  const cartCount = cartItems?.length || 0;
+  const [cartCount, setCartCount] = useState(cartItems?.length || 0);
   const listItems =
     "xl:text-[17px] lg:text-[17px] text-[14px] text-[#58575B] font-normal ";
   const listItemsSec = " text-[20px] text-[#111111] ";
@@ -72,6 +74,48 @@ export default function Home() {
   };
 
   useEffect(() => {
+    const fetchCartCount = async () => {
+      if (typeof window === "undefined") return;
+
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      if (!token) {
+        setCartCount(0);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/cart`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const text = await response.text();
+        let data = {};
+
+        if (text) {
+          try {
+            data = JSON.parse(text);
+          } catch {
+            data = {};
+          }
+        }
+
+        if (!response.ok) {
+          setCartCount(cartItems?.length || 0);
+          return;
+        }
+
+        const count = Number(data?.summary?.items_count ?? 0);
+        setCartCount(Number.isNaN(count) ? 0 : count);
+      } catch {
+        setCartCount(cartItems?.length || 0);
+      }
+    };
+
+    fetchCartCount();
+
     const handleOpenAuthModal = () => {
       if (isAuthenticated()) {
         return;
@@ -87,7 +131,7 @@ export default function Home() {
     return () => {
       window.removeEventListener(AUTH_MODAL_EVENT, handleOpenAuthModal);
     };
-  }, []);
+  }, [cartItems]);
 
   // const handleToogleDetails = () => {
   //   setToogleProfile((prev) => !prev); laterrrrrrrrrrrrr

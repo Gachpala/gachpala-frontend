@@ -2,37 +2,230 @@
 import Container from "@/components/container";
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { BsArrowLeft, BsTrash } from "react-icons/bs";
 import { FaMinus, FaPlus } from "react-icons/fa";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  updateCartQuantity,
-  removeFromCart,
-} from "@/app/slices/products_slices";
+import { API_BASE_URL } from "@/app/config";
+import { AUTH_TOKEN_KEY } from "@/lib/authGate";
 
 export default function Cart() {
-  const cartItems = useSelector((state) => state.products.cart);
-  const dispatch = useDispatch();
+  const [cartData, setCartData] = useState(null);
+  const [isCartLoading, setIsCartLoading] = useState(true);
+  const [cartError, setCartError] = useState("");
+  const [deletingItemId, setDeletingItemId] = useState(null);
+  const [updatingItemId, setUpdatingItemId] = useState(null);
 
-  const updateQuantity = (id, change) => {
-    const item = cartItems.find((item) => item.id === id);
+  useEffect(() => {
+    const fetchCart = async () => {
+      if (typeof window === "undefined") return;
+
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      if (!token) {
+        setCartData({ items: [], summary: { subtotal: 0, currency: "BDT" } });
+        setIsCartLoading(false);
+        return;
+      }
+
+      try {
+        setIsCartLoading(true);
+        setCartError("");
+
+        const response = await fetch(`${API_BASE_URL}/cart`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const text = await response.text();
+        let data = {};
+
+        if (text) {
+          try {
+            data = JSON.parse(text);
+          } catch {
+            data = {};
+          }
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            data?.message ||
+              data?.error ||
+              `Failed to load cart (${response.status})`,
+          );
+        }
+
+        setCartData(data);
+      } catch (error) {
+        setCartError(error?.message || "Unable to load cart.");
+        setCartData({ items: [], summary: { subtotal: 0, currency: "BDT" } });
+      } finally {
+        setIsCartLoading(false);
+      }
+    };
+
+    fetchCart();
+  }, []);
+
+  const cartItems = useMemo(() => cartData?.items || [], [cartData]);
+
+  const updateQuantity = async (id, change) => {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    if (!token) {
+      setCartError("Please sign in to update cart items.");
+      return;
+    }
+
+    const item = cartItems.find((entry) => entry.id === id);
     if (item) {
-      dispatch(updateCartQuantity({ id, quantity: item.quantity + change }));
+      const nextQuantity = item.quantity + change;
+      if (nextQuantity < 1) return;
+      if (item.stock && nextQuantity > item.stock) return;
+
+      try {
+        setUpdatingItemId(id);
+        setCartError("");
+
+        const response = await fetch(`${API_BASE_URL}/cart/${id}`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ quantity: nextQuantity }),
+        });
+
+        const text = await response.text();
+        let data = {};
+
+        if (text) {
+          try {
+            data = JSON.parse(text);
+          } catch {
+            data = {};
+          }
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            data?.message ||
+              data?.error ||
+              `Update failed (${response.status})`,
+          );
+        }
+
+        setCartData((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            items: prev.items.map((entry) =>
+              entry.id === id ? { ...entry, quantity: nextQuantity } : entry,
+            ),
+          };
+        });
+      } catch (error) {
+        setCartError(error?.message || "Unable to update cart item.");
+      } finally {
+        setUpdatingItemId(null);
+      }
     }
   };
 
-  const removeItem = (id) => {
-    dispatch(removeFromCart(id));
+  const removeItem = async (id) => {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    if (!token) {
+      setCartError("Please sign in to remove cart items.");
+      return;
+    }
+
+    try {
+      setDeletingItemId(id);
+      setCartError("");
+
+      const response = await fetch(`${API_BASE_URL}/cart/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const text = await response.text();
+      let data = {};
+
+      if (text) {
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = {};
+        }
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data?.message || data?.error || `Delete failed (${response.status})`,
+        );
+      }
+
+      setCartData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          items: prev.items.filter((entry) => entry.id !== id),
+        };
+      });
+    } catch (error) {
+      setCartError(error?.message || "Unable to remove cart item.");
+    } finally {
+      setDeletingItemId(null);
+    }
   };
 
   const subtotal = parseFloat(
     cartItems
-      .reduce((acc, item) => acc + item.price * item.quantity, 0)
+      .reduce((acc, item) => acc + item.unit_price * item.quantity, 0)
       .toFixed(2),
   );
   const shipping = 100;
   const total = parseFloat((subtotal + shipping).toFixed(2));
+
+  const currency = cartData?.summary?.currency || "BDT";
+  const currencySymbol = currency === "BDT" ? "৳" : `${currency} `;
+
+  const getProductImage = (imagePath) => {
+    if (!imagePath) return "/plant-placeholder.png";
+
+    const normalizedPath = String(imagePath).replace(/\\/g, "/");
+
+    if (
+      normalizedPath.startsWith("http://") ||
+      normalizedPath.startsWith("https://")
+    ) {
+      return encodeURI(normalizedPath);
+    }
+
+    const withLeadingSlash = normalizedPath.startsWith("/")
+      ? normalizedPath
+      : `/${normalizedPath}`;
+
+    return encodeURI(`${API_BASE_URL}${withLeadingSlash}`);
+  };
+
+  if (isCartLoading) {
+    return (
+      <div className="relative min-h-screen overflow-hidden bg-[linear-gradient(180deg,#f7faf4_0%,#eff4ea_100%)] py-20">
+        <Container>
+          <div className="bg-white/85 rounded-4xl border border-emerald-100 p-10 max-w-3xl mx-auto animate-pulse">
+            <div className="h-8 w-52 bg-emerald-100 rounded mb-4" />
+            <div className="h-4 w-72 bg-emerald-100 rounded mb-8" />
+            <div className="h-24 w-full bg-emerald-50 rounded-xl mb-4" />
+            <div className="h-24 w-full bg-emerald-50 rounded-xl mb-4" />
+            <div className="h-24 w-full bg-emerald-50 rounded-xl" />
+          </div>
+        </Container>
+      </div>
+    );
+  }
 
   if (cartItems.length === 0) {
     return (
@@ -43,6 +236,12 @@ export default function Cart() {
         </div>
 
         <Container>
+          {cartError ? (
+            <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {cartError}
+            </div>
+          ) : null}
+
           <div className="relative z-10 bg-white/85 backdrop-blur-sm rounded-4xl border border-emerald-100 shadow-[0_30px_70px_-38px_rgba(16,40,26,0.45)] p-10 text-center max-w-2xl mx-auto">
             <div className="w-24 h-24 bg-[#00be62]/10 rounded-full flex items-center justify-center mx-auto mb-6 text-[#00be62] text-4xl">
               <BsTrash />
@@ -75,6 +274,12 @@ export default function Cart() {
       </div>
 
       <Container>
+        {cartError ? (
+          <div className="relative z-10 mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {cartError}
+          </div>
+        ) : null}
+
         <div className="relative z-10 mb-8 md:mb-10">
           <p
             className={`${openSans.className} text-xs uppercase tracking-[0.18em] text-[#2d7d53]`}
@@ -84,7 +289,7 @@ export default function Cart() {
           <h1
             className={`${inter.className} text-3xl md:text-4xl font-bold text-[#15261d] mt-2`}
           >
-            Shopping Cart ({cartItems.length})
+            Shopping Cart ({cartData?.summary?.items_count ?? cartItems.length})
           </h1>
           <p className={`${openSans.className} text-sm text-[#67756d] mt-2`}>
             Review your selected plants and complete your order.
@@ -114,8 +319,11 @@ export default function Cart() {
                     <div className="col-span-12 md:col-span-6 flex gap-4 items-center">
                       <div className="w-20 h-20 md:w-24 md:h-24 bg-[#eef4ed] rounded-xl overflow-hidden shrink-0 border border-emerald-50">
                         <img
-                          src={item.image}
-                          alt={item.name}
+                          src={getProductImage(item.product_image)}
+                          alt={item.product_name}
+                          onError={(event) => {
+                            event.currentTarget.src = "/plant-placeholder.png";
+                          }}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -123,7 +331,7 @@ export default function Cart() {
                         <h3
                           className={`${inter.className} font-bold text-[#1a2b22] text-lg`}
                         >
-                          {item.name}
+                          {item.product_name}
                         </h3>
                         <p
                           className={`${openSans.className} text-sm text-[#6c7a72]`}
@@ -132,9 +340,13 @@ export default function Cart() {
                         </p>
                         <button
                           onClick={() => removeItem(item.id)}
-                          className="text-red-500 text-sm mt-2 flex items-center gap-1 hover:text-red-700 transition-colors md:hidden"
+                          disabled={deletingItemId === item.id}
+                          className="text-red-500 text-sm mt-2 flex items-center gap-1 hover:text-red-700 transition-colors md:hidden disabled:opacity-60 disabled:cursor-not-allowed"
                         >
-                          <BsTrash /> Remove
+                          <BsTrash />
+                          {deletingItemId === item.id
+                            ? "Removing..."
+                            : "Remove"}
                         </button>
                       </div>
                     </div>
@@ -147,7 +359,8 @@ export default function Cart() {
                       <span
                         className={`${inter.className} font-medium text-[#1d2c24]`}
                       >
-                        ৳{item.price}
+                        {currencySymbol}
+                        {item.unit_price}
                       </span>
                     </div>
 
@@ -159,6 +372,7 @@ export default function Cart() {
                       <div className="flex items-center border border-emerald-100 rounded-xl bg-white">
                         <button
                           onClick={() => updateQuantity(item.id, -1)}
+                          disabled={updatingItemId === item.id}
                           className="w-8 h-8 flex items-center justify-center text-[#6a766f] hover:text-[#00be62] hover:bg-emerald-50 rounded-l-xl transition-colors"
                         >
                           <FaMinus size={10} />
@@ -168,6 +382,7 @@ export default function Cart() {
                         </span>
                         <button
                           onClick={() => updateQuantity(item.id, 1)}
+                          disabled={updatingItemId === item.id}
                           className="w-8 h-8 flex items-center justify-center text-[#6a766f] hover:text-[#00be62] hover:bg-emerald-50 rounded-r-xl transition-colors"
                         >
                           <FaPlus size={10} />
@@ -183,11 +398,15 @@ export default function Cart() {
                       <span
                         className={`${inter.className} font-bold text-[#00be62]`}
                       >
-                        ৳{parseFloat((item.price * item.quantity).toFixed(2))}
+                        {currencySymbol}
+                        {parseFloat(
+                          (item.unit_price * item.quantity).toFixed(2),
+                        )}
                       </span>
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="text-gray-400 hover:text-red-500 transition-colors hidden md:block"
+                        disabled={deletingItemId === item.id}
+                        className="text-gray-400 hover:text-red-500 transition-colors hidden md:block disabled:opacity-60 disabled:cursor-not-allowed"
                         title="Remove Item"
                       >
                         <BsTrash size={18} />
@@ -222,18 +441,22 @@ export default function Cart() {
                 <div className="flex justify-between text-[#66746d]">
                   <span>Subtotal</span>
                   <span className="font-medium text-[#1c2a22]">
-                    ৳{subtotal}
+                    {currencySymbol}
+                    {subtotal}
                   </span>
                 </div>
                 <div className="flex justify-between text-[#66746d]">
                   <span>Shipping Estimate</span>
                   <span className="font-medium text-[#1c2a22]">
-                    ৳{shipping}
+                    {currencySymbol}
+                    {shipping}
                   </span>
                 </div>
                 <div className="flex justify-between text-[#66746d]">
                   <span>Tax Estimate</span>
-                  <span className="font-medium text-[#1c2a22]">৳0</span>
+                  <span className="font-medium text-[#1c2a22]">
+                    {currencySymbol}0
+                  </span>
                 </div>
 
                 {/* Coupon Code Input */}
@@ -259,7 +482,8 @@ export default function Cart() {
                   <span
                     className={`${inter.className} text-xl font-bold text-[#00be62]`}
                   >
-                    ৳{total}
+                    {currencySymbol}
+                    {total}
                   </span>
                 </div>
               </div>

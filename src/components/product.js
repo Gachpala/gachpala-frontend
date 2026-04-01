@@ -7,7 +7,8 @@ import {
   addToFavorites,
   removeFromFavorites,
 } from "@/app/slices/products_slices";
-import { requireAuthOrRun } from "@/lib/authGate";
+import { API_BASE_URL } from "@/app/config";
+import { AUTH_TOKEN_KEY, requireAuthOrRun } from "@/lib/authGate";
 
 const ProductCard = ({
   id,
@@ -47,10 +48,33 @@ const ProductCard = ({
     setIsActive((prev) => !prev);
   };
 
-  const handleAddToCart = (e) => {
+  const handleAddToCart = async (e) => {
     e.stopPropagation();
 
-    requireAuthOrRun(() => {
+    requireAuthOrRun(async () => {
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      if (!token) return;
+
+      const payload = {
+        product_id: id,
+        quantity: 1,
+      };
+
+      const response = await fetch(`${API_BASE_URL}/cart`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error("Add to cart failed:", text || response.status);
+        return;
+      }
+
       const newItem = {
         id,
         name: title,
@@ -78,11 +102,45 @@ const ProductCard = ({
   const handleAddToFavorites = (e) => {
     e.stopPropagation();
 
-    requireAuthOrRun(() => {
+    requireAuthOrRun(async () => {
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      if (!token) return;
+
       if (isFavorited) {
+        const response = await fetch(`${API_BASE_URL}/wishlist/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const text = await response.text();
+          console.error(
+            "Remove from wishlist failed:",
+            text || response.status,
+          );
+          return;
+        }
+
         dispatch(removeFromFavorites(id));
         console.log("Removed from favorites:", title, "ID:", id);
       } else {
+        const response = await fetch(`${API_BASE_URL}/wishlist`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ product_id: id }),
+        });
+
+        if (!response.ok) {
+          const text = await response.text();
+          console.error("Add to wishlist failed:", text || response.status);
+          return;
+        }
+
         const newItem = {
           id,
           name: title,
@@ -113,7 +171,7 @@ const ProductCard = ({
   let imageSrc = usePlaceholder ? placeholder : img;
   // Prepend base URL only for real product images that are relative
   if (!usePlaceholder && imageSrc && imageSrc.startsWith("/")) {
-    imageSrc = `https://api.gachpala.com${imageSrc}`;
+    imageSrc = `${API_BASE_URL}${imageSrc}`;
   }
   const isPlaceholder = usePlaceholder;
 

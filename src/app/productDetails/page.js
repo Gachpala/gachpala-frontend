@@ -14,7 +14,7 @@ import {
   removeFromFavorites,
 } from "@/app/slices/products_slices";
 import { API_BASE_URL } from "@/app/config";
-import { requireAuthOrRun } from "@/lib/authGate";
+import { AUTH_TOKEN_KEY, requireAuthOrRun } from "@/lib/authGate";
 
 function ProductDetailsContent() {
   const searchParams = useSearchParams();
@@ -181,7 +181,30 @@ function ProductDetailsContent() {
 
   // ✅ CART — uses cartReducer (your slice)
   const handleAddToCart = () => {
-    requireAuthOrRun(() => {
+    requireAuthOrRun(async () => {
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      if (!token) return;
+
+      const payload = {
+        product_id: product.id,
+        quantity,
+      };
+
+      const response = await fetch(`${API_BASE_URL}/cart`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error("Add to cart failed:", text || response.status);
+        return;
+      }
+
       dispatch(
         cartReducer({
           id: product.id,
@@ -198,10 +221,44 @@ function ProductDetailsContent() {
 
   // ✅ FAVORITES — matches slice
   const handleAddToFavorites = () => {
-    requireAuthOrRun(() => {
+    requireAuthOrRun(async () => {
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      if (!token) return;
+
       if (isFavorited) {
+        const response = await fetch(`${API_BASE_URL}/wishlist/${product.id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const text = await response.text();
+          console.error(
+            "Remove from wishlist failed:",
+            text || response.status,
+          );
+          return;
+        }
+
         dispatch(removeFromFavorites(product.id));
       } else {
+        const response = await fetch(`${API_BASE_URL}/wishlist`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ product_id: product.id }),
+        });
+
+        if (!response.ok) {
+          const text = await response.text();
+          console.error("Add to wishlist failed:", text || response.status);
+          return;
+        }
+
         dispatch(
           addToFavorites({
             id: product.id,
