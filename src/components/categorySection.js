@@ -68,20 +68,24 @@ export default function CategorySection() {
               <Link
                 key={cat.id ?? idx}
                 href={`/shop?category=${query}`}
-                className="flex flex-col items-center group cursor-none"
+                className="flex flex-col items-start group cursor-none"
               >
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gray-100 p-2 mb-2 overflow-hidden border-2 border-transparent group-hover:border-green-500 transition-all duration-300">
-                  <img
-                    src={imgSrc}
-                    alt={name}
-                    className="w-full h-full object-contain rounded-full group-hover:scale-110 transition-transform duration-500"
-                  />
+                <div className=" flex flex-col justify-center items-center  " >
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-[#ebeee3] p-2 mb-2 overflow-hidden border-2 border-transparent
+                 group-hover:border-green-500 duration-300 ease-in-out ">
+                    <img
+                      src={imgSrc}
+                      alt={name}
+                      className="w-full h-full object-contain rounded-full group-hover:scale-110 transition-transform duration-500"
+                    />
+                  </div> <span
+                    className={`${openSans.className} text-sm font-medium text-gray-700 group-hover:text-green-600 text-center`}
+                  >
+                    {name}
+                  </span>
                 </div>
-                <span
-                  className={`${openSans.className} text-sm font-medium text-gray-700 group-hover:text-green-600 text-center`}
-                >
-                  {name}
-                </span>
+
+
               </Link>
             );
           })}

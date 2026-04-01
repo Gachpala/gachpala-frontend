@@ -1,24 +1,48 @@
 "use client";
 
-export default function ProductSkeleton() {
+export default function ProductSkeleton({ className }) {
   return (
-    <div className="relative animate-pulse">
-      <div className="w-full bg-[#EBEEE3] 2xl:px-11 xl:px-4 lg:px-2 md:px-2 px-1 2xl:py-[90.5px] xl:py-12 lg:py-8 md:py-10 py-6 select-none rounded-xl group relative">
-        {/* Image skeleton */}
-        <div className="mx-auto 2xl:w-auto xl:w-[80%] lg:w-[70%] md:w-[60%] w-[60%] h-32 md:h-40 bg-gray-300 rounded-lg"></div>
+    <div className={` w-75 h-100 max-w-[420px] bg-[#f8f8f8] rounded-2xl p-4 shadow-xl relative animate-p  ulse ${className} `}>
+
+      {/* Image Section */}
+      <div className="relative bg-[#ebebeb] rounded-2xl overflow-hidden">
+
+        {/* Discount Badge Skeleton */}
+        <div className="absolute top-2 left-2 w-12 h-12 rounded-full bg-gray-300" />
+
+        {/* Price Corner Skeleton */}
+        <div className="absolute top-0 right-0 bg-[#f8f8f8] rounded-bl-[2.5rem] px-5 py-5">
+          <div className="w-16 h-6 bg-gray-300 rounded" />
+        </div>
+
+        {/* Image Skeleton */}
+        <div className="flex justify-center items-center">
+          <div className="w-full h-50 bg-gray-300 rounded-xl" />
+        </div>
       </div>
 
-      <div className="mt-3 md:mt-4 text-left space-y-2">
-        {/* Title skeleton */}
-        <div className="h-5 bg-gray-300 rounded w-3/4"></div>
+      {/* Content */}
+      <div className="pt-2 px-3">
 
-        {/* Price skeleton */}
-        <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+        {/* Title + Icon */}
+        <div className="flex justify-between items-end mb-2">
+          <div className="w-32 h-6 bg-gray-300 rounded" />
+          <div className="w-6 h-6 bg-gray-300 rounded-full" />
+        </div>
+
+        {/* Description */}
+        <div className="space-y-2 mb-4">
+          <div className="w-full h-4 bg-gray-300 rounded" />
+          <div className="w-5/6 h-4 bg-gray-300 rounded" />
+        </div>
+
+        {/* Stock */}
+        <div className="w-40 h-4 bg-gray-300 rounded" />
       </div>
 
-      {/* Heart icon skeleton */}
-      <div className="p-1.5 bg-white w-fit rounded-full absolute right-2 top-2 animate-pulse">
-        <div className="w-5 h-5 bg-gray-300 rounded-full"></div>
+      {/* Button */}
+      <div className="absolute left-0 -bottom-5 w-full h-14">
+        <div className="w-full h-full bg-gray-300 rounded-b-2xl" />
       </div>
     </div>
   );

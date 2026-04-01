@@ -20,7 +20,7 @@ export default function FlashSale({ products }) {
     }
   }, [products]);
 
-  const COUNTDOWN_END_TIME = new Date("2026-01-20 23:59:59 UTC");
+  const COUNTDOWN_END_TIME = new Date("2026-04-05 23:59:59 UTC");
 
   const countdownDate = useMemo(() => {
     return COUNTDOWN_END_TIME.getTime();
@@ -56,7 +56,7 @@ export default function FlashSale({ products }) {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           {isLoading ? (
             <>
               {[...Array(5)].map((_, i) => (
@@ -66,7 +66,7 @@ export default function FlashSale({ products }) {
           ) : (
             Array.isArray(products) &&
             products
-              .slice(0, 5)
+              .slice(0, 4)
               .map((product) => (
                 <Product
                   key={product.id}

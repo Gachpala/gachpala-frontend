@@ -3,14 +3,12 @@ import Container from "@/components/container";
 import Arrival from "@/components/arrival";
 import HeroSection from "@/components/heroSection";
 import CategorySection from "@/components/categorySection";
-import FlashSale from "@/components/flashSale";
 import BestCollection from "@/components/bestCollection";
 import AutoPlayText from "@/components/autoPlayText";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { productReducer } from "@/app/slices/products_slices";
-import ProductCard from "@/components/product";
 
 export default function Landing() {
   const [allProducts, setAllProducts] = useState([]);
@@ -36,23 +34,21 @@ export default function Landing() {
   });
 
   return (
-    <div className="bg-[#f5f5f5] -z-50 min-h-screen">
+    <div className=" -z-50 min-h-screen">
       <HeroSection />
-      <ProductCard />
 
       <CategorySection />
 
       <div className="space-y-6 pb-12">
-        <FlashSale products={allProducts} />
 
         <Container>
-          <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm">
+          <div className="bg-[#ebeee3] px-4 py-10 rounded-2xl mt-15 shadow-sm flex justify-center items-center ">
             <Arrival products={allProducts} />
           </div>
         </Container>
 
         <Container>
-          <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm">
+          <div className="bg-[#ebeee3] px-4 py-10 rounded-2xl mt-15 shadow-sm flex justify-center items-center ">
             <BestCollection products={allProducts} />
           </div>
         </Container>

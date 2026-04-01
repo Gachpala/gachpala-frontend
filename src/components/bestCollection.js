@@ -18,7 +18,7 @@ export default function BestCollection({ products }) {
   }, [products]);
 
   return (
-    <section className=" 2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-16 mx-6 mt-[50px] select-none ">
+    <section className=" py-15 select-none ">
       <h1
         className={`${inter.className} font-normal 2xl:text-[48px] xl:text-[48px] lg:text-[48px] md:text-[38px] text-[28px] leading-12 text-black`}
       >
@@ -36,11 +36,13 @@ export default function BestCollection({ products }) {
           products.slice(0, 4).map((item) => (
             <div key={item.id}>
               <Product
+                title={item.name}
                 id={item.id}
-                img={item.thumbnail}
+                img={item.image_url === null ? item.thumbnail : item.image_url}
                 alt={item.title}
-                title={item.title}
                 price={`${item.price}`}
+                description={item.description}
+                stock={item.stock}
               />
             </div>
           ))

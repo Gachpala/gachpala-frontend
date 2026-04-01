@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import BannerSkeleton from "./bannerSkeleton";
 
 const API_BASE = "https://api.gachpala.com";
-const PLACEHOLDER = "/plant-placeholder.png";
 
 export default function BannerSlider() {
   const [banners, setBanners] = useState([]);
@@ -15,7 +15,7 @@ export default function BannerSlider() {
     const fetchBanners = async () => {
       try {
         const res = await fetch(`${API_BASE}/banners`);
-        if (!res.ok) throw new Error(`Failed to load banners: ${res.status}`);
+        if (!res.ok) throw new Error(`Failed to load banners`);
         const data = await res.json();
         setBanners(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -27,13 +27,6 @@ export default function BannerSlider() {
     };
     fetchBanners();
   }, []);
-
-  const slides = useMemo(() => {
-    if (!isLoading && banners.length === 0) {
-      return [{ title: "", imageurl: PLACEHOLDER }];
-    }
-    return banners;
-  }, [banners, isLoading]);
 
   const settings = {
     dots: true,
@@ -47,29 +40,28 @@ export default function BannerSlider() {
     pauseOnHover: true,
   };
 
-  const resolveImage = (url) => {
-    if (!url) return PLACEHOLDER;
-    if (url.startsWith("http")) return url;
-    return `${API_BASE}${url}`;
-  };
+
+  if (isLoading) {
+    return (
+      <div className="w-full">
+        {[...Array(3)].map((_, i) => (
+          <BannerSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
 
   return (
-    <div className="slider-container overflow-hidden w-full">
-      <Slider {...settings}>
-        {(isLoading ? [{ title: "", imageurl: PLACEHOLDER }] : slides).map(
-          (banner, idx) => (
-            <div className="outline-none" key={banner.imageurl ?? idx}>
-              <img
-                id="bannerImg"
-                src={resolveImage(banner.imageurl)}
-                className="w-full h-auto object-cover min-h-[250px] md:min-h-[400px]"
-                alt={banner.title || "Banner"}
-                loading="lazy"
-              />
-            </div>
-          ),
-        )}
-      </Slider>
-    </div>
+    <Slider {...settings}>
+      {banners.map((banner, idx) => (
+        <div key={banner.imageurl ?? idx}>
+          <img
+            src={banner.imageurl}
+            className="w-full h-auto object-cover min-h-[250px] md:min-h-[400px]"
+            alt={banner.title || "Banner"}
+          />
+        </div>
+      ))}
+    </Slider>
   );
 }

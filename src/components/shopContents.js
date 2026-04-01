@@ -46,7 +46,7 @@ export default function ShopContents() {
           (product) =>
             product.category_name &&
             product.category_name.toLowerCase() ===
-              selectedCategory.toLowerCase(),
+            selectedCategory.toLowerCase(),
         );
         setFilteredProducts(filtered);
       } else {
@@ -85,20 +85,21 @@ export default function ShopContents() {
         </Container>
       </div>
 
-      <Container>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+      <Container className=" max-w-[1400px]! bg-[#ebeee3] rounded-2xl " >
+        <div className="grid grid-cols-4 mx-auto p-x-4 py-14 ">
           {isLoading ? (
             // Show skeleton loaders while loading
             Array.from({ length: productsPerPage }).map((_, i) => (
-              <ProductSkeleton key={i} />
+              <ProductSkeleton key={i} className={` my-8 `} />
             ))
           ) : Array.isArray(currentProducts) && currentProducts.length > 0 ? (
             // Show products when loaded
             currentProducts.map((product) => (
               <Product
+                className="my-8 mx-auto "
                 key={product.id}
                 id={product.id}
-                img={product.image_url}
+                img={product.image_url === "" ? product.thumbnail : product.image_url}
                 alt={product.name}
                 title={product.name}
                 price={`${product.price}`}

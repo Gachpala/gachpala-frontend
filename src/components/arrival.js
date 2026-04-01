@@ -18,7 +18,7 @@ export default function Arrival({ products }) {
   }, [products]);
 
   return (
-    <section className="  2xl:mx-0 xl:mx-24 lg:mx-18 md:mx-16 mx-6 mt-[50px] select-none ">
+    <section className=" py-10 select-none ">
       <h1
         className={`${inter.className} font-normal 2xl:text-[48px] xl:text-[48px] lg:text-[48px] md:text-[38px] text-[28px] leading-12 text-black`}
       >
@@ -37,7 +37,7 @@ export default function Arrival({ products }) {
             <div key={item.id}>
               <Product
                 id={item.id}
-                img={item.image_url}
+                img={item.image_url === null ? item.thumbnail : item.image_url}
                 alt={item.name}
                 title={item.name}
                 price={`${item.price}`}
