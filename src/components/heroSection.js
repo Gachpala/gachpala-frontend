@@ -5,8 +5,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { inter } from "@/lib/fonts";
 import Link from "next/link";
+import { API_BASE_URL } from "@/app/config";
 
-const API_BASE = "https://api.gachpala.com";
 const PLACEHOLDER = "/plant-placeholder.png";
 
 export default function HeroSection() {
@@ -16,7 +16,7 @@ export default function HeroSection() {
   useEffect(() => {
     const fetchBanners = async () => {
       try {
-        const res = await fetch(`${API_BASE}/banners`);
+        const res = await fetch(`${API_BASE_URL}/banners`);
         if (!res.ok) throw new Error(`Failed to load banners: ${res.status}`);
         const data = await res.json();
         setBanners(Array.isArray(data) ? data : []);
@@ -58,7 +58,7 @@ export default function HeroSection() {
   const resolveImage = (url) => {
     if (!url) return PLACEHOLDER;
     if (url.startsWith("http")) return url;
-    return `${API_BASE}${url}`;
+    return `${API_BASE_URL}${url}`;
   };
 
   return (

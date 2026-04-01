@@ -8,6 +8,7 @@ import {
 } from "../../services/geminiService.js";
 import ChatMessage from "../../components/ChatMessage.jsx";
 import Link from "next/link";
+import { API_BASE_URL } from "@/app/config";
 
 const SUGGESTIONS = [
   { text: "Best indoor plants? 🌿", label: "Indoor options" },
@@ -35,7 +36,7 @@ const App = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("https://api.gachpala.com/products");
+        const response = await fetch(`${API_BASE_URL}/products`);
         if (!response.ok) {
           console.error("Failed to fetch products:", await response.text());
           return;
@@ -52,7 +53,7 @@ const App = () => {
           careLevel: "Moderate",
           imageUrl: item.image_url.startsWith("http")
             ? item.image_url
-            : `https://api.gachpala.com${item.image_url}`,
+            : `${API_BASE_URL}${item.image_url}`,
           benefits: [],
           popular: item.is_featured,
         }));
@@ -65,9 +66,7 @@ const App = () => {
 
     const fetchTopSelling = async () => {
       try {
-        const response = await fetch(
-          "https://api.gachpala.com/products/topselling",
-        );
+        const response = await fetch(`${API_BASE_URL}/products/topselling`);
         if (!response.ok) {
           console.error(
             "Failed to fetch top selling products:",
@@ -87,7 +86,7 @@ const App = () => {
           careLevel: "Moderate",
           imageUrl: item.image_url.startsWith("http")
             ? item.image_url
-            : `https://api.gachpala.com${item.image_url}`,
+            : `${API_BASE_URL}${item.image_url}`,
           benefits: [],
           popular: item.is_featured,
         }));
@@ -230,9 +229,9 @@ const App = () => {
             : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-hide mt-6 ">
+        <div className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-hide mt-6 drop-shadow-2xl shadow-2xl">
           {/* Top Selling Section */}
-          <div className="mb-8">
+          <div className="mb-8 mt-4">
             <h2 className="px-4 text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-4 flex items-center gap-2">
               Top Selling{" "}
               <Flame size={12} className="text-orange-500 fill-orange-500" />
@@ -286,62 +285,6 @@ const App = () => {
                 ))
               )}
             </div>
-          </div>
-
-          {/* Collection Section */}
-          {/* <div>
-            <div className="px-4 mb-4 flex items-center justify-between">
-              <h2 className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest">
-                Collection
-              </h2>
-            </div>
-
-            <div className="space-y-1 mt-2">
-              {filteredProducts.map((product) => (
-                <button
-                  key={product.id}
-                  onClick={() => handleProductSelect(product)}
-                  className="w-full text-left group px-4 py-3 rounded-xl hover:bg-white hover:shadow-sm transition-all duration-300 flex items-center gap-3 border border-transparent hover:border-neutral-100"
-                >
-                  <div className="w-8 h-8 rounded-lg overflow-hidden bg-neutral-200 flex-shrink-0">
-                    <img
-                      src={product.imageUrl}
-                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                      alt=""
-                    />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-neutral-600 group-hover:text-neutral-900 transition-colors">
-                      {product.name}
-                    </p>
-                    <p className="text-[10px] text-neutral-400">
-                      {product.category}
-                    </p>
-                  </div>
-                </button>
-              ))}
-              {filteredProducts.length === 0 && (
-                <p className="px-4 text-xs text-neutral-400 italic py-4 text-center">
-                  No products found in this category.
-                </p>
-              )}
-            </div>
-          </div> */}
-        </div>
-
-        <div className="p-6 mb-28 ">
-          <div className="bg-neutral-900 rounded-2xl p-4 text-white shadow-xl shadow-neutral-900/10 relative overflow-hidden group cursor-none">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-110"></div>
-            <p className="relative z-10 text-sm font-medium">New Arrival</p>
-            <p className="relative z-10 text-xs text-neutral-400 mt-1">
-              Check out our seasonal fruit saplings.
-            </p>
-            <Link
-              href="/shop"
-              className=" block mt-3 text-xs font-bold text-emerald-400"
-            >
-              Explore
-            </Link>
           </div>
         </div>
       </aside>

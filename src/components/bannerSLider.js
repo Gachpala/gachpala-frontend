@@ -4,8 +4,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import BannerSkeleton from "./bannerSkeleton";
-
-const API_BASE = "https://api.gachpala.com";
+import { API_BASE_URL } from "@/app/config";
 
 export default function BannerSlider() {
   const [banners, setBanners] = useState([]);
@@ -14,7 +13,7 @@ export default function BannerSlider() {
   useEffect(() => {
     const fetchBanners = async () => {
       try {
-        const res = await fetch(`${API_BASE}/banners`);
+        const res = await fetch(`${API_BASE_URL}/banners`);
         if (!res.ok) throw new Error(`Failed to load banners`);
         const data = await res.json();
         setBanners(Array.isArray(data) ? data : []);
@@ -39,7 +38,6 @@ export default function BannerSlider() {
     cssEase: "linear",
     pauseOnHover: true,
   };
-
 
   if (isLoading) {
     return (

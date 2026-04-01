@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { productReducer } from "@/app/slices/products_slices";
 import { useSearchParams } from "next/navigation";
+import { API_BASE_URL } from "@/app/config";
 
 export default function ShopContents() {
   let productData = useSelector((state) => state.products.product);
@@ -27,7 +28,7 @@ export default function ShopContents() {
       if (!productData) {
         try {
           setIsLoading(true);
-          let data = await axios.get("https://api.gachpala.com/products");
+          let data = await axios.get(`${API_BASE_URL}/products`);
           dispatch(productReducer(data.data));
         } catch (error) {
           console.error("Failed to fetch products:", error);
@@ -46,7 +47,7 @@ export default function ShopContents() {
           (product) =>
             product.category_name &&
             product.category_name.toLowerCase() ===
-            selectedCategory.toLowerCase(),
+              selectedCategory.toLowerCase(),
         );
         setFilteredProducts(filtered);
       } else {
@@ -85,7 +86,7 @@ export default function ShopContents() {
         </Container>
       </div>
 
-      <Container className=" max-w-[1400px]! bg-[#ebeee3] rounded-2xl " >
+      <Container className=" max-w-[1400px]! bg-[#ebeee3] rounded-2xl ">
         <div className="grid grid-cols-4 mx-auto p-x-4 py-14 ">
           {isLoading ? (
             // Show skeleton loaders while loading
@@ -99,7 +100,11 @@ export default function ShopContents() {
                 className="my-8 mx-auto "
                 key={product.id}
                 id={product.id}
-                img={product.image_url === "" ? product.thumbnail : product.image_url}
+                img={
+                  product.image_url === ""
+                    ? product.thumbnail
+                    : product.image_url
+                }
                 alt={product.name}
                 title={product.name}
                 price={`${product.price}`}

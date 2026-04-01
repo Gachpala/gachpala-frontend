@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { productReducer } from "@/app/slices/products_slices";
+import { API_BASE_URL } from "@/app/config";
 
 export default function Landing() {
   const [allProducts, setAllProducts] = useState([]);
@@ -16,7 +17,7 @@ export default function Landing() {
 
   async function getAllProducts() {
     try {
-      let data = await axios.get("https://api.gachpala.com/products");
+      let data = await axios.get(`${API_BASE_URL}/products`);
       setAllProducts(data.data);
       console.log(data);
       dispatch(productReducer(data.data));
@@ -40,7 +41,6 @@ export default function Landing() {
       <CategorySection />
 
       <div className="space-y-6 pb-12">
-
         <Container>
           <div className="bg-[#ebeee3] px-4 py-10 rounded-2xl mt-15 shadow-sm flex justify-center items-center ">
             <Arrival products={allProducts} />

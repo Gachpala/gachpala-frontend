@@ -4,8 +4,8 @@ import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import Container from "./container";
 import { useMemo } from "react";
+import { API_BASE_URL } from "@/app/config";
 
-const API_BASE = "https://api.gachpala.com";
 const PLACEHOLDER = "/plant-placeholder.png";
 
 export default function CategorySection() {
@@ -15,7 +15,7 @@ export default function CategorySection() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch(`${API_BASE}/categories`);
+        const res = await fetch(`${API_BASE_URL}/categories`);
         if (!res.ok)
           throw new Error(`Failed to load categories: ${res.status}`);
         const data = await res.json();
@@ -35,7 +35,7 @@ export default function CategorySection() {
   const resolveImage = (img) => {
     if (!img) return PLACEHOLDER;
     if (img.startsWith("http")) return img;
-    return `${API_BASE}${img}`;
+    return `${API_BASE_URL}${img}`;
   };
 
   return (
@@ -70,22 +70,23 @@ export default function CategorySection() {
                 href={`/shop?category=${query}`}
                 className="flex flex-col items-start group cursor-none"
               >
-                <div className=" flex flex-col justify-center items-center  " >
-                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-[#ebeee3] p-2 mb-2 overflow-hidden border-2 border-transparent
-                 group-hover:border-green-500 duration-300 ease-in-out ">
+                <div className=" flex flex-col justify-center items-center  ">
+                  <div
+                    className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-[#ebeee3] p-2 mb-2 overflow-hidden border-2 border-transparent
+                 group-hover:border-green-500 duration-300 ease-in-out "
+                  >
                     <img
                       src={imgSrc}
                       alt={name}
                       className="w-full h-full object-contain rounded-full group-hover:scale-110 transition-transform duration-500"
                     />
-                  </div> <span
+                  </div>{" "}
+                  <span
                     className={`${openSans.className} text-sm font-medium text-gray-700 group-hover:text-green-600 text-center`}
                   >
                     {name}
                   </span>
                 </div>
-
-
               </Link>
             );
           })}

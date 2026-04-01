@@ -1,8 +1,20 @@
 // Client-side service for Gemini API calls
+import { INTERNAL_API_BASE_URL } from "@/app/config";
+
+const parseJsonOrText = async (response) => {
+  const raw = await response.text();
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return raw;
+  }
+};
 
 export const sendMessageStream = async (message, inventory, onChunk) => {
   try {
-    const response = await fetch("/api/gemini", {
+    const response = await fetch(`${INTERNAL_API_BASE_URL}/api/gemini`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -10,14 +22,24 @@ export const sendMessageStream = async (message, inventory, onChunk) => {
       body: JSON.stringify({ message, inventory }),
     });
 
+    const payload = await parseJsonOrText(response);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(
-        errorData.error || `API request failed: ${response.status}`
-      );
+      const errorMessage =
+        payload && typeof payload === "object" && "error" in payload
+          ? payload.error
+          : typeof payload === "string"
+            ? payload
+            : null;
+
+      throw new Error(errorMessage || `API request failed: ${response.status}`);
     }
 
-    const data = await response.json();
+    if (!payload || typeof payload !== "object") {
+      throw new Error("API response was not valid JSON");
+    }
+
+    const data = payload;
     if (onChunk) {
       onChunk(data.response);
     }

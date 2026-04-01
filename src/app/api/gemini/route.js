@@ -8,7 +8,9 @@ const getGenAI = () => {
   if (!genAI) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      throw new Error("GEMINI_API_KEY is missing");
+      throw new Error(
+        "GEMINI_API_KEY is missing. Set it in .env.local and restart the dev server.",
+      );
     }
     genAI = new GoogleGenerativeAI(apiKey);
   }
@@ -46,9 +48,19 @@ export async function POST(request) {
   } catch (error) {
     console.error("Gemini API error:", error.message);
     console.error("Stack:", error.stack);
+
+    const isMissingKeyError =
+      typeof error?.message === "string" &&
+      error.message.includes("GEMINI_API_KEY is missing");
+
     return Response.json(
-      { error: error.message || "Failed to process request" },
-      { status: 500 }
+      {
+        error: error.message || "Failed to process request",
+        code: isMissingKeyError
+          ? "MISSING_GEMINI_API_KEY"
+          : "GEMINI_REQUEST_FAILED",
+      },
+      { status: isMissingKeyError ? 503 : 500 },
     );
   }
 }
