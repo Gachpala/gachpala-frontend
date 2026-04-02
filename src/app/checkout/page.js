@@ -5,6 +5,7 @@ import { API_BASE_URL } from "@/app/config";
 import { AUTH_TOKEN_KEY } from "@/lib/authGate";
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
+import Image from "next/image";
 import React, { useEffect, useMemo, useState } from "react";
 import { BsArrowLeft, BsCheckCircleFill } from "react-icons/bs";
 
@@ -23,6 +24,7 @@ export default function CheckoutPage() {
   const [orderSuccessMessage, setOrderSuccessMessage] = useState("");
   const [discountCodeInput, setDiscountCodeInput] = useState("");
   const [discountCodes, setDiscountCodes] = useState([]);
+  const [loadVersion, setLoadVersion] = useState(0);
 
   const paymentMethod = "COD";
 
@@ -120,7 +122,7 @@ export default function CheckoutPage() {
     };
 
     fetchCart();
-  }, []);
+  }, [loadVersion]);
 
   const cartItems = useMemo(() => cartData?.items || [], [cartData]);
 
@@ -131,6 +133,8 @@ export default function CheckoutPage() {
   );
   const shipping = cartItems.length ? 100 : 0;
   const total = parseFloat((subtotal + shipping).toFixed(2));
+  const canPlaceOrder =
+    !isPlacingOrder && cartItems.length > 0 && Boolean(selectedAddressId);
 
   const currency = cartData?.summary?.currency || "BDT";
   const currencySymbol = currency === "BDT" ? "৳" : `${currency} `;
@@ -156,12 +160,21 @@ export default function CheckoutPage() {
 
   const handleAddDiscountCode = () => {
     const normalizedCode = discountCodeInput.trim().toUpperCase();
-    if (!normalizedCode) return;
+    if (!normalizedCode) {
+      setCheckoutMessage("Enter a discount code before adding.");
+      return;
+    }
+
+    if (normalizedCode.length > 40) {
+      setCheckoutMessage("Discount code looks too long.");
+      return;
+    }
 
     setDiscountCodes((prev) => {
       if (prev.includes(normalizedCode)) return prev;
       return [...prev, normalizedCode];
     });
+    setCheckoutMessage("");
     setDiscountCodeInput("");
   };
 
@@ -424,17 +437,29 @@ export default function CheckoutPage() {
         {error ? (
           <div className="relative z-10 mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
+            <button
+              type="button"
+              onClick={() => setLoadVersion((prev) => prev + 1)}
+              className="ml-3 rounded-md border border-red-300 px-2 py-1 text-xs font-semibold hover:bg-red-100"
+            >
+              Retry
+            </button>
           </div>
         ) : null}
 
         {checkoutMessage ? (
-          <div className="relative z-10 mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          <div
+            className="relative z-10 mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
+            role="status"
+            aria-live="polite"
+          >
             {checkoutMessage}
           </div>
         ) : null}
 
         <div className="relative z-10 flex flex-col lg:flex-row gap-8">
           <form
+            id="checkout-form"
             onSubmit={handlePlaceOrder}
             className="grow bg-white/90 backdrop-blur-sm rounded-3xl border border-emerald-100 shadow-[0_24px_60px_-38px_rgba(16,40,26,0.4)] p-6 md:p-8"
           >
@@ -520,9 +545,16 @@ export default function CheckoutPage() {
                 <input
                   type="text"
                   value={discountCodeInput}
+                  maxLength={40}
                   onChange={(event) =>
                     setDiscountCodeInput(event.currentTarget.value)
                   }
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      handleAddDiscountCode();
+                    }
+                  }}
                   className="w-full bg-[#f6faf5] border border-emerald-100 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#00be62] transition-colors"
                   placeholder="Enter code (e.g. EIDSPACIAL20)"
                 />
@@ -570,7 +602,7 @@ export default function CheckoutPage() {
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <button
                 type="submit"
-                disabled={isPlacingOrder}
+                disabled={!canPlaceOrder}
                 className="w-full sm:w-auto bg-[#00be62] text-white px-7 py-3 rounded-xl font-bold hover:bg-[#00a757] shadow-lg shadow-emerald-600/25 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isPlacingOrder ? "Placing Order..." : "Place Order"}
@@ -598,12 +630,12 @@ export default function CheckoutPage() {
                   {cartItems.map((item) => (
                     <div key={item.id} className="flex items-center gap-3">
                       <div className="w-14 h-14 bg-[#eef4ed] rounded-lg overflow-hidden shrink-0 border border-emerald-50">
-                        <img
+                        <Image
                           src={getProductImage(item.product_image)}
                           alt={item.product_name}
-                          onError={(event) => {
-                            event.currentTarget.src = "/plant-placeholder.png";
-                          }}
+                          width={56}
+                          height={56}
+                          unoptimized
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -660,6 +692,12 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
+              <div className="mt-5 rounded-xl border border-emerald-100 bg-[#f7fbf6] p-3 text-xs text-[#4e5f56] leading-5">
+                <p>Estimated delivery: 2-4 business days.</p>
+                <p>Easy return support for damaged plants on delivery day.</p>
+                <p>Secure order processing with address verification.</p>
+              </div>
+
               <Link
                 href="/cart"
                 className="mt-6 inline-flex items-center gap-2 text-[#5f6f67] hover:text-[#00be62] font-medium transition-colors"
@@ -667,6 +705,26 @@ export default function CheckoutPage() {
                 <BsArrowLeft /> Edit cart items
               </Link>
             </div>
+
+            {cartItems.length ? (
+              <div className="fixed bottom-3 left-3 right-3 z-40 rounded-2xl border border-emerald-200 bg-white/95 p-3 shadow-xl backdrop-blur-sm lg:hidden">
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="text-[#5b6c63]">Total</span>
+                  <span className="font-bold text-[#00a757]">
+                    {currencySymbol}
+                    {total}
+                  </span>
+                </div>
+                <button
+                  type="submit"
+                  form="checkout-form"
+                  disabled={!canPlaceOrder}
+                  className="w-full rounded-xl bg-[#00be62] px-4 py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {isPlacingOrder ? "Placing Order..." : "Place Order"}
+                </button>
+              </div>
+            ) : null}
           </aside>
         </div>
       </Container>

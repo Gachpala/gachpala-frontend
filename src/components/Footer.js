@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 import { inter, openSans } from "@/lib/fonts";
 import Container from "./container";
 import Link from "next/link";

@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import { IoIosArrowRoundForward } from "react-icons/io";
 
-export default function ({ bannerText, bannerTextSpan }) {
+export default function BannerSliderItem({ bannerText, bannerTextSpan }) {
   return (
     <div className="flex flex-col-reverse md:flex-row justify-center items-center gap-4 md:gap-8 lg:gap-10 cursor-grab mx-2 sm:mx-4 md:mx-2 lg:mx-8 xl:mx-0">
       <div className="pt-2.5 md:pt-[30px] lg:pt-10 xl:pt-[50px]">
@@ -27,10 +28,12 @@ export default function ({ bannerText, bannerTextSpan }) {
       <div className="flex justify-center gap-2 md:gap-6 items-start -z-50! w-full md:w-auto">
         <img
           src={`/banner1.png`}
+          alt="Featured indoor plant"
           className="h-[220px] sm:h-[280px] md:h-80 lg:h-[420px] xl:h-[601px] 2xl:h-[701px] w-auto"
         />
         <img
           src={`/bannerS1.png`}
+          alt="Decorative plant"
           className="w-[90px] sm:w-[100px] md:w-[100px] lg:w-[150px] xl:w-[150px] 2xl:w-[170px] mt-5 md:mt-10 lg:mt-10 xl:mt-12 2xl:mt-14"
         />
       </div>

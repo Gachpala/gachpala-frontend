@@ -38,7 +38,7 @@ export default function ShopContents() {
     };
 
     fetchProducts();
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (isLoading) return;

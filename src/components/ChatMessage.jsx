@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable @next/next/no-img-element */
+import React, { useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import TreeCard from "./TreeCard.jsx";
 
 const ChatMessage = ({ message, ref }) => {
   const isBot = message.role === "model";
-  const [formattedTime, setFormattedTime] = useState("");
-
-  useEffect(() => {
-    if (message.timestamp) {
-      const date =
-        typeof message.timestamp === "string"
-          ? new Date(message.timestamp)
-          : message.timestamp;
-      setFormattedTime(
-        date.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      );
-    }
+  const formattedTime = useMemo(() => {
+    if (!message.timestamp) return "";
+    const date =
+      typeof message.timestamp === "string"
+        ? new Date(message.timestamp)
+        : message.timestamp;
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   }, [message.timestamp]);
 
   return (

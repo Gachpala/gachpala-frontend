@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 import React, { useState, useRef, useEffect } from "react";
 import { Send, Leaf, Menu, X, ArrowRight, Flame, Trash2 } from "lucide-react";
 import {

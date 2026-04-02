@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { inter, openSans } from "@/lib/fonts";
 
 export default function Journey() {
@@ -44,12 +45,12 @@ export default function Journey() {
               a passion for greenery and sustainable living.
             </p>
             <p>
-              We realized that finding quality plants and gardening tools wasn't
-              just hard—it was intimidating for beginners. We wanted to change
-              that.
+              We realized that finding quality plants and gardening tools was
+              not just hard—it was intimidating for beginners. We wanted to
+              change that.
             </p>
             <p>
-              Today, GachPala is more than just a marketplace; it's a community
+              Today, GachPala is more than just a marketplace; it is a community
               of plant lovers. We connect local nurseries with enthusiasts
               across the country, ensuring that every plant finds a loving home.
             </p>

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";

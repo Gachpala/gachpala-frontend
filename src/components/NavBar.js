@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 import { arapey, inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -26,7 +27,6 @@ const CART_UPDATED_EVENT = "gachpala:cart-updated";
 export default function Home() {
   const router = useRouter();
   const cartItems = useSelector((state) => state.products.cart);
-  const [isHydrated, setIsHydrated] = useState(false);
   const [cartCount, setCartCount] = useState(cartItems?.length || 0);
   const listItems =
     "xl:text-[17px] lg:text-[17px] text-[13px] md:text-[14px] text-[#58575B] font-normal ";
@@ -74,10 +74,6 @@ export default function Home() {
     setSignInUp(false);
     router.push("/");
   };
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
 
   useEffect(() => {
     const fetchCartCount = async () => {
@@ -151,7 +147,7 @@ export default function Home() {
     };
   }, [cartItems]);
 
-  const displayedCartCount = isHydrated ? cartCount : 0;
+  const displayedCartCount = cartCount;
 
   // const handleToogleDetails = () => {
   //   setToogleProfile((prev) => !prev); laterrrrrrrrrrrrr
@@ -233,15 +229,20 @@ export default function Home() {
           </div>
           <ul className=" flex flex-row justify-center items-center xl:gap-5 lg:gap-5 gap-3 sm:gap-4 ">
             <li className={`${listItemsSec} relative`}>
-              <GoSearch
+              <button
+                type="button"
                 onClick={handleOpenSearch}
-                className=" xl:text-[24px] lg:text-[24px] text-[18px] sm:text-[20px] text-[#58575B] cursor-pointer "
-              />
+                aria-label="Open search"
+                className="flex items-center justify-center"
+              >
+                <GoSearch className=" xl:text-[24px] lg:text-[24px] text-[18px] sm:text-[20px] text-[#58575B] cursor-pointer " />
+              </button>
             </li>
             <li className=" relative ">
               <button
                 onClick={handleToogleSignInUp}
                 className={`${listItemsSec} block `}
+                aria-label="Open account options"
               >
                 <BiUser className=" xl:text-[24px] lg:text-[24px] text-[18px] sm:text-[20px] text-[#58575B] " />
               </button>
@@ -291,22 +292,28 @@ export default function Home() {
                 </div>
               </motion.div>
             </li>
-            <Link href="/favourite">
-              <li>
+            <li>
+              <Link href="/favourite" aria-label="Go to favorites">
                 <FaRegHeart className=" xl:text-[22px] lg:text-[22px] text-[18px] sm:text-[20px] text-[#58575B]" />
-              </li>
-            </Link>
+              </Link>
+            </li>
 
-            <Link href="/cart" className=" relative">
-              <li className={`${listItemsSec} `}>
+            <li className={`${listItemsSec} relative`}>
+              <Link href="/cart" className="relative" aria-label="Go to cart">
                 <HiOutlineShoppingBag className=" xl:text-[24px] lg:text-[24px] text-[18px] sm:text-[20px] text-[#58575B] " />
-              </li>
-              <div className=" text-[10px] sm:text-[12px] text-white bg-[#588456] w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full flex justify-center items-center absolute left-2.5 top-2.5 sm:left-3 sm:top-3 ">
-                <span suppressHydrationWarning>{displayedCartCount}</span>
-              </div>
-            </Link>
+                <div className=" text-[10px] sm:text-[12px] text-white bg-[#588456] w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full flex justify-center items-center absolute left-2.5 top-2.5 sm:left-3 sm:top-3 ">
+                  <span suppressHydrationWarning>{displayedCartCount}</span>
+                </div>
+              </Link>
+            </li>
             <li className={` xl:hidden lg:hidden md:hidden block `}>
-              <CiMenuBurger onClick={handleToggle} className=" text-[18px] " />
+              <button
+                type="button"
+                onClick={handleToggle}
+                aria-label="Toggle mobile menu"
+              >
+                <CiMenuBurger className=" text-[18px] " />
+              </button>
             </li>
           </ul>
         </div>
@@ -328,10 +335,14 @@ export default function Home() {
                 placeholder="Search for plants..."
                 className={`${openSans.className} w-full bg-gray-50 py-3 pl-11 pr-10 rounded-full text-base outline-none focus:ring-2 focus:ring-green-500/20 transition-all text-gray-700 placeholder-gray-400`}
               />
-              <FiX
-                className="absolute right-4 text-lg text-gray-400 hover:text-red-500 transition-colors"
+              <button
+                type="button"
+                className="absolute right-4"
                 onClick={() => setOpenSearch(false)}
-              />
+                aria-label="Close search"
+              >
+                <FiX className="text-lg text-gray-400 hover:text-red-500 transition-colors" />
+              </button>
             </div>
           </div>
         </motion.div>

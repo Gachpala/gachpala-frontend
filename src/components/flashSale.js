@@ -1,32 +1,25 @@
 "use client";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import Container from "./container";
 import Product from "./product";
 import ProductSkeleton from "./productSkeleton";
 import { IoFlash } from "react-icons/io5";
-import ReactDOM from "react-dom";
 import Countdown from "react-countdown";
 
+const COUNTDOWN_END_TIME = new Date("2026-04-05 23:59:59 UTC").getTime();
+
+function Completionist() {
+  return <span>Flash Sale is over!</span>;
+}
+
 export default function FlashSale({ products }) {
-  const [isLoading, setIsLoading] = useState(
-    !products || products.length === 0,
-  );
-
-  useEffect(() => {
-    if (products && products.length > 0) {
-      setIsLoading(false);
-    }
-  }, [products]);
-
-  const COUNTDOWN_END_TIME = new Date("2026-04-05 23:59:59 UTC");
+  const isLoading = !products || products.length === 0;
 
   const countdownDate = useMemo(() => {
-    return COUNTDOWN_END_TIME.getTime();
+    return COUNTDOWN_END_TIME;
   }, []);
-
-  const Completionist = () => <span>Flash Sale is over!</span>;
 
   return (
     <section className="py-8 bg-white border-b border-gray-100">

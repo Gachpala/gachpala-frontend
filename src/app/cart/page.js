@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 import Container from "@/components/container";
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
@@ -252,7 +253,7 @@ export default function Cart() {
               Your Cart is Empty
             </h2>
             <p className={`${openSans.className} text-[#607066] mb-8`}>
-              Looks like you haven't added anything to your cart yet.
+              Looks like you have not added anything to your cart yet.
             </p>
             <Link
               href="/shop"

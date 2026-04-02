@@ -1,21 +1,12 @@
 "use client";
 import { inter, openSans, interSec } from "@/lib/fonts";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 import { BsArrowRight } from "react-icons/bs";
 import Product from "./product";
 import ProductSkeleton from "./productSkeleton";
 
 export default function Arrival({ products }) {
-  const [isLoading, setIsLoading] = useState(
-    !products || products.length === 0,
-  );
-
-  useEffect(() => {
-    if (products && products.length > 0) {
-      setIsLoading(false);
-    }
-  }, [products]);
+  const isLoading = !products || products.length === 0;
 
   return (
     <section className=" py-10 select-none ">

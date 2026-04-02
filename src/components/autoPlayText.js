@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 import { inter, openSans } from "@/lib/fonts";
 import React from "react";
 import Marquee from "react-fast-marquee";

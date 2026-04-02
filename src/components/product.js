@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -105,7 +106,6 @@ const ProductCard = ({
           dimensions,
         };
         dispatch(cartReducer(newItem));
-        console.log("Added to cart:", title, "ID:", id);
 
         setIsCartAdded(true);
       } catch (error) {
@@ -141,7 +141,6 @@ const ProductCard = ({
         }
 
         dispatch(removeFromFavorites(id));
-        console.log("Removed from favorites:", title, "ID:", id);
       } else {
         const response = await fetch(`${API_BASE_URL}/wishlist`, {
           method: "POST",
@@ -174,7 +173,6 @@ const ProductCard = ({
           dimensions,
         };
         dispatch(addToFavorites(newItem));
-        console.log("Added to favorites:", title, "ID:", id);
       }
     }, "product-card:wishlist");
   };

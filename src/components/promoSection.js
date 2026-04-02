@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import Container from "./container";

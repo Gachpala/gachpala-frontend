@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { arapey, inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import BannerSlider from "./bannerSLider";

@@ -5,7 +5,7 @@ import HeroSection from "@/components/heroSection";
 import CategorySection from "@/components/categorySection";
 import BestCollection from "@/components/bestCollection";
 import AutoPlayText from "@/components/autoPlayText";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { productReducer } from "@/app/slices/products_slices";
@@ -13,26 +13,26 @@ import { API_BASE_URL } from "@/app/config";
 
 export default function Landing() {
   const [allProducts, setAllProducts] = useState([]);
-  let dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  async function getAllProducts() {
+  const getAllProducts = useCallback(async () => {
     try {
-      let data = await axios.get(`${API_BASE_URL}/products`);
+      const data = await axios.get(`${API_BASE_URL}/products`);
       setAllProducts(data.data);
-      console.log(data);
       dispatch(productReducer(data.data));
     } catch (error) {
       console.error("Error fetching products:", error);
     }
-  }
-
-  useEffect(() => {
-    getAllProducts();
   }, [dispatch]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    getAllProducts();
+  }, [getAllProducts]);
+
+  useEffect(() => {
     scrollTo(0, 0);
-  });
+  }, []);
 
   return (
     <div className=" -z-50 min-h-screen">

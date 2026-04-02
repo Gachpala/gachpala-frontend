@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 import { inter } from "@/lib/fonts";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,7 +23,11 @@ export default function AIButton() {
         className="w-12 rounded-full hover:w-15 duration-400 ease-in-out delay-75 z-50 "
         alt="NiM logo"
       />
-      <p className={` ${inter.className} w-30 text-black absolute -left-10 top-[50%] translate-y-[-50%] -z-20 pointer-events-none `} >Ask NIM</p>
+      <p
+        className={` ${inter.className} w-30 text-black absolute -left-10 top-[50%] translate-y-[-50%] -z-20 pointer-events-none `}
+      >
+        Ask NIM
+      </p>
     </Link>
   );
 }
