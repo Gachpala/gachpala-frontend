@@ -3,7 +3,7 @@ import Container from "@/components/container";
 import Product from "@/components/product";
 import ProductSkeleton from "@/components/productSkeleton";
 import { inter, interSec } from "@/lib/fonts";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { productReducer } from "@/app/slices/products_slices";
@@ -11,52 +11,68 @@ import { useSearchParams } from "next/navigation";
 import { API_BASE_URL } from "@/app/config";
 
 export default function ShopContents() {
-  let productData = useSelector((state) => state.products.product);
   const dispatch = useDispatch();
   const searchParams = useSearchParams();
   const selectedCategory = searchParams.get("category");
+  const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(!productData);
+  const [isLoading, setIsLoading] = useState(true);
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 20;
 
-  console.log(productData, selectedCategory);
-
   useEffect(() => {
     const fetchProducts = async () => {
-      if (!productData) {
-        try {
-          setIsLoading(true);
-          let data = await axios.get(`${API_BASE_URL}/products`);
-          dispatch(productReducer(data.data));
-        } catch (error) {
-          console.error("Failed to fetch products:", error);
-          setIsLoading(false);
-        }
+      try {
+        setIsLoading(true);
+        const response = await axios.get(`${API_BASE_URL}/products`);
+        const products = Array.isArray(response.data) ? response.data : [];
+        setAllProducts(products);
+        dispatch(productReducer(products));
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        setAllProducts([]);
+      } finally {
+        setIsLoading(false);
       }
     };
+
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    if (isLoading) return;
+    if (typeof window === "undefined") return;
+
+    const saved = sessionStorage.getItem("shopScrollY");
+    if (!saved) return;
+
+    const y = Number(saved);
+    if (!Number.isNaN(y)) {
+      // Delay one frame so layout has settled before scrolling.
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: y, behavior: "auto" });
+      });
+    }
+
+    sessionStorage.removeItem("shopScrollY");
+  }, [isLoading, filteredProducts.length]);
+
   // Filter products based on selected category and update loading state
   useEffect(() => {
-    if (productData) {
-      if (selectedCategory) {
-        const filtered = productData.filter(
-          (product) =>
-            product.category_name &&
-            product.category_name.toLowerCase() ===
-              selectedCategory.toLowerCase(),
-        );
-        setFilteredProducts(filtered);
-      } else {
-        setFilteredProducts(productData);
-      }
-      setIsLoading(false);
-      setCurrentPage(1); // Reset to first page on filter change
+    if (selectedCategory) {
+      const filtered = allProducts.filter(
+        (product) =>
+          product.category_name &&
+          product.category_name.toLowerCase() ===
+            selectedCategory.toLowerCase(),
+      );
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(allProducts);
     }
-  }, [productData, selectedCategory]);
+    setCurrentPage(1); // Reset to first page on filter change
+  }, [allProducts, selectedCategory]);
 
   // Pagination calculations
   const totalProducts = filteredProducts.length;
@@ -64,6 +80,8 @@ export default function ShopContents() {
   const startIdx = (currentPage - 1) * productsPerPage;
   const endIdx = startIdx + productsPerPage;
   const currentProducts = filteredProducts.slice(startIdx, endIdx);
+  const displayStart = totalProducts === 0 ? 0 : startIdx + 1;
+  const displayEnd = Math.min(endIdx, totalProducts);
 
   return (
     <section>
@@ -79,8 +97,7 @@ export default function ShopContents() {
               home / <span className="text-gray-600">shop</span>
             </p>
             <p className="mt-2 text-gray-700 text-sm">
-              Showing {startIdx + 1}-{Math.min(endIdx, totalProducts)} of{" "}
-              {totalProducts} products
+              Showing {displayStart}-{displayEnd} of {totalProducts} products
             </p>
           </div>
         </Container>

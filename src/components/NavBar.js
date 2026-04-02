@@ -1,14 +1,13 @@
 "use client";
 import { arapey, inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BiUser } from "react-icons/bi";
 import { CiMenuBurger } from "react-icons/ci";
 import { FiLogOut, FiX } from "react-icons/fi";
 import { HiOutlineShoppingBag, HiShoppingBag } from "react-icons/hi";
 import { LiaSearchSolid } from "react-icons/lia";
 import { easeOut, motion } from "framer-motion";
-import { pre } from "framer-motion/client";
 import { FaRegHeart } from "react-icons/fa";
 import { GoSearch } from "react-icons/go";
 import { useSelector } from "react-redux";
@@ -25,6 +24,7 @@ import {
 export default function Home() {
   const router = useRouter();
   const cartItems = useSelector((state) => state.products.cart);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [cartCount, setCartCount] = useState(cartItems?.length || 0);
   const listItems =
     "xl:text-[17px] lg:text-[17px] text-[13px] md:text-[14px] text-[#58575B] font-normal ";
@@ -72,6 +72,10 @@ export default function Home() {
     setSignInUp(false);
     router.push("/");
   };
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   useEffect(() => {
     const fetchCartCount = async () => {
@@ -132,6 +136,8 @@ export default function Home() {
       window.removeEventListener(AUTH_MODAL_EVENT, handleOpenAuthModal);
     };
   }, [cartItems]);
+
+  const displayedCartCount = isHydrated ? cartCount : 0;
 
   // const handleToogleDetails = () => {
   //   setToogleProfile((prev) => !prev); laterrrrrrrrrrrrr
@@ -282,7 +288,7 @@ export default function Home() {
                 <HiOutlineShoppingBag className=" xl:text-[24px] lg:text-[24px] text-[18px] sm:text-[20px] text-[#58575B] " />
               </li>
               <div className=" text-[10px] sm:text-[12px] text-white bg-[#588456] w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full flex justify-center items-center absolute left-2.5 top-2.5 sm:left-3 sm:top-3 ">
-                {cartCount}
+                <span suppressHydrationWarning>{displayedCartCount}</span>
               </div>
             </Link>
             <li className={` xl:hidden lg:hidden md:hidden block `}>

@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import {
   cartReducer,
   addToFavorites,
@@ -27,11 +28,12 @@ const ProductCard = ({
   dimensions,
   className,
 }) => {
-  const [isActive, setIsActive] = useState(false);
+  const router = useRouter();
   const [isCartAdded, setIsCartAdded] = useState(false);
+  const [isCartAnimating, setIsCartAnimating] = useState(false);
+  const [isCartSubmitting, setIsCartSubmitting] = useState(false);
   const [usePlaceholder, setUsePlaceholder] = useState(!img);
   const dispatch = useDispatch();
-  const reduxProducts = useSelector((state) => state.products.product);
   const favorites = useSelector((state) => state.products.favorites);
   const isFavorited = favorites?.some((item) => item.id === id) || false;
 
@@ -44,58 +46,73 @@ const ProductCard = ({
     }
   }, [isCartAdded]);
 
-  const handleCartButton = () => {
-    setIsActive((prev) => !prev);
-  };
+  useEffect(() => {
+    if (isCartAnimating) {
+      const timer = setTimeout(() => {
+        setIsCartAnimating(false);
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [isCartAnimating]);
 
   const handleAddToCart = async (e) => {
     e.stopPropagation();
+    if (isCartSubmitting) return;
+
+    setIsCartAnimating(true);
 
     requireAuthOrRun(async () => {
-      const token = localStorage.getItem(AUTH_TOKEN_KEY);
-      if (!token) return;
+      setIsCartSubmitting(true);
+      try {
+        const token = localStorage.getItem(AUTH_TOKEN_KEY);
+        if (!token) return;
 
-      const payload = {
-        product_id: id,
-        quantity: 1,
-      };
+        const payload = {
+          product_id: id,
+          quantity: 1,
+        };
 
-      const response = await fetch(`${API_BASE_URL}/cart`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+        const response = await fetch(`${API_BASE_URL}/cart`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
 
-      if (!response.ok) {
-        const text = await response.text();
-        console.error("Add to cart failed:", text || response.status);
-        return;
+        if (!response.ok) {
+          const text = await response.text();
+          console.error("Add to cart failed:", text || response.status);
+          return;
+        }
+
+        const newItem = {
+          id,
+          name: title,
+          price: parseFloat(price),
+          quantity: 1,
+          image: img,
+          size: "Standard",
+          description,
+          stock,
+          category_id,
+          category_name,
+          is_featured,
+          created_at,
+          status,
+          weight,
+          dimensions,
+        };
+        dispatch(cartReducer(newItem));
+        console.log("Added to cart:", title, "ID:", id);
+
+        setIsCartAdded(true);
+      } catch (error) {
+        console.error("Add to cart request failed:", error);
+      } finally {
+        setIsCartSubmitting(false);
       }
-
-      const newItem = {
-        id,
-        name: title,
-        price: parseFloat(price),
-        quantity: 1,
-        image: img,
-        size: "Standard",
-        description,
-        stock,
-        category_id,
-        category_name,
-        is_featured,
-        created_at,
-        status,
-        weight,
-        dimensions,
-      };
-      dispatch(cartReducer(newItem));
-      console.log("Added to cart:", title, "ID:", id);
-
-      setIsCartAdded(true);
     }, "product-card:add-to-cart");
   };
 
@@ -164,25 +181,20 @@ const ProductCard = ({
 
   const handleDetails = (e) => {
     e.stopPropagation();
-    window.location.href = `/productDetails?id=${id}`;
-  };
-  const placeholder = "/plant-placeholder.png";
-  // Choose src based on whether we should force placeholder
-  let imageSrc = usePlaceholder ? placeholder : img;
-  // Prepend base URL only for real product images that are relative
-  if (!usePlaceholder && imageSrc && imageSrc.startsWith("/")) {
-    imageSrc = `${API_BASE_URL}${imageSrc}`;
-  }
-  const isPlaceholder = usePlaceholder;
-
-  const handleImgError = () => {
-    if (!usePlaceholder) {
-      setUsePlaceholder(true);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("shopScrollY", String(window.scrollY));
     }
+    router.push(`/productDetails?id=${id}`);
   };
-  const imageContainerClass = `relative w-full aspect-[4/5] rounded-2xl overflow-hidden flex items-center justify-center ${
-    isPlaceholder ? "bg-gray-50" : "bg-gray-100"
-  }`;
+
+  const placeholder = "/plant-placeholder.png";
+  const imageSrc = useMemo(() => {
+    const src = usePlaceholder ? placeholder : img;
+    if (!usePlaceholder && src && src.startsWith("/")) {
+      return `${API_BASE_URL}${src}`;
+    }
+    return src || placeholder;
+  }, [img, usePlaceholder]);
 
   const textShorter = (text, maxLength) => {
     if (!text) return "";
@@ -191,8 +203,15 @@ const ProductCard = ({
       : text;
   };
 
+  const shortDescription = useMemo(
+    () => textShorter(description, 55),
+    [description],
+  );
+
+  const hasStock = Number(stock) > 0;
+
   return (
-    <div
+    <article
       onClick={handleDetails}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -202,61 +221,29 @@ const ProductCard = ({
       }}
       role="button"
       tabIndex={0}
-      className={` group w-full md:w-75 h-auto md:h-100 max-w-[420px] bg-[#f8f8f8] rounded-2xl p-3 sm:p-4 shadow-xl transition-all duration-300 z-10 relative cursor-pointer ${className} `}
+      aria-label={`View details for ${title}`}
+      className={`group w-full h-full min-h-[300px] sm:min-h-[360px] bg-[#f8f8f8] border border-[#eef0ea] rounded-2xl p-2.5 sm:p-3 shadow-[0_8px_22px_rgba(0,0,0,0.08)] transition-all duration-300 relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00be62]/35 hover:shadow-[0_14px_32px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 ${className || ""}`}
     >
-      {/* Image & Badges Section */}
-      <div className="relative bg-[#ebebeb] rounded-2xl flex flex-col justify-between overflow-hidden">
-        {/* Discount Badge */}
-        <div
-          className="absolute top-2 left-2 z-50 bg-[#00be62] text-white rounded-full w-12 h-12 flex flex-col items-center justify-center
-         text-sm font-bold leading-tight shadow-sm"
-        >
-          <span>15%</span>
-          <span>OFF</span>
-        </div>
+      <div className="flex h-full flex-col gap-2.5 sm:gap-3">
+        <div className="relative overflow-hidden rounded-xl bg-[#ebebeb]">
+          {is_featured ? (
+            <span className="absolute left-2 top-2 z-20 rounded-full bg-[#00be62] px-2 py-1 text-[10px] font-bold tracking-wide text-white shadow-sm sm:left-3 sm:top-3 sm:text-xs">
+              Featured
+            </span>
+          ) : null}
 
-        {/* Cutout Price Corner */}
-        <div className="absolute top-0 right-0 z-50 bg-[#f8f8f8] rounded-bl-[2.5rem] px-5 py-5">
-          {/* FIX: Added `relative z-10` here. 
-              This forces the text to sit ABOVE the shadows cast by the corner helpers below. 
-            */}
-          <div className="relative z-10 text-xl font-medium text-[#2b2b2b]">
-            {price} <span className=" text-sm text-[#00be62] ">BDT</span>
-          </div>
-
-          {/* Smooth Curve - Top Left */}
-          <div className="absolute top-0 -left-8 w-8 h-8 bg-transparent rounded-tr-4xl shadow-[1rem_-1rem_0_1rem_#f8f8f8] pointer-events-none "></div>
-
-          {/* Smooth Curve - Bottom Right */}
-          <div className="absolute -bottom-8 right-0 w-8 h-8 bg-transparent rounded-tr-4xl shadow-[1rem_-1rem_0_1rem_#f8f8f8] pointer-events-none "></div>
-        </div>
-
-        {/* Product Image */}
-        <div className="flex justify-center items-center">
-          <img
-            src={imageSrc}
-            alt={alt}
-            onError={(e) => {
-              e.target.src = "/plant-placeholder.png";
-            }}
-            className="w-full h-40 sm:h-50 object-cover rounded-xl drop-shadow-2xl scale-100 group-hover:scale-105 duration-300 ease-out "
-          />
-        </div>
-      </div>
-
-      <div className="pt-2 px-2 sm:px-3">
-        <div className="flex justify-between items-end mb-1 ">
-          <h2 className="text-lg sm:text-2xl font-medium text-black tracking-tight line-clamp-1">
-            {title}
-          </h2>
           <button
             type="button"
             onClick={handleAddToFavorites}
-            aria-label="Add to wishlist"
-            className={`p-1.5 rounded-full transition-colors shrink-0 mb-1 ${
+            title={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
+            aria-pressed={isFavorited}
+            aria-label={
+              isFavorited ? "Remove from wishlist" : "Add to wishlist"
+            }
+            className={`absolute right-2 top-2 z-20 rounded-full border p-2 min-h-10 min-w-10 flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00be62]/35 sm:right-3 sm:top-3 ${
               isFavorited
-                ? "text-[#c00000] bg-red-50"
-                : "text-black hover:text-[#c00000] hover:bg-gray-100"
+                ? "border-red-100 bg-red-50 text-[#c00000]"
+                : "border-white/70 bg-white/80 text-black hover:text-[#c00000]"
             }`}
           >
             <svg
@@ -265,7 +252,7 @@ const ProductCard = ({
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6"
+              className="h-5 w-5 sm:h-6 sm:w-6"
             >
               <path
                 strokeLinecap="round"
@@ -274,30 +261,69 @@ const ProductCard = ({
               />
             </svg>
           </button>
+
+          <img
+            src={imageSrc}
+            alt={alt || title}
+            loading="lazy"
+            decoding="async"
+            onError={() => setUsePlaceholder(true)}
+            className="h-36 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 sm:h-44 md:h-48"
+          />
+
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/35 to-transparent p-2.5 sm:p-3">
+            <p className="inline-flex rounded-full bg-white/90 px-2 py-1 text-[10px] font-semibold text-neutral-700 sm:text-xs">
+              {category_name || "Plant"}
+            </p>
+          </div>
         </div>
 
-        {/* Description */}
-        <p className="text-gray-800 text-sm sm:text-md leading-snug mb-4 pr-2 sm:pr-4">
-          {textShorter(description, 55)}
-        </p>
+        <div className="flex flex-1 flex-col px-1 sm:px-2">
+          <div className="mb-1.5 flex items-start justify-between gap-2 sm:mb-2">
+            <h2 className="line-clamp-1 text-[15px] font-semibold leading-tight text-[#1f1f1f] sm:text-lg">
+              {title}
+            </h2>
+            <p className="shrink-0 rounded-full bg-[#e7f7ef] px-2 py-1 text-[11px] font-semibold text-[#009a52] sm:text-xs">
+              {hasStock ? `${stock} in stock` : "Out of stock"}
+            </p>
+          </div>
 
-        {/* Stock Info */}
-        <div className="text-black text-sm">
-          <span className="font-semibold">Available Stock:</span> {stock}
+          <p className="line-clamp-2 min-h-10 text-[12px] leading-relaxed text-neutral-600 sm:min-h-11 sm:text-[13px]">
+            {shortDescription || "Healthy plant from Gachpala collection."}
+          </p>
+
+          <div className="mt-2 flex items-center justify-between sm:mt-3">
+            <p className="text-base font-bold text-[#2b2b2b] sm:text-lg">
+              {price}{" "}
+              <span className="text-[11px] font-medium text-[#00be62] sm:text-xs">
+                BDT
+              </span>
+            </p>
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={isCartSubmitting || !hasStock}
+              aria-live="polite"
+              className={`min-h-10 rounded-full px-3 py-2 text-[12px] font-semibold text-white shadow-md transition-[background-color,transform,box-shadow,opacity] duration-300 ease-out sm:min-h-11 sm:px-4 sm:text-sm ${
+                hasStock
+                  ? "bg-[#00be62] hover:bg-green-600"
+                  : "bg-neutral-400 cursor-not-allowed"
+              } active:scale-[0.98] disabled:opacity-75 motion-reduce:transform-none ${
+                isCartAnimating ? "animate-cart-bump" : ""
+              }`}
+            >
+              {isCartSubmitting
+                ? "Adding..."
+                : isCartAdded
+                  ? "Added"
+                  : hasStock
+                    ? "Add to Cart"
+                    : "Unavailable"}
+            </button>
+          </div>
         </div>
       </div>
-      <div className="mt-4 md:mt-0 md:absolute left-0 md:-bottom-5 w-full h-12 md:h-14">
-        <button
-          type="button"
-          onClick={handleAddToCart}
-          className="w-full h-full bg-[#00be62] text-white font-semibold text-sm sm:text-base md:text-lg py-2 md:py-3 rounded-xl md:rounded-b-2xl transition-colors shadow-md flex items-center justify-center
-           hover:bg-green-600 duration-400 ease-in-out "
-        >
-          Add to Cart
-        </button>
-      </div>
-      <div className=" w-7 h-7 bg-[#f8f9f9] absolute top-2 right-2 "> </div>
-    </div>
+    </article>
   );
 };
 
