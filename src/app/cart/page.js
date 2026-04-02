@@ -488,9 +488,12 @@ export default function Cart() {
                 </div>
               </div>
 
-              <button className="w-full bg-[#00be62] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#00a757] shadow-lg shadow-emerald-600/25 transition-all transform active:scale-95">
+              <Link
+                href="/checkout"
+                className="block w-full text-center bg-[#00be62] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#00a757] shadow-lg shadow-emerald-600/25 transition-all transform active:scale-95"
+              >
                 Proceed to Checkout
-              </button>
+              </Link>
 
               <div className="mt-6 flex items-center justify-center gap-2 opacity-60 grayscale">
                 <img

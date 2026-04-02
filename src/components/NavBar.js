@@ -21,6 +21,8 @@ import {
   isAuthenticated,
 } from "@/lib/authGate";
 
+const CART_UPDATED_EVENT = "gachpala:cart-updated";
+
 export default function Home() {
   const router = useRouter();
   const cartItems = useSelector((state) => state.products.cart);
@@ -130,10 +132,22 @@ export default function Home() {
       setToggle(false);
     };
 
+    const handleCartUpdated = (event) => {
+      const nextCount = Number(event?.detail?.count);
+      if (!Number.isNaN(nextCount)) {
+        setCartCount(nextCount);
+        return;
+      }
+
+      fetchCartCount();
+    };
+
     window.addEventListener(AUTH_MODAL_EVENT, handleOpenAuthModal);
+    window.addEventListener(CART_UPDATED_EVENT, handleCartUpdated);
 
     return () => {
       window.removeEventListener(AUTH_MODAL_EVENT, handleOpenAuthModal);
+      window.removeEventListener(CART_UPDATED_EVENT, handleCartUpdated);
     };
   }, [cartItems]);
 
