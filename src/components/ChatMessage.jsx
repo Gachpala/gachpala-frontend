@@ -1,9 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useMemo } from "react";
 import ReactMarkdown from "react-markdown";
+import { useRouter } from "next/navigation";
 import TreeCard from "./TreeCard.jsx";
 
 const ChatMessage = ({ message, ref }) => {
+  const router = useRouter();
   const isBot = message.role === "model";
   const formattedTime = useMemo(() => {
     if (!message.timestamp) return "";
@@ -16,6 +18,12 @@ const ChatMessage = ({ message, ref }) => {
       minute: "2-digit",
     });
   }, [message.timestamp]);
+
+  const handleRecommendationSelect = (product) => {
+    const productId = product?.id;
+    if (!productId) return;
+    router.push(`/productDetails?id=${encodeURIComponent(String(productId))}`);
+  };
 
   return (
     <div
@@ -105,7 +113,10 @@ const ChatMessage = ({ message, ref }) => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {message.relatedProducts.map((product) => (
                   <div key={product.id} className="h-full">
-                    <TreeCard product={product} />
+                    <TreeCard
+                      product={product}
+                      onSelect={handleRecommendationSelect}
+                    />
                   </div>
                 ))}
               </div>

@@ -1,0 +1,30 @@
+<svg width="1600" height="700" viewBox="0 0 1600 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Banner placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E8F5E9"/>
+      <stop offset="1" stop-color="#F4FAF1"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#00BE62"/>
+      <stop offset="1" stop-color="#1F7A4D"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="700" fill="url(#bg)"/>
+
+  <circle cx="1280" cy="120" r="160" fill="#CFEED7" opacity="0.6"/>
+  <circle cx="230" cy="620" r="210" fill="#DDF4E5" opacity="0.8"/>
+
+  <g opacity="0.95">
+    <ellipse cx="790" cy="332" rx="88" ry="120" fill="url(#leaf)" transform="rotate(-12 790 332)"/>
+    <ellipse cx="870" cy="338" rx="72" ry="98" fill="#35A76A" transform="rotate(16 870 338)"/>
+    <rect x="822" y="390" width="16" height="110" rx="8" fill="#2D7D53"/>
+  </g>
+
+  <text x="800" y="548" text-anchor="middle" fill="#24543E" font-family="Segoe UI, Arial, sans-serif" font-size="44" font-weight="700">
+    Banner Image Unavailable
+  </text>
+  <text x="800" y="590" text-anchor="middle" fill="#4E6A5A" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="500">
+    Please add a banner image in the admin panel.
+  </text>
+</svg>

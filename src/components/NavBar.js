@@ -1,12 +1,12 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import { arapey, inter, openSans } from "@/lib/fonts";
+import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { BiUser } from "react-icons/bi";
 import { CiMenuBurger } from "react-icons/ci";
 import { FiLogOut, FiX } from "react-icons/fi";
-import { HiOutlineShoppingBag, HiShoppingBag } from "react-icons/hi";
+import { HiOutlineShoppingBag } from "react-icons/hi";
 import { LiaSearchSolid } from "react-icons/lia";
 import { easeOut, motion } from "framer-motion";
 import { FaRegHeart } from "react-icons/fa";
@@ -27,10 +27,15 @@ const CART_UPDATED_EVENT = "gachpala:cart-updated";
 export default function Home() {
   const router = useRouter();
   const cartItems = useSelector((state) => state.products.cart);
-  const [cartCount, setCartCount] = useState(cartItems?.length || 0);
-  const listItems =
-    "xl:text-[17px] lg:text-[17px] text-[13px] md:text-[14px] text-[#58575B] font-normal ";
-  const listItemsSec = " text-[18px] md:text-[20px] text-[#111111] ";
+  const getLocalCartCount = () => {
+    if (!Array.isArray(cartItems) || !cartItems.length) return 0;
+    return cartItems.reduce(
+      (acc, item) => acc + Number(item?.quantity || 1),
+      0,
+    );
+  };
+
+  const [cartCount, setCartCount] = useState(getLocalCartCount());
 
   const [toggle, setToggle] = React.useState(false);
   const [toogleProfile, setToogleProfile] = React.useState(false);
@@ -81,7 +86,7 @@ export default function Home() {
 
       const token = localStorage.getItem(AUTH_TOKEN_KEY);
       if (!token) {
-        setCartCount(0);
+        setCartCount(getLocalCartCount());
         return;
       }
 
@@ -105,14 +110,29 @@ export default function Home() {
         }
 
         if (!response.ok) {
-          setCartCount(cartItems?.length || 0);
+          setCartCount(getLocalCartCount());
           return;
         }
 
-        const count = Number(data?.summary?.items_count ?? 0);
-        setCartCount(Number.isNaN(count) ? 0 : count);
+        const countFromSummary = Number(data?.summary?.items_count);
+        const countFromRoot = Number(data?.items_count);
+        const countFromItems = Array.isArray(data?.items)
+          ? data.items.reduce(
+              (acc, item) => acc + Number(item?.quantity || 1),
+              0,
+            )
+          : NaN;
+
+        const candidates = [countFromSummary, countFromRoot, countFromItems];
+        const resolvedCount = candidates.find(
+          (value) => Number.isFinite(value) && value >= 0,
+        );
+
+        setCartCount(
+          Number.isFinite(resolvedCount) ? resolvedCount : getLocalCartCount(),
+        );
       } catch {
-        setCartCount(cartItems?.length || 0);
+        setCartCount(getLocalCartCount());
       }
     };
 
@@ -170,153 +190,188 @@ export default function Home() {
   // }, []);
 
   return (
-    <nav className=" relative z-50 select-none bg-[#f6f7f2] ">
-      <div className=" xl:py-[23.5px] lg:py-[23.5px] md:py-[23.5px] py-4 xl:px-10 lg:px-10 md:px-8 px-3 sm:px-4 flex flex-row justify-between items-center gap-3 ">
-        <Link href="/">
+    <nav className="sticky top-0 z-50 select-none border-b border-emerald-100/80 bg-[#f7fbf6]/90 backdrop-blur-md">
+      <div className="mx-auto flex w-full max-w-[1360px] items-center justify-between gap-3 px-3 py-3 md:px-6 md:py-4 xl:px-10">
+        <Link href="/" className="shrink-0">
           <img
             src="/logo.png"
             alt="gachpala_logo"
-            className=" 2xl:w-40 xl:w-36 lg:w-32 md:w-28 w-24 "
+            className="w-24 md:w-30 lg:w-34 xl:w-36"
           />
         </Link>
 
-        <div className=" flex justify-between items-center xl:gap-[120px] lg:gap-16 md:gap-7 ">
-          <div
-            className={` ${
-              toggle
-                ? " flex flex-col gap-2 justify-center items-center absolute left-0 top-12 bg-[#F6F7F2] pb-5 w-full "
-                : "hidden"
-            }  xl:flex lg:flex md:flex justify-center items-center xl:gap-[30px] lg:gap-5 md:gap-2 `}
+        <div className="hidden items-center rounded-full border border-emerald-200 bg-white px-2 py-1 shadow-sm md:flex">
+          <Link
+            href="/"
+            onClick={handleClose}
+            className="rounded-full px-4 py-2 text-sm font-medium text-[#40564a] transition hover:bg-[#eaf5ee] hover:text-[#1f7a4d]"
           >
+            Home
+          </Link>
+          <Link
+            href="/about"
+            onClick={handleClose}
+            className="rounded-full px-4 py-2 text-sm font-medium text-[#40564a] transition hover:bg-[#eaf5ee] hover:text-[#1f7a4d]"
+          >
+            About
+          </Link>
+          <Link
+            href="/shop"
+            onClick={handleClose}
+            className="rounded-full px-4 py-2 text-sm font-medium text-[#40564a] transition hover:bg-[#eaf5ee] hover:text-[#1f7a4d]"
+          >
+            Shop
+          </Link>
+          <a
+            href="mailto:gachpala.business@gmail.com?subject=Inquiry%20from%20Gachpala&body=Hi%2C%20I%20want%20to%20know%20more%20about%20your%20products."
+            onClick={handleClose}
+            className="ml-1 rounded-full bg-[#00bf63] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#00a757]"
+          >
+            Contact
+          </a>
+        </div>
+
+        <ul className="flex items-center gap-1.5 sm:gap-2.5 md:gap-3">
+          <li>
+            <button
+              type="button"
+              onClick={handleOpenSearch}
+              aria-label="Open search"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-emerald-200 bg-white text-[#4e6559] transition hover:border-[#00be62] hover:text-[#00be62] md:h-10 md:w-10"
+            >
+              <GoSearch className="text-[18px]" />
+            </button>
+          </li>
+
+          <li className="relative">
+            <button
+              onClick={handleToogleSignInUp}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-emerald-200 bg-white text-[#4e6559] transition hover:border-[#00be62] hover:text-[#00be62] md:h-10 md:w-10"
+              aria-label="Open account options"
+            >
+              <BiUser className="text-[20px]" />
+            </button>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{
+                opacity: toogleProfile ? 1 : 0,
+                scale: toogleProfile ? 1 : 0.95,
+                y: toogleProfile ? 0 : -10,
+                display: toogleProfile ? "block" : "none",
+              }}
+              transition={{ duration: 0.2, ease: easeOut }}
+              className="absolute right-0 top-12 w-64 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl z-50 origin-top-right"
+            >
+              <div className="border-b border-gray-50 bg-gray-50/50 p-4">
+                <p className={`${inter.className} font-bold text-gray-900`}>
+                  Sakib Al Hasan
+                </p>
+                <p className={`${openSans.className} text-xs text-gray-500`}>
+                  sakib@example.com
+                </p>
+              </div>
+
+              <div className="p-2">
+                <Link
+                  href="/profile"
+                  onClick={() => setToogleProfile(false)}
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-green-50 hover:text-green-700"
+                >
+                  <BiUser /> My Profile
+                </Link>
+                <Link
+                  href="/profile"
+                  onClick={() => setToogleProfile(false)}
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-green-50 hover:text-green-700"
+                >
+                  <HiOutlineShoppingBag /> My Orders
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="w-full text-left flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50"
+                >
+                  <FiLogOut /> Sign Out
+                </button>
+              </div>
+            </motion.div>
+          </li>
+
+          <li>
+            <Link
+              href="/favourite"
+              aria-label="Go to favorites"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-emerald-200 bg-white text-[#4e6559] transition hover:border-[#00be62] hover:text-[#00be62] md:h-10 md:w-10"
+            >
+              <FaRegHeart className="text-[18px]" />
+            </Link>
+          </li>
+
+          <li className="relative">
+            <Link
+              href="/cart"
+              className="relative flex h-9 w-9 items-center justify-center rounded-full border border-emerald-200 bg-white text-[#4e6559] transition hover:border-[#00be62] hover:text-[#00be62] md:h-10 md:w-10"
+              aria-label="Go to cart"
+            >
+              <HiOutlineShoppingBag className="text-[19px]" />
+              <div className="absolute -right-1 -top-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-[#588456] text-[10px] text-white md:h-5 md:w-5 md:text-[11px]">
+                <span suppressHydrationWarning>{displayedCartCount}</span>
+              </div>
+            </Link>
+          </li>
+
+          <li className="md:hidden">
+            <button
+              type="button"
+              onClick={handleToggle}
+              aria-label="Toggle mobile menu"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-emerald-200 bg-white text-[#4e6559]"
+            >
+              <CiMenuBurger className="text-[18px]" />
+            </button>
+          </li>
+        </ul>
+
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{
+            height: toggle ? "auto" : 0,
+            opacity: toggle ? 1 : 0,
+          }}
+          transition={{ duration: 0.25, ease: easeOut }}
+          className="absolute left-0 right-0 top-full overflow-hidden border-t border-emerald-100 bg-white shadow-lg md:hidden"
+        >
+          <div className="flex flex-col gap-1 p-4">
             <Link
               href="/"
               onClick={handleClose}
-              className={` ${
-                (openSans.className, listItems)
-              } bg-transparent px-3 hover:px-3 hover:text-white after:content-[''] after:w-0 after:h-full after:bg-[#00bf63] after:rounded-sm after:absolute after:left-0 after:bottom-0 hover:after:w-full hover:after:duration-300 hover:after:ease-out hover:after:-z-50 duration-150 ease-in z-50 relative`}
+              className="rounded-xl px-3 py-2 text-sm font-medium text-[#3f5649] hover:bg-[#edf7f1]"
             >
               Home
             </Link>
-
             <Link
               href="/about"
               onClick={handleClose}
-              className={` ${
-                (openSans.className, listItems)
-              } bg-transparent px-3 hover:px-3 hover:text-white after:content-[''] after:w-0 after:h-full after:bg-[#00bf63] after:rounded-sm after:absolute after:left-0 after:bottom-0 hover:after:w-full hover:after:duration-300 hover:after:ease-out hover:after:-z-50 duration-150 ease-in z-50 relative`}
+              className="rounded-xl px-3 py-2 text-sm font-medium text-[#3f5649] hover:bg-[#edf7f1]"
             >
               About
             </Link>
-
             <Link
               href="/shop"
               onClick={handleClose}
-              className={` ${
-                (openSans.className, listItems)
-              } bg-transparent px-3 hover:px-3 hover:text-white after:content-[''] after:w-0 after:h-full after:bg-[#00bf63] after:rounded-sm after:absolute after:left-0 after:bottom-0 hover:after:w-full hover:after:duration-300 hover:after:ease-out hover:after:-z-50 duration-150 ease-in z-50 relative`}
+              className="rounded-xl px-3 py-2 text-sm font-medium text-[#3f5649] hover:bg-[#edf7f1]"
             >
               Shop
             </Link>
-
             <a
               href="mailto:gachpala.business@gmail.com?subject=Inquiry%20from%20Gachpala&body=Hi%2C%20I%20want%20to%20know%20more%20about%20your%20products."
               onClick={handleClose}
-              className={` font-medium xl:text-[16.5px] lg:text-[16.5px] text-[13.5px] text-[#ffffff] bg-[#00bf63] xl:px-7 lg:px-7 md:px-4 px-3 xl:py-2 lg:py-2 py-1 border-2 border-[#00bf63]
-               rounded-lg hover:bg-transparent hover:border-[#00bf63] hover:text-[#00bf63] duration-300 ease-in-out `}
+              className="mt-1 rounded-xl bg-[#00bf63] px-3 py-2 text-center text-sm font-semibold text-white hover:bg-[#00a757]"
             >
               Contact
             </a>
           </div>
-          <ul className=" flex flex-row justify-center items-center xl:gap-5 lg:gap-5 gap-3 sm:gap-4 ">
-            <li className={`${listItemsSec} relative`}>
-              <button
-                type="button"
-                onClick={handleOpenSearch}
-                aria-label="Open search"
-                className="flex items-center justify-center"
-              >
-                <GoSearch className=" xl:text-[24px] lg:text-[24px] text-[18px] sm:text-[20px] text-[#58575B] cursor-pointer " />
-              </button>
-            </li>
-            <li className=" relative ">
-              <button
-                onClick={handleToogleSignInUp}
-                className={`${listItemsSec} block `}
-                aria-label="Open account options"
-              >
-                <BiUser className=" xl:text-[24px] lg:text-[24px] text-[18px] sm:text-[20px] text-[#58575B] " />
-              </button>
-
-              {/* Profile Dropdown */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                animate={{
-                  opacity: toogleProfile ? 1 : 0,
-                  scale: toogleProfile ? 1 : 0.95,
-                  y: toogleProfile ? 0 : -10,
-                  display: toogleProfile ? "block" : "none",
-                }}
-                transition={{ duration: 0.2, ease: easeOut }}
-                className="absolute right-0 top-12 w-64 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 origin-top-right"
-              >
-                <div className="p-4 border-b border-gray-50 bg-gray-50/50">
-                  <p className={`${inter.className} font-bold text-gray-900`}>
-                    Sakib Al Hasan
-                  </p>
-                  <p className={`${openSans.className} text-xs text-gray-500`}>
-                    sakib@example.com
-                  </p>
-                </div>
-
-                <div className="p-2">
-                  <Link
-                    href="/profile"
-                    onClick={() => setToogleProfile(false)}
-                    className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors"
-                  >
-                    <BiUser /> My Profile
-                  </Link>
-                  <Link
-                    href="/profile"
-                    onClick={() => setToogleProfile(false)}
-                    className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors"
-                  >
-                    <HiOutlineShoppingBag /> My Orders
-                  </Link>
-                  <button
-                    onClick={handleSignOut}
-                    className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left"
-                  >
-                    <FiLogOut /> Sign Out
-                  </button>
-                </div>
-              </motion.div>
-            </li>
-            <li>
-              <Link href="/favourite" aria-label="Go to favorites">
-                <FaRegHeart className=" xl:text-[22px] lg:text-[22px] text-[18px] sm:text-[20px] text-[#58575B]" />
-              </Link>
-            </li>
-
-            <li className={`${listItemsSec} relative`}>
-              <Link href="/cart" className="relative" aria-label="Go to cart">
-                <HiOutlineShoppingBag className=" xl:text-[24px] lg:text-[24px] text-[18px] sm:text-[20px] text-[#58575B] " />
-                <div className=" text-[10px] sm:text-[12px] text-white bg-[#588456] w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full flex justify-center items-center absolute left-2.5 top-2.5 sm:left-3 sm:top-3 ">
-                  <span suppressHydrationWarning>{displayedCartCount}</span>
-                </div>
-              </Link>
-            </li>
-            <li className={` xl:hidden lg:hidden md:hidden block `}>
-              <button
-                type="button"
-                onClick={handleToggle}
-                aria-label="Toggle mobile menu"
-              >
-                <CiMenuBurger className=" text-[18px] " />
-              </button>
-            </li>
-          </ul>
-        </div>
+        </motion.div>
 
         <motion.div
           initial={{ height: 0, opacity: 0 }}
@@ -325,15 +380,15 @@ export default function Home() {
             opacity: openSearch ? 1 : 0,
           }}
           transition={{ duration: 0.3, ease: easeOut }}
-          className="absolute top-full left-0 w-full bg-white shadow-lg overflow-hidden border-t border-gray-100 z-40"
+          className="absolute left-0 top-full w-full overflow-hidden border-t border-emerald-100 bg-white shadow-lg z-40"
         >
-          <div className="xl:px-10 lg:px-10 md:px-8 px-4 py-5 flex items-center justify-center">
-            <div className="w-full max-w-2xl relative flex items-center">
+          <div className="flex items-center justify-center px-4 py-5 md:px-8 lg:px-10 xl:px-10">
+            <div className="relative flex w-full max-w-2xl items-center">
               <LiaSearchSolid className="absolute left-4 text-lg text-gray-400" />
               <input
                 type="text"
                 placeholder="Search for plants..."
-                className={`${openSans.className} w-full bg-gray-50 py-3 pl-11 pr-10 rounded-full text-base outline-none focus:ring-2 focus:ring-green-500/20 transition-all text-gray-700 placeholder-gray-400`}
+                className={`${openSans.className} w-full rounded-full bg-gray-50 py-3 pl-11 pr-10 text-base text-gray-700 outline-none transition-all placeholder-gray-400 focus:ring-2 focus:ring-green-500/20`}
               />
               <button
                 type="button"
@@ -341,7 +396,7 @@ export default function Home() {
                 onClick={() => setOpenSearch(false)}
                 aria-label="Close search"
               >
-                <FiX className="text-lg text-gray-400 hover:text-red-500 transition-colors" />
+                <FiX className="text-lg text-gray-400 transition-colors hover:text-red-500" />
               </button>
             </div>
           </div>

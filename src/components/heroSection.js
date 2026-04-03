@@ -8,7 +8,7 @@ import { inter } from "@/lib/fonts";
 import Link from "next/link";
 import { API_BASE_URL } from "@/app/config";
 
-const PLACEHOLDER = "/plant-placeholder.png";
+const PLACEHOLDER = "/banner-placeholder.svg";
 
 export default function HeroSection() {
   const [banners, setBanners] = useState([]);
@@ -58,8 +58,23 @@ export default function HeroSection() {
 
   const resolveImage = (url) => {
     if (!url) return PLACEHOLDER;
-    if (url.startsWith("http")) return url;
-    return `${API_BASE_URL}${url}`;
+
+    const normalized = String(url).trim();
+    if (!normalized) return PLACEHOLDER;
+    if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+      return normalized;
+    }
+
+    // If backend returns a plain filename like "banner1.png", use public path.
+    if (!normalized.includes("/")) {
+      return `/${normalized}`;
+    }
+
+    if (normalized.startsWith("/")) {
+      return `${API_BASE_URL}${normalized}`;
+    }
+
+    return `${API_BASE_URL}/${normalized}`;
   };
 
   return (
@@ -79,6 +94,9 @@ export default function HeroSection() {
                     className="w-full h-full object-cover block"
                     alt={banner.title || `Banner ${i + 1}`}
                     loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.src = PLACEHOLDER;
+                    }}
                   />
                 </div>
               ),

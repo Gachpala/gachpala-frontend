@@ -206,7 +206,12 @@ const ProductCard = ({
     [description],
   );
 
-  const hasStock = Number(stock) > 0;
+  const hasStock = stock == null || Number(stock) > 0;
+  const stockLabel = hasStock
+    ? stock == null
+      ? "In stock"
+      : `${stock} in stock`
+    : "Out of stock";
 
   return (
     <article
@@ -282,7 +287,7 @@ const ProductCard = ({
               {title}
             </h2>
             <p className="shrink-0 rounded-full bg-[#e7f7ef] px-2 py-1 text-[11px] font-semibold text-[#009a52] sm:text-xs">
-              {hasStock ? `${stock} in stock` : "Out of stock"}
+              {stockLabel}
             </p>
           </div>
 

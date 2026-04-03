@@ -1,14 +1,13 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Leaf, Menu, X, ArrowRight, Flame, Trash2 } from "lucide-react";
+import { Send, Leaf, Menu, Flame, Trash2 } from "lucide-react";
 import {
   sendMessageStream,
   extractRecommendedProducts,
   initializeChat,
 } from "../../services/geminiService.js";
 import ChatMessage from "../../components/ChatMessage.jsx";
-import Link from "next/link";
 import { API_BASE_URL } from "@/app/config";
 
 const SUGGESTIONS = [
@@ -110,7 +109,7 @@ const App = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  });
+  }, []);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -207,58 +206,61 @@ const App = () => {
   };
 
   const topSelling = topSellingProducts;
-  const filteredProducts = products;
 
   return (
-    <div
-      className="relative w-full min-h-dvh overflow-hidden font-sans text-neutral-900 bg-[linear-gradient(180deg,#f8faf5_0%,#f2f5ee_100%)]"
-      id="nimDad"
-    >
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -left-28 top-16 h-72 w-72 rounded-full bg-emerald-200/30 blur-3xl" />
-        <div className="absolute -right-24 bottom-20 h-80 w-80 rounded-full bg-emerald-100/40 blur-3xl" />
+    <div className="relative h-[calc(100dvh-4.5rem)] md:h-[calc(100dvh-5rem)] overflow-hidden bg-[radial-gradient(circle_at_10%_10%,#ddf3e3_0%,#f2f7ef_38%,#f8fbf6_100%)] text-neutral-900">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-24 top-12 h-72 w-72 rounded-full bg-emerald-300/25 blur-3xl" />
+        <div className="absolute -right-24 bottom-20 h-80 w-80 rounded-full bg-lime-200/35 blur-3xl" />
       </div>
 
-      <div className="relative z-10 flex h-full w-full">
-        {/* Mobile Sidebar Overlay */}
+      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1460px] gap-3 px-3 py-2 md:gap-4 md:px-5 md:py-3 lg:gap-5">
         {isSidebarOpen && (
           <div
-            className="fixed inset-0 bg-neutral-900/15 backdrop-blur-sm z-40 md:hidden transition-opacity"
+            className="fixed inset-0 z-40 bg-neutral-900/20 backdrop-blur-sm md:hidden"
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
 
-        {/* Sidebar */}
         <aside
-          className={`fixed md:static inset-y-0 left-0 w-80 bg-white/65 border-r border-emerald-100/70 transform transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] z-50 flex flex-col backdrop-blur-xl ${
-            isSidebarOpen
-              ? "translate-x-0 shadow-2xl"
-              : "-translate-x-full md:translate-x-0"
+          className={`fixed inset-y-0 left-0 z-50 w-80 transform border-r border-emerald-100/80 bg-white/80 backdrop-blur-xl transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] md:static md:z-auto md:h-full md:translate-x-0 md:rounded-3xl md:border md:shadow-[0_20px_60px_-42px_rgba(17,42,28,0.45)] ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <div className="flex-1 overflow-y-auto px-4 pb-5 mt-6 scrollbar-hide">
-            {/* Top Selling Section */}
-            <div className="mb-8 mt-4">
-              <h2 className="px-4 text-[11px] font-bold text-neutral-500 uppercase tracking-[0.18em] mb-4 flex items-center gap-2">
-                Top Selling{" "}
-                <Flame size={12} className="text-orange-500 fill-orange-500" />
+          <div className="h-full overflow-y-auto px-4 pb-5 pt-5 scrollbar-hide md:pt-4">
+            <div className="mb-5 rounded-2xl border border-emerald-100 bg-[#f8fbf7] p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#3f7859]">
+                Gachpala AI
+              </p>
+              <h2 className="mt-2 text-xl font-bold text-[#1e3327]">
+                Ask Plant Expert
               </h2>
-              <div className="space-y-3">
+              <p className="mt-2 text-xs leading-5 text-[#607066]">
+                Discover plant matches, care tips, and buying guidance in one
+                chat.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="mb-3 flex items-center gap-2 px-1 text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-500">
+                Top Selling{" "}
+                <Flame size={12} className="fill-orange-500 text-orange-500" />
+              </h3>
+              <div className="space-y-2.5">
                 {topSelling.length === 0 ? (
-                  // Loading skeleton cards
                   <>
                     {[1, 2, 3, 4, 5, 6].map((index) => (
                       <div
                         key={`skeleton-${index}`}
-                        className="w-full px-4 py-3 bg-white rounded-2xl shadow-sm border border-neutral-100/80 flex items-center gap-3 relative overflow-hidden"
+                        className="relative flex w-full items-center gap-3 overflow-hidden rounded-2xl border border-neutral-100/80 bg-white px-4 py-3 shadow-sm"
                       >
-                        <div className="absolute top-0 right-0 w-8 h-8 bg-neutral-50 rounded-bl-xl text-[10px] font-bold text-neutral-400 flex items-center justify-center">
+                        <div className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-bl-xl bg-neutral-50 text-[10px] font-bold text-neutral-400">
                           #{index}
                         </div>
-                        <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-200 shrink-0 animate-pulse"></div>
+                        <div className="h-10 w-10 shrink-0 animate-pulse overflow-hidden rounded-lg bg-neutral-200" />
                         <div className="flex-1 pr-4">
-                          <div className="h-4 bg-neutral-200 rounded animate-pulse mb-2"></div>
-                          <div className="h-3 bg-neutral-100 rounded animate-pulse w-16"></div>
+                          <div className="mb-2 h-4 animate-pulse rounded bg-neutral-200" />
+                          <div className="h-3 w-16 animate-pulse rounded bg-neutral-100" />
                         </div>
                       </div>
                     ))}
@@ -268,23 +270,23 @@ const App = () => {
                     <button
                       key={product.id}
                       onClick={() => handleProductSelect(product)}
-                      className="w-full text-left group px-4 py-3 bg-white rounded-2xl shadow-sm border border-neutral-100 hover:border-emerald-200 hover:shadow-md transition-all duration-300 flex items-center gap-3 relative overflow-hidden"
+                      className="group relative flex w-full items-center gap-3 overflow-hidden rounded-2xl border border-neutral-100 bg-white px-4 py-3 text-left shadow-sm transition-all duration-300 hover:border-emerald-200 hover:shadow-md"
                     >
-                      <div className="absolute top-0 right-0 w-8 h-8 bg-neutral-50 rounded-bl-xl text-[10px] font-bold text-neutral-400 flex items-center justify-center">
+                      <div className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-bl-xl bg-neutral-50 text-[10px] font-bold text-neutral-400">
                         #{index + 1}
                       </div>
-                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-100 shrink-0">
+                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
                         <img
                           src={product.imageUrl}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                           alt=""
                         />
                       </div>
                       <div className="pr-4">
-                        <p className="text-sm font-semibold text-neutral-800 leading-tight group-hover:text-emerald-700 transition-colors">
+                        <p className="text-sm font-semibold leading-tight text-neutral-800 transition-colors group-hover:text-emerald-700">
                           {product.name}
                         </p>
-                        <p className="text-[11px] text-neutral-400 mt-0.5 font-medium">
+                        <p className="mt-0.5 text-[11px] font-medium text-neutral-400">
                           ${product.price.toFixed(2)}
                         </p>
                       </div>
@@ -296,64 +298,59 @@ const App = () => {
           </div>
         </aside>
 
-        {/* Main Chat Area */}
-        <main className="flex-1 flex flex-col h-full relative bg-transparent">
-          {/* Header */}
-          <header className="h-16 flex items-center justify-between px-4 md:px-8 sticky top-0 bg-[#f6f7f2]/80 backdrop-blur-md z-30 border-b border-neutral-100">
+        <main className="relative grid h-full min-h-0 flex-1 grid-rows-[auto,1fr,auto] overflow-hidden rounded-3xl border border-emerald-100/70 bg-white/70 shadow-[0_24px_70px_-45px_rgba(17,42,28,0.45)] backdrop-blur-xl">
+          <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-emerald-100 bg-white/75 px-4 backdrop-blur-md md:px-6">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsSidebarOpen(true)}
-                className="md:hidden p-2 -ml-2 text-neutral-500 hover:bg-neutral-50 rounded-lg"
+                className="-ml-1 rounded-lg p-2 text-neutral-500 hover:bg-neutral-50 md:hidden"
               >
                 <Menu size={20} />
               </button>
-              <span className="font-semibold text-neutral-900 flex items-center gap-2 tracking-wide">
+              <span className="flex items-center gap-2 text-sm font-semibold tracking-wide text-neutral-900 md:text-base">
                 Gachpala NiM
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
               </span>
             </div>
 
             <button
               onClick={handleClearChat}
-              className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500"
               title="Clear Chat"
             >
               <Trash2 size={18} />
             </button>
           </header>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-4 pt-20 pb-32 md:p-10 scrollbar-hide">
-            <div className="max-w-3xl mx-auto w-full pb-8">
+          <div className="min-h-0 overflow-y-auto px-4 pb-4 pt-4 scrollbar-hide md:px-8 md:pb-5 md:pt-6">
+            <div className="mx-auto w-full max-w-3xl pb-6">
               {messages.map((msg) => (
                 <ChatMessage ref={messagesEndRef} key={msg.id} message={msg} />
               ))}
 
-              {/* Loading State */}
               {isLoading && (
-                <div className="flex items-center gap-2 text-neutral-400 text-xs ml-1 font-medium tracking-wide animate-pulse mt-4">
-                  <div className="w-1.5 h-1.5 bg-neutral-400 rounded-full animate-bounce"></div>
+                <div className="mt-4 ml-1 flex items-center gap-2 text-xs font-medium tracking-wide text-neutral-400 animate-pulse">
+                  <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-neutral-400" />
                   <div
-                    className="w-1.5 h-1.5 bg-neutral-400 rounded-full animate-bounce"
+                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-neutral-400"
                     style={{ animationDelay: "0.1s" }}
                   ></div>
                   <div
-                    className="w-1.5 h-1.5 bg-neutral-400 rounded-full animate-bounce"
+                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-neutral-400"
                     style={{ animationDelay: "0.2s" }}
                   ></div>
                 </div>
               )}
 
-              {/* Suggestions for empty chat (or just welcome message) */}
               {!isLoading && messages.length === 1 && (
-                <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-3 animate-fade-in-up">
+                <div className="mt-12 grid grid-cols-1 gap-3 animate-fade-in-up sm:grid-cols-2">
                   {SUGGESTIONS.map((suggestion, idx) => (
                     <button
                       key={idx}
                       onClick={() => handleSend(suggestion.text)}
-                      className="text-left p-4 rounded-2xl border border-neutral-100 bg-white/60 hover:bg-white hover:border-emerald-200 hover:shadow-md transition-all duration-300 group"
+                      className="group rounded-2xl border border-neutral-100 bg-white/70 p-4 text-left transition-all duration-300 hover:border-emerald-200 hover:bg-white hover:shadow-md"
                     >
-                      <span className="block text-xs font-bold text-neutral-400 uppercase tracking-wider mb-1 group-hover:text-emerald-600 transition-colors">
+                      <span className="mb-1 block text-xs font-bold uppercase tracking-wider text-neutral-400 transition-colors group-hover:text-emerald-600">
                         {suggestion.label}
                       </span>
                       <span className="text-sm font-medium text-neutral-800">
@@ -366,23 +363,22 @@ const App = () => {
             </div>
           </div>
 
-          {/* Input Area */}
-          <div className="p-6 fixed md:bottom-18 bottom-0 left-0 right-0 md:relative z-30">
-            <div className="max-w-3xl mx-auto w-full relative">
-              <div className="relative group">
+          <div className="z-30 border-t border-emerald-100 bg-white/92 p-3 backdrop-blur-md md:bg-transparent md:p-6">
+            <div className="mx-auto w-full max-w-3xl">
+              <div className="group relative">
                 <input
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSend()}
                   placeholder="Ask about plants..."
-                  className="w-full pl-6 pr-14 py-4 bg-white/95 border border-neutral-200 rounded-full text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-300 transition-all shadow-[0_10px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_12px_34px_rgb(0,0,0,0.10)]"
+                  className="w-full rounded-full border border-neutral-200 bg-white/95 py-4 pl-6 pr-14 text-neutral-800 placeholder-neutral-400 shadow-[0_10px_30px_rgb(0,0,0,0.06)] transition-all hover:shadow-[0_12px_34px_rgb(0,0,0,0.10)] focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                   disabled={isLoading}
                 />
                 <button
                   onClick={() => handleSend()}
                   disabled={!input.trim() || isLoading}
-                  className="absolute right-2 top-2 bottom-2 aspect-square bg-[#00be62] text-white rounded-full hover:bg-[#00a757] disabled:opacity-50 disabled:hover:bg-[#00be62] transition-all flex items-center justify-center shadow-lg shadow-emerald-700/25 transform hover:scale-105 active:scale-95"
+                  className="absolute bottom-2 right-2 top-2 aspect-square flex items-center justify-center rounded-full bg-[#00be62] text-white shadow-lg shadow-emerald-700/25 transition-all hover:scale-105 hover:bg-[#00a757] active:scale-95 disabled:opacity-50 disabled:hover:bg-[#00be62]"
                 >
                   {isLoading ? (
                     <Leaf size={18} className="animate-spin" />
@@ -391,7 +387,7 @@ const App = () => {
                   )}
                 </button>
               </div>
-              <p className="text-center text-[10px] text-neutral-300 mt-4 font-medium tracking-wide">
+              <p className="mt-3 text-center text-[10px] font-medium tracking-wide text-neutral-400 md:mt-4">
                 AI can make mistakes. Please verify.
               </p>
             </div>

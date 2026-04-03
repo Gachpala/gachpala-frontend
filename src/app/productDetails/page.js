@@ -340,6 +340,12 @@ function ProductDetailsContent() {
     return () => clearTimeout(timer);
   }, [isAddedToCart]);
 
+  useEffect(() => {
+    const stockValue = Number(product?.stock || 0);
+    const allowedMax = stockValue > 0 ? stockValue : 1;
+    setQuantity((prev) => Math.min(Math.max(1, prev), allowedMax));
+  }, [product?.stock]);
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-[linear-gradient(180deg,#f8fbf6_0%,#eff4ea_100%)] text-[#335544]">
@@ -381,6 +387,7 @@ function ProductDetailsContent() {
   };
 
   const inStock = Number(product.stock || 0) > 0;
+  const maxQuantity = inStock ? Math.max(1, Number(product.stock || 1)) : 1;
   const hasDiscount = Number(product.discount || 0) > 0;
   const seller = sellerInfo ||
     product.seller || {
@@ -408,9 +415,11 @@ function ProductDetailsContent() {
         const token = localStorage.getItem(AUTH_TOKEN_KEY);
         if (!token) return;
 
+        const safeQuantity = Math.min(Math.max(1, quantity), maxQuantity);
+
         const payload = {
           product_id: product.id,
-          quantity,
+          quantity: safeQuantity,
         };
 
         const response = await fetch(`${API_BASE_URL}/cart`, {
@@ -433,7 +442,7 @@ function ProductDetailsContent() {
             id: product.id,
             name: product.title,
             price: product.price,
-            quantity,
+            quantity: safeQuantity,
             image: product.thumbnail,
             size: "Standard",
           }),
@@ -495,6 +504,14 @@ function ProductDetailsContent() {
         );
       }
     }, "product-details:wishlist");
+  };
+
+  const handleDecreaseQuantity = () => {
+    setQuantity((prev) => Math.max(1, prev - 1));
+  };
+
+  const handleIncreaseQuantity = () => {
+    setQuantity((prev) => Math.min(maxQuantity, prev + 1));
   };
 
   return (
@@ -648,7 +665,7 @@ function ProductDetailsContent() {
               <div className="mt-6 space-y-3">
                 <div className="flex w-fit items-center rounded-xl border border-emerald-100 bg-[#f7fbf6]">
                   <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    onClick={handleDecreaseQuantity}
                     className="px-4 py-2 text-[#4f6157] hover:text-[#00be62]"
                   >
                     −
@@ -659,8 +676,9 @@ function ProductDetailsContent() {
                     className="w-11 text-center bg-transparent border-x border-emerald-100 text-[#182820]"
                   />
                   <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="px-4 py-2 text-[#4f6157] hover:text-[#00be62]"
+                    onClick={handleIncreaseQuantity}
+                    disabled={!inStock || quantity >= maxQuantity}
+                    className="px-4 py-2 text-[#4f6157] hover:text-[#00be62] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     +
                   </button>

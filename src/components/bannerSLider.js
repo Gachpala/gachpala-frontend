@@ -7,6 +7,8 @@ import "slick-carousel/slick/slick-theme.css";
 import BannerSkeleton from "./bannerSkeleton";
 import { API_BASE_URL } from "@/app/config";
 
+const PLACEHOLDER = "/banner-placeholder.svg";
+
 export default function BannerSlider() {
   const [banners, setBanners] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,6 +42,31 @@ export default function BannerSlider() {
     pauseOnHover: true,
   };
 
+  const resolveBannerImage = (url) => {
+    if (!url) return PLACEHOLDER;
+
+    const normalized = String(url).trim();
+    if (!normalized) return PLACEHOLDER;
+    if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+      return normalized;
+    }
+
+    // If backend returns a plain filename like "banner1.png", prefer public assets.
+    if (!normalized.includes("/")) {
+      return `/${normalized}`;
+    }
+
+    if (normalized.startsWith("/")) {
+      return `${API_BASE_URL}${normalized}`;
+    }
+
+    return `${API_BASE_URL}/${normalized}`;
+  };
+
+  const slides = banners.length
+    ? banners
+    : [{ title: "Banner", imageurl: PLACEHOLDER }];
+
   if (isLoading) {
     return (
       <div className="w-full">
@@ -52,12 +79,15 @@ export default function BannerSlider() {
 
   return (
     <Slider {...settings}>
-      {banners.map((banner, idx) => (
+      {slides.map((banner, idx) => (
         <div key={banner.imageurl ?? idx}>
           <img
-            src={banner.imageurl}
+            src={resolveBannerImage(banner.imageurl)}
             className="w-full h-auto object-cover min-h-[250px] md:min-h-[400px]"
             alt={banner.title || "Banner"}
+            onError={(event) => {
+              event.currentTarget.src = PLACEHOLDER;
+            }}
           />
         </div>
       ))}

@@ -2,6 +2,7 @@
 import { arapey, inter, openSans } from "@/lib/fonts";
 import { useState, useCallback, memo, useEffect } from "react";
 import Image from "next/image";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
@@ -36,6 +37,7 @@ function SignInUpPageComponent({ isOpen, onClose }) {
   const [signUpError, setSignUpError] = useState("");
   const [signUpSuccess, setSignUpSuccess] = useState("");
   const [hasSession, setHasSession] = useState(false);
+  const [portalReady, setPortalReady] = useState(false);
   const isModalMode = typeof isOpen === "boolean";
   const router = useRouter();
 
@@ -58,6 +60,10 @@ function SignInUpPageComponent({ isOpen, onClose }) {
   const handleClose = useCallback(() => {
     onClose?.();
   }, [onClose]);
+
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
 
   useEffect(() => {
     const loggedIn = isAuthenticated();
@@ -591,7 +597,11 @@ function SignInUpPageComponent({ isOpen, onClose }) {
     return content;
   }
 
-  return (
+  if (!portalReady) {
+    return null;
+  }
+
+  return createPortal(
     <>
       <div
         className={`fixed inset-0 z-90 bg-transparent backdrop-blur-sm transition-opacity duration-300 ${
@@ -612,7 +622,8 @@ function SignInUpPageComponent({ isOpen, onClose }) {
           {content}
         </div>
       </div>
-    </>
+    </>,
+    document.body,
   );
 }
 

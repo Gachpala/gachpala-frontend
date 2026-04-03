@@ -111,6 +111,14 @@ export default function CheckoutPage() {
         setSelectedAddressId(
           String(defaultAddress?.id ?? fetchedAddresses?.[0]?.id ?? ""),
         );
+
+        if (!fetchedAddresses.length) {
+          setCheckoutMessage(
+            "No address added. Please add one from your profile.",
+          );
+        } else {
+          setCheckoutMessage("");
+        }
       } catch (fetchError) {
         setError(fetchError?.message || "Unable to load checkout details.");
         setCartData({ items: [], summary: { subtotal: 0, currency: "BDT" } });
@@ -524,7 +532,7 @@ export default function CheckoutPage() {
               </div>
             ) : (
               <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                No saved address found. Please add one from your profile.
+                No address added. Please add one from your profile.
               </div>
             )}
 

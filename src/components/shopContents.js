@@ -2,12 +2,13 @@
 import Container from "@/components/container";
 import Product from "@/components/product";
 import ProductSkeleton from "@/components/productSkeleton";
-import { inter, interSec } from "@/lib/fonts";
+import { inter, openSans } from "@/lib/fonts";
 import { useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { productReducer } from "@/app/slices/products_slices";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { API_BASE_URL } from "@/app/config";
 
 export default function ShopContents() {
@@ -83,28 +84,105 @@ export default function ShopContents() {
   const displayStart = totalProducts === 0 ? 0 : startIdx + 1;
   const displayEnd = Math.min(endIdx, totalProducts);
 
+  const categories = useMemo(() => {
+    const set = new Set();
+    allProducts.forEach((product) => {
+      const name = product?.category_name?.trim();
+      if (name) set.add(name);
+    });
+    return [...set].sort((a, b) => a.localeCompare(b));
+  }, [allProducts]);
+
+  const pageWindow = useMemo(() => {
+    const maxVisible = 5;
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    let start = Math.max(1, currentPage - 2);
+    const end = Math.min(totalPages, start + maxVisible - 1);
+    start = Math.max(1, end - maxVisible + 1);
+
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  }, [currentPage, totalPages]);
+
   return (
-    <section>
-      <div className="bg-[#ebeee3] px-4 sm:px-6 md:px-10 py-10 md:py-14 mb-10 md:mb-[90px]">
+    <section className="pb-16">
+      <div className="relative overflow-hidden bg-[linear-gradient(130deg,#e8f2e7_0%,#f4f9f1_52%,#f8fbf5_100%)] px-4 py-10 sm:px-6 md:px-10 md:py-14 mb-10 md:mb-14">
+        <div className="pointer-events-none absolute -left-16 top-0 h-56 w-56 rounded-full bg-[#00be62]/12 blur-3xl" />
+        <div className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-emerald-200/35 blur-3xl" />
+
         <Container>
-          <div className=" bg-[#ebeee3]  ">
+          <div className="relative z-10">
             <p
-              className={`${inter.className} text-xl font-bold text-gray-800 mb-2`}
+              className={`${openSans.className} text-[11px] uppercase tracking-[0.2em] text-[#357f55]`}
             >
-              Shop Page
+              Gachpala Marketplace
             </p>
-            <p className={` ${interSec.className} text-md `}>
-              home / <span className="text-gray-600">shop</span>
-            </p>
-            <p className="mt-2 text-gray-700 text-sm">
+            <h1
+              className={`${inter.className} mt-2 text-3xl leading-tight text-[#15261d] md:text-5xl`}
+            >
+              Shop Plants
+            </h1>
+            <p
+              className={`${openSans.className} mt-3 text-sm text-[#55665d] md:text-base`}
+            >
               Showing {displayStart}-{displayEnd} of {totalProducts} products
+              {selectedCategory ? ` in ${selectedCategory}` : ""}.
             </p>
+
+            <div className="mt-5 flex flex-wrap items-center gap-2.5">
+              <Link
+                href="/shop"
+                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                  !selectedCategory
+                    ? "border-[#00be62] bg-[#e8f7ef] text-[#1f7a4d]"
+                    : "border-emerald-200 bg-white text-[#4f6358] hover:border-[#00be62]"
+                }`}
+              >
+                All Categories
+              </Link>
+              {categories.slice(0, 8).map((category) => {
+                const isActive =
+                  String(selectedCategory || "").toLowerCase() ===
+                  category.toLowerCase();
+                return (
+                  <Link
+                    key={category}
+                    href={`/shop?category=${encodeURIComponent(category)}`}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                      isActive
+                        ? "border-[#00be62] bg-[#e8f7ef] text-[#1f7a4d]"
+                        : "border-emerald-200 bg-white text-[#4f6358] hover:border-[#00be62]"
+                    }`}
+                  >
+                    {category}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </Container>
       </div>
 
-      <Container className="max-w-[1400px]! bg-[#ebeee3] rounded-2xl">
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-auto px-3 sm:px-4 py-10 md:py-14 gap-3 sm:gap-6">
+      <Container className="max-w-[1400px]! rounded-3xl border border-emerald-200/70 bg-white/70 p-3 shadow-[0_26px_60px_-46px_rgba(17,42,28,0.4)] backdrop-blur-sm sm:p-4 md:p-6">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 px-1">
+          <p
+            className={`${openSans.className} text-xs uppercase tracking-[0.15em] text-[#597066]`}
+          >
+            Curated Green Collection
+          </p>
+          {selectedCategory ? (
+            <Link
+              href="/shop"
+              className="rounded-full border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-[#356f50] hover:border-[#00be62]"
+            >
+              Clear Filter
+            </Link>
+          ) : null}
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-auto gap-3 sm:gap-6">
           {isLoading ? (
             // Show skeleton loaders while loading
             Array.from({ length: productsPerPage }).map((_, i) => (
@@ -138,28 +216,48 @@ export default function ShopContents() {
             ))
           ) : (
             // Show empty state when no products
-            <div className="col-span-full text-center py-10">
-              <p className="text-gray-500">No products found</p>
+            <div className="col-span-full rounded-2xl border border-emerald-100 bg-[#f8fbf7] text-center py-14">
+              <p className={`${inter.className} text-xl text-[#27392f]`}>
+                No products found
+              </p>
+              <p className="mt-2 text-sm text-[#64746c]">
+                Try switching category or browsing all products.
+              </p>
             </div>
           )}
         </div>
+
         {/* Pagination controls */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-2 mt-8">
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+              className="rounded-lg border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-[#4e6559] disabled:opacity-50"
             >
               Previous
             </button>
-            <span className="mx-2 text-gray-700">
-              Page {currentPage} of {totalPages}
-            </span>
+
+            <div className="flex items-center gap-1.5">
+              {pageWindow.map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`h-9 w-9 rounded-lg text-sm font-semibold transition ${
+                    page === currentPage
+                      ? "bg-[#00be62] text-white"
+                      : "border border-emerald-200 bg-white text-[#4e6559] hover:border-[#00be62]"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+              className="rounded-lg border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-[#4e6559] disabled:opacity-50"
             >
               Next
             </button>
