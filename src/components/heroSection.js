@@ -61,6 +61,7 @@ export default function HeroSection() {
 
     const normalized = String(url).trim();
     if (!normalized) return PLACEHOLDER;
+    if (normalized === PLACEHOLDER) return PLACEHOLDER;
     if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
       return normalized;
     }

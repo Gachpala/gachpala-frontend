@@ -460,20 +460,6 @@ export default function Cart() {
                   </span>
                 </div>
 
-                {/* Coupon Code Input */}
-                <div className="pt-4">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Promo code"
-                      className="grow bg-[#f6faf5] border border-emerald-100 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#00be62] transition-colors"
-                    />
-                    <button className="bg-[#1d2f24] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#122016] transition-colors">
-                      Apply
-                    </button>
-                  </div>
-                </div>
-
                 <div className="border-t border-emerald-50 my-4 pt-4 flex justify-between items-center">
                   <span
                     className={`${inter.className} text-lg font-bold text-[#1b2c22]`}

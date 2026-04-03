@@ -166,7 +166,7 @@ export default function ShopContents() {
       </div>
 
       <Container className="max-w-[1400px]! rounded-3xl border border-emerald-200/70 bg-white/70 p-3 shadow-[0_26px_60px_-46px_rgba(17,42,28,0.4)] backdrop-blur-sm sm:p-4 md:p-6">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 px-1">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 px-1 md:mb-7">
           <p
             className={`${openSans.className} text-xs uppercase tracking-[0.15em] text-[#597066]`}
           >
@@ -182,7 +182,7 @@ export default function ShopContents() {
           ) : null}
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-auto gap-3 sm:gap-6">
+        <div className="mx-auto mb-6 grid grid-cols-2 gap-3 sm:gap-6 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
           {isLoading ? (
             // Show skeleton loaders while loading
             Array.from({ length: productsPerPage }).map((_, i) => (

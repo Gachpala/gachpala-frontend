@@ -1,6 +1,7 @@
 "use client";
 
 export const AUTH_MODAL_EVENT = "gachpala:open-auth-modal";
+export const AUTH_CHANGED_EVENT = "gachpala:auth-changed";
 
 export const AUTH_TOKEN_KEY = "user_token";
 

@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import SignInUpPage from "@/app/signInUp/page";
 import { API_BASE_URL } from "@/app/config";
 import {
+  AUTH_CHANGED_EVENT,
   AUTH_MODAL_EVENT,
   AUTH_TOKEN_KEY,
   clearAuthStorage,
@@ -27,6 +28,60 @@ const CART_UPDATED_EVENT = "gachpala:cart-updated";
 export default function Home() {
   const router = useRouter();
   const cartItems = useSelector((state) => state.products.cart);
+  const getStoredProfile = () => {
+    if (typeof window === "undefined") {
+      return { name: "", email: "" };
+    }
+
+    const decodeJwtPayload = (token) => {
+      if (!token || typeof token !== "string") return null;
+
+      const parts = token.split(".");
+      if (parts.length < 2) return null;
+
+      try {
+        const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+        const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+        return JSON.parse(atob(padded));
+      } catch {
+        return null;
+      }
+    };
+
+    const readUserObject = (key) => {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+
+      try {
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return null;
+
+        return {
+          name: String(parsed?.name || "").trim(),
+          email: String(parsed?.email || "").trim(),
+        };
+      } catch {
+        return null;
+      }
+    };
+
+    const profile = readUserObject("currentUser") || readUserObject("user");
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    const payload = decodeJwtPayload(token);
+    const storedName = String(localStorage.getItem("user_name") || "").trim();
+    const storedEmail = String(localStorage.getItem("user_email") || "").trim();
+
+    const nameFromStorage = String(profile?.name || "").trim();
+    const emailFromStorage = String(profile?.email || "").trim();
+    const nameFromToken = String(payload?.name || "").trim();
+    const emailFromToken = String(payload?.email || "").trim();
+
+    return {
+      name: storedName || nameFromStorage || nameFromToken,
+      email: storedEmail || emailFromStorage || emailFromToken,
+    };
+  };
+
   const getLocalCartCount = () => {
     if (!Array.isArray(cartItems) || !cartItems.length) return 0;
     return cartItems.reduce(
@@ -36,6 +91,7 @@ export default function Home() {
   };
 
   const [cartCount, setCartCount] = useState(getLocalCartCount());
+  const [profile, setProfile] = useState(getStoredProfile());
 
   const [toggle, setToggle] = React.useState(false);
   const [toogleProfile, setToogleProfile] = React.useState(false);
@@ -75,6 +131,14 @@ export default function Home() {
 
   const handleSignOut = () => {
     clearAuthStorage();
+    localStorage.removeItem("user_name");
+    localStorage.removeItem("user_email");
+    setProfile({ name: "", email: "" });
+    window.dispatchEvent(
+      new CustomEvent(AUTH_CHANGED_EVENT, {
+        detail: { authenticated: false },
+      }),
+    );
     setToogleProfile(false);
     setSignInUp(false);
     router.push("/");
@@ -136,7 +200,54 @@ export default function Home() {
       }
     };
 
+    const hydrateProfileFromApi = async () => {
+      if (typeof window === "undefined") return;
+      if (!isAuthenticated()) return;
+
+      const existingProfile = getStoredProfile();
+      if (existingProfile.name && existingProfile.email) return;
+
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      if (!token) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/users/`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const text = await response.text();
+        let data = {};
+
+        if (text) {
+          try {
+            data = JSON.parse(text);
+          } catch {
+            data = {};
+          }
+        }
+
+        if (!response.ok) return;
+
+        const user =
+          data?.user && typeof data.user === "object" ? data.user : data;
+        const name = String(user?.name || existingProfile.name || "").trim();
+        const email = String(user?.email || existingProfile.email || "").trim();
+
+        if (!name && !email) return;
+
+        const nextProfile = { name, email };
+        localStorage.setItem("currentUser", JSON.stringify(nextProfile));
+        setProfile(nextProfile);
+      } catch {
+        // noop
+      }
+    };
+
     fetchCartCount();
+    hydrateProfileFromApi();
 
     const handleOpenAuthModal = () => {
       if (isAuthenticated()) {
@@ -146,6 +257,12 @@ export default function Home() {
       setToogleProfile(false);
       setOpenSearch(false);
       setToggle(false);
+    };
+
+    const handleAuthChanged = () => {
+      setProfile(getStoredProfile());
+      fetchCartCount();
+      hydrateProfileFromApi();
     };
 
     const handleCartUpdated = (event) => {
@@ -159,10 +276,12 @@ export default function Home() {
     };
 
     window.addEventListener(AUTH_MODAL_EVENT, handleOpenAuthModal);
+    window.addEventListener(AUTH_CHANGED_EVENT, handleAuthChanged);
     window.addEventListener(CART_UPDATED_EVENT, handleCartUpdated);
 
     return () => {
       window.removeEventListener(AUTH_MODAL_EVENT, handleOpenAuthModal);
+      window.removeEventListener(AUTH_CHANGED_EVENT, handleAuthChanged);
       window.removeEventListener(CART_UPDATED_EVENT, handleCartUpdated);
     };
   }, [cartItems]);
@@ -265,10 +384,10 @@ export default function Home() {
             >
               <div className="border-b border-gray-50 bg-gray-50/50 p-4">
                 <p className={`${inter.className} font-bold text-gray-900`}>
-                  Sakib Al Hasan
+                  {profile.name || "My Account"}
                 </p>
                 <p className={`${openSans.className} text-xs text-gray-500`}>
-                  sakib@example.com
+                  {profile.email || "Signed in"}
                 </p>
               </div>
 

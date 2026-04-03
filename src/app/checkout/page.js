@@ -243,12 +243,16 @@ export default function CheckoutPage() {
       return;
     }
 
-    const selectedAddress = addresses.find(
-      (address) => String(address?.id) === selectedAddressId,
+    const selectedAddressNumericId = Number(selectedAddressId);
+    const hasMatchingAddress = addresses.some(
+      (address) => Number(address?.id) === selectedAddressNumericId,
     );
-    const shippingAddress = getAddressText(selectedAddress);
 
-    if (!shippingAddress) {
+    if (
+      !Number.isFinite(selectedAddressNumericId) ||
+      selectedAddressNumericId <= 0 ||
+      !hasMatchingAddress
+    ) {
       setCheckoutMessage(
         "Selected address is invalid. Please pick another one.",
       );
@@ -276,10 +280,10 @@ export default function CheckoutPage() {
       setIsPlacingOrder(true);
       setCheckoutMessage("");
 
+      const primaryPromoCode = discountCodes.length ? discountCodes[0] : null;
       const payload = {
-        shipping_address: shippingAddress,
-        payment_method: paymentMethod,
-        discount_codes: discountCodes,
+        shipping_address_id: selectedAddressNumericId,
+        ...(primaryPromoCode ? { promo_code: primaryPromoCode } : {}),
         items,
       };
 

@@ -281,7 +281,7 @@ const ProductCard = ({
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col px-1 sm:px-2">
+        <div className="flex flex-1 flex-col px-1 pb-1 sm:px-2 sm:pb-2">
           <div className="mb-1.5 flex items-start justify-between gap-2 sm:mb-2">
             <h2 className="line-clamp-1 text-[15px] font-semibold leading-tight text-[#1f1f1f] sm:text-lg">
               {title}
@@ -295,7 +295,7 @@ const ProductCard = ({
             {shortDescription || "Healthy plant from Gachpala collection."}
           </p>
 
-          <div className="mt-2 flex items-center justify-between sm:mt-3">
+          <div className="mt-auto pt-3 flex items-center justify-between">
             <p className="text-base font-bold text-[#2b2b2b] sm:text-lg">
               {price}{" "}
               <span className="text-[11px] font-medium text-[#00be62] sm:text-xs">

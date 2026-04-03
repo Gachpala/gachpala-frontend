@@ -7,7 +7,11 @@ import Link from "next/link";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 import { API_BASE_URL } from "@/app/config";
-import { AUTH_TOKEN_KEY, isAuthenticated } from "@/lib/authGate";
+import {
+  AUTH_CHANGED_EVENT,
+  AUTH_TOKEN_KEY,
+  isAuthenticated,
+} from "@/lib/authGate";
 import { useRouter } from "next/navigation";
 
 const inputClassName =
@@ -127,11 +131,25 @@ function SignInUpPageComponent({ isOpen, onClose }) {
           throw new Error("Login succeeded but token was not returned.");
         }
 
+        const userProfile = {
+          name: String(data?.name || "").trim(),
+          email: String(data?.email || email).trim(),
+        };
+
         localStorage.setItem(AUTH_TOKEN_KEY, token);
+        localStorage.setItem("currentUser", JSON.stringify(userProfile));
+        localStorage.setItem("user_name", userProfile.name);
+        localStorage.setItem("user_email", userProfile.email);
         setHasSession(true);
         setSignInSuccess("Signed in successfully.");
         setSignInEmail("");
         setSignInPassword("");
+
+        window.dispatchEvent(
+          new CustomEvent(AUTH_CHANGED_EVENT, {
+            detail: { authenticated: true, user: userProfile },
+          }),
+        );
 
         if (isModalMode) {
           setTimeout(() => {
