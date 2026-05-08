@@ -27,11 +27,6 @@ function SignInUpPageComponent({ isOpen, onClose }) {
   const [signUpPassword, setSignUpPassword] = useState("");
   const [signUpConfirmPassword, setSignUpConfirmPassword] = useState("");
   const [signUpPhone, setSignUpPhone] = useState("");
-  const [signUpAddress, setSignUpAddress] = useState("");
-  const [signUpCity, setSignUpCity] = useState("");
-  const [signUpDivision, setSignUpDivision] = useState("");
-  const [signUpPostalCode, setSignUpPostalCode] = useState("");
-  const [signUpCountry, setSignUpCountry] = useState("Bangladesh");
   const [signInEmail, setSignInEmail] = useState("");
   const [signInPassword, setSignInPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
@@ -178,23 +173,13 @@ function SignInUpPageComponent({ isOpen, onClose }) {
         email: signUpEmail.trim(),
         password: signUpPassword,
         phone: signUpPhone.trim(),
-        address: signUpAddress.trim(),
-        city: signUpCity.trim(),
-        division: signUpDivision.trim(),
-        postal_code: signUpPostalCode.trim(),
-        country: signUpCountry.trim(),
       };
 
       if (
         !payload.name ||
         !payload.email ||
         !payload.password ||
-        !payload.phone ||
-        !payload.address ||
-        !payload.city ||
-        !payload.division ||
-        !payload.postal_code ||
-        !payload.country
+        !payload.phone
       ) {
         setSignUpError("All fields are required.");
         setSignUpSuccess("");
@@ -245,11 +230,6 @@ function SignInUpPageComponent({ isOpen, onClose }) {
         setSignUpPassword("");
         setSignUpConfirmPassword("");
         setSignUpPhone("");
-        setSignUpAddress("");
-        setSignUpCity("");
-        setSignUpDivision("");
-        setSignUpPostalCode("");
-        setSignUpCountry("Bangladesh");
 
         setSignInSuccess("Registration successful. Please sign in.");
         setSignInError("");
@@ -261,16 +241,11 @@ function SignInUpPageComponent({ isOpen, onClose }) {
       }
     },
     [
-      signUpAddress,
-      signUpCity,
       signUpConfirmPassword,
-      signUpCountry,
-      signUpDivision,
       signUpEmail,
       signUpName,
       signUpPassword,
       signUpPhone,
-      signUpPostalCode,
     ],
   );
 
