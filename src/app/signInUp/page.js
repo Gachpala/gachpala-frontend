@@ -522,41 +522,6 @@ function SignInUpPageComponent({ isOpen, onClose }) {
                 onChange={(e) => setSignUpPhone(e.target.value)}
                 className={inputClassName}
               />
-              <input
-                type="text"
-                placeholder="City"
-                value={signUpCity}
-                onChange={(e) => setSignUpCity(e.target.value)}
-                className={inputClassName}
-              />
-              <input
-                type="text"
-                placeholder="Division"
-                value={signUpDivision}
-                onChange={(e) => setSignUpDivision(e.target.value)}
-                className={inputClassName}
-              />
-              <input
-                type="text"
-                placeholder="Postal Code"
-                value={signUpPostalCode}
-                onChange={(e) => setSignUpPostalCode(e.target.value)}
-                className={inputClassName}
-              />
-              <input
-                type="text"
-                placeholder="Country"
-                value={signUpCountry}
-                onChange={(e) => setSignUpCountry(e.target.value)}
-                className={inputClassName}
-              />
-              <input
-                type="text"
-                placeholder="Address"
-                value={signUpAddress}
-                onChange={(e) => setSignUpAddress(e.target.value)}
-                className={`${inputClassName} sm:col-span-2`}
-              />
 
               <label
                 className={`${openSans.className} sm:col-span-2 flex items-start gap-2 text-sm text-[#5b6d63]`}
