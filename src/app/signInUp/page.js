@@ -316,25 +316,17 @@ function SignInUpPageComponent({ isOpen, onClose }) {
         </aside>
 
         <section className="p-6 sm:p-10 md:p-12">
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <p
-                className={`${inter.className} text-xs uppercase tracking-[0.18em] text-[#377e57]`}
-              >
-                Account
-              </p>
-              <h2
-                className={`${inter.className} mt-2 text-2xl text-[#1d2f24] sm:text-3xl`}
-              >
-                {activeTab === "signin" ? "Welcome Back" : "Create Account"}
-              </h2>
-            </div>
-            <Link
-              href="/"
-              className={`${openSans.className} text-sm text-[#4f6358] hover:text-[#00be62]`}
+          <div className="mb-8">
+            <p
+              className={`${inter.className} text-xs uppercase tracking-[0.18em] text-[#377e57]`}
             >
-              {isModalMode ? "Home" : "Back to Home"}
-            </Link>
+              Account
+            </p>
+            <h2
+              className={`${inter.className} mt-2 text-2xl text-[#1d2f24] sm:text-3xl`}
+            >
+              {activeTab === "signin" ? "Welcome Back" : "Create Account"}
+            </h2>
           </div>
 
           <div className="mb-8 grid grid-cols-2 rounded-2xl border border-[#d7e5d9] bg-[#f4f8f4] p-1.5">

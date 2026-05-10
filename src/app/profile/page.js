@@ -19,6 +19,11 @@ import {
   FiMail,
   FiPhone,
   FiCalendar,
+  FiTruck,
+  FiArrowLeft,
+  FiCheckCircle,
+  FiClock,
+  FiMapPin as FiMapPinAlt,
 } from "react-icons/fi";
 
 function ProfileSkeleton() {
@@ -446,6 +451,7 @@ export default function Profile() {
   const [recentOrders, setRecentOrders] = useState([]);
   const [allOrders, setAllOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [trackingOrder, setTrackingOrder] = useState(null);
   const [profileForm, setProfileForm] = useState({
     name: "",
     email: "",
@@ -1265,10 +1271,10 @@ export default function Profile() {
                           order.status.slice(1)}
                       </span>
                       <button
-                        onClick={() => openOrderDetails(order)}
+                        onClick={() => { setTrackingOrder(order); setActiveTab("tracking"); }}
                         className="px-4 py-2 border border-[#00be62] text-[#00be62] rounded-lg text-sm font-medium hover:bg-emerald-50 transition-colors"
                       >
-                        View Details
+                        Track Order
                       </button>
                     </div>
                   </div>
@@ -1522,6 +1528,193 @@ export default function Profile() {
             </form>
           </div>
         );
+      case "tracking":
+        if (!trackingOrder) {
+          setActiveTab("orders");
+          return null;
+        }
+        {
+          const statusLabel = trackingOrder.status.charAt(0).toUpperCase() + trackingOrder.status.slice(1);
+
+          const steps = [
+            { key: "pending", label: "Order Placed", icon: FiCheckCircle },
+            { key: "confirmed", label: "Confirmed", icon: FiCheckCircle },
+            { key: "processing", label: "Processing", icon: FiPackage },
+            { key: "delivered", label: "Delivered", icon: FiTruck },
+          ];
+
+          const statusOrder = ["pending", "confirmed", "processing", "delivered"];
+          const currentIdx = statusOrder.indexOf(trackingOrder.status);
+          const isCancelled = trackingOrder.status === "cancelled";
+
+          return (
+            <div className="space-y-6">
+              {/* Back button + header */}
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => { setTrackingOrder(null); setActiveTab("orders"); }}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-200 text-[#3f6b54] transition hover:bg-emerald-50"
+                >
+                  <FiArrowLeft size={18} />
+                </button>
+                <div>
+                  <p className={`${openSans.className} text-xs uppercase tracking-[0.16em] text-[#6f7f77]`}>
+                    Order Tracking
+                  </p>
+                  <h3 className={`${inter.className} text-xl text-[#1b2b22] mt-0.5`}>
+                    {trackingOrder.id}
+                  </h3>
+                </div>
+                <span className={`ml-auto rounded-full px-3 py-1 text-xs font-semibold ${
+                  isCancelled
+                    ? "bg-rose-100 text-rose-700 border border-rose-200"
+                    : trackingOrder.status === "delivered"
+                      ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                      : trackingOrder.status === "processing"
+                        ? "bg-blue-100 text-blue-700 border border-blue-200"
+                        : "bg-amber-100 text-amber-700 border border-amber-200"
+                }`}>
+                  {statusLabel}
+                </span>
+              </div>
+
+              {/* Main tracking card */}
+              <div className="bg-white/90 backdrop-blur-sm border border-emerald-100 rounded-3xl overflow-hidden shadow-[0_18px_50px_-36px_rgba(17,42,28,0.45)]">
+                {/* Status timeline */}
+                <div className="bg-gradient-to-br from-[#f5fcf7] to-[#edf7ef] px-6 py-7 border-b border-emerald-100">
+                  <p className={`${openSans.className} text-[10px] uppercase tracking-[0.16em] text-[#6f7f77] mb-5 font-semibold`}>
+                    Tracking Progress
+                  </p>
+
+                  {isCancelled ? (
+                    <div className="flex items-center gap-3 rounded-2xl bg-rose-50 border border-rose-100 px-5 py-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+                        <FiX size={20} />
+                      </div>
+                      <div>
+                        <p className={`${inter.className} text-sm font-semibold text-rose-700`}>Order Cancelled</p>
+                        <p className={`${openSans.className} text-xs text-rose-500 mt-0.5`}>This order has been cancelled.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between">
+                      {steps.map((step, idx) => {
+                        const Icon = step.icon;
+                        const isCompleted = idx <= currentIdx;
+                        const isCurrent = idx === currentIdx;
+                        const isLast = idx === steps.length - 1;
+
+                        return (
+                          <React.Fragment key={step.key}>
+                            <div className="flex flex-col items-center gap-2">
+                              <div className={`relative flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all ${
+                                isCurrent
+                                  ? "border-[#00be62] bg-[#00be62] text-white shadow-[0_0_18px_-4px_rgba(0,190,98,0.6)]"
+                                  : isCompleted
+                                    ? "border-[#00be62] bg-emerald-50 text-[#00be62]"
+                                    : "border-emerald-200 bg-white text-[#c4cec8]"
+                              }`}>
+                                <Icon size={18} />
+                                {isCurrent && (
+                                  <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00be62] opacity-40" />
+                                    <span className="relative inline-flex h-3.5 w-3.5 rounded-full bg-[#00be62] border-2 border-white" />
+                                  </span>
+                                )}
+                              </div>
+                              <span className={`text-[10px] font-semibold text-center whitespace-nowrap ${
+                                isCurrent ? "text-[#00be62]" : isCompleted ? "text-[#3d6b52]" : "text-[#b0bcb5]"
+                              }`}>
+                                {step.label}
+                              </span>
+                            </div>
+                            {!isLast && (
+                              <div className={`flex-1 h-0.5 mx-1 rounded-full mt-[-20px] ${
+                                idx < currentIdx ? "bg-[#00be62]" : "bg-emerald-100"
+                              }`} />
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Delivery info row (From / To) */}
+                <div className="px-6 py-5 border-b border-emerald-50">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="rounded-2xl border border-emerald-100 bg-[#f9fcfa] p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-[#00be62]">
+                          <FiBox size={13} />
+                        </div>
+                        <p className={`${openSans.className} text-[10px] uppercase tracking-[0.14em] text-[#6f7f77] font-semibold`}>From</p>
+                      </div>
+                      <p className={`${inter.className} text-sm font-semibold text-[#1b2b22]`}>Gachpala Store</p>
+                      <p className={`${openSans.className} text-xs text-[#6b7c73] mt-0.5`}>Dhaka, Bangladesh</p>
+                    </div>
+                    <div className="rounded-2xl border border-emerald-100 bg-[#f9fcfa] p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                          <FiMapPin size={13} />
+                        </div>
+                        <p className={`${openSans.className} text-[10px] uppercase tracking-[0.14em] text-[#6f7f77] font-semibold`}>To</p>
+                      </div>
+                      <p className={`${inter.className} text-sm font-semibold text-[#1b2b22]`}>{user.name}</p>
+                      <p className={`${openSans.className} text-xs text-[#6b7c73] mt-0.5`}>
+                        {addresses.length > 0
+                          ? `${addresses[0].city || ""}, ${addresses[0].state || addresses[0].country || ""}`
+                          : "Address not set"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Order details row */}
+                <div className="px-6 py-5 border-b border-emerald-50">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div>
+                      <p className={`${openSans.className} text-[10px] uppercase tracking-[0.12em] text-[#6f7f77] font-semibold`}>Customer</p>
+                      <p className={`${inter.className} text-sm font-semibold text-[#1b2b22] mt-1`}>{user.name}</p>
+                    </div>
+                    <div>
+                      <p className={`${openSans.className} text-[10px] uppercase tracking-[0.12em] text-[#6f7f77] font-semibold`}>Date</p>
+                      <p className={`${inter.className} text-sm font-semibold text-[#1b2b22] mt-1`}>{trackingOrder.date}</p>
+                    </div>
+                    <div>
+                      <p className={`${openSans.className} text-[10px] uppercase tracking-[0.12em] text-[#6f7f77] font-semibold`}>Amount</p>
+                      <p className={`${inter.className} text-sm font-semibold text-[#1b2b22] mt-1`}>৳{trackingOrder.total}</p>
+                    </div>
+                    <div>
+                      <p className={`${openSans.className} text-[10px] uppercase tracking-[0.12em] text-[#6f7f77] font-semibold`}>Phone</p>
+                      <p className={`${inter.className} text-sm font-semibold text-[#1b2b22] mt-1`}>{user.phone || "N/A"}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tracking number + action */}
+                <div className="px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div>
+                    <p className={`${openSans.className} text-[10px] uppercase tracking-[0.12em] text-[#6f7f77] font-semibold`}>Tracking ID</p>
+                    <p className={`${inter.className} text-2xl font-bold text-[#1b2b22] mt-1 tracking-wide`}>
+                      {trackingOrder.id.replace("#", "")}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => { setTrackingOrder(null); setActiveTab("orders"); }}
+                    className="inline-flex items-center gap-2 rounded-full bg-[#00be62] px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-18px_rgba(0,190,98,0.8)] transition hover:bg-[#00a757]"
+                  >
+                    <FiPackage size={16} />
+                    View All Orders
+                    <FiChevronRight size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        }
       default:
         return null;
     }
@@ -1745,6 +1938,108 @@ export default function Profile() {
                       <FiLogOut size={17} /> Logout
                     </button>
                   </nav>
+
+                  {/* Current Orders section */}
+                  <div className="hidden lg:block mt-3 border-t border-emerald-50 pt-3 px-1">
+                    <div className="flex items-center justify-between px-2 mb-2.5">
+                      <span className={`${openSans.className} text-[10px] font-bold uppercase tracking-[0.14em] text-[#8a9790]`}>
+                        Current Orders
+                      </span>
+                      {(() => {
+                        const active = recentOrderRows.filter((o) => {
+                          const s = o.status;
+                          return s === "pending" || s === "processing" || s === "confirmed";
+                        });
+                        return active.length > 0 ? (
+                          <span className="flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-[#00be62] px-1.5 text-[10px] font-bold text-white">
+                            {active.length}
+                          </span>
+                        ) : null;
+                      })()}
+                    </div>
+
+                    {isRecentOrdersLoading ? (
+                      <div className="space-y-2 px-1">
+                        {[1, 2].map((i) => (
+                          <div key={i} className="animate-pulse rounded-xl bg-[#f5f9f6] p-3">
+                            <div className="flex items-center justify-between">
+                              <div className="h-3 w-20 rounded bg-emerald-100" />
+                              <div className="h-3 w-12 rounded bg-emerald-100" />
+                            </div>
+                            <div className="mt-2 flex items-center justify-between">
+                              <div className="h-2.5 w-14 rounded bg-emerald-50" />
+                              <div className="h-4 w-14 rounded-full bg-emerald-50" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (() => {
+                      const activeItems = recentOrderRows.filter((o) => {
+                        const s = o.status;
+                        return s === "pending" || s === "processing" || s === "confirmed";
+                      }).slice(0, 3);
+
+                      if (activeItems.length === 0) {
+                        return (
+                          <div className="rounded-xl bg-[#f8fbf8] px-3 py-4 text-center mx-1">
+                            <FiPackage className="mx-auto mb-1.5 text-[#c4cec8]" size={18} />
+                            <p className={`${openSans.className} text-[11px] text-[#8a9790]`}>
+                              No active orders
+                            </p>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div className="space-y-1.5 px-1">
+                          {activeItems.map((order, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => { setTrackingOrder(order); setActiveTab("tracking"); }}
+                              className="group flex w-full items-center gap-2.5 rounded-xl bg-[#f8fbf8] px-3 py-2.5 text-left transition-colors hover:bg-[#edf7ef]"
+                            >
+                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-500">
+                                <FiPackage size={14} />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center justify-between">
+                                  <p className={`${inter.className} text-[11px] font-semibold text-[#1b2b22]`}>
+                                    {order.id}
+                                  </p>
+                                  <p className={`${openSans.className} text-[10px] font-medium text-[#1b2b22]`}>
+                                    ৳{order.total}
+                                  </p>
+                                </div>
+                                <div className="mt-0.5 flex items-center justify-between">
+                                  <span className={`${openSans.className} text-[9px] text-[#8a9790]`}>
+                                    {order.date}
+                                  </span>
+                                  <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${
+                                    order.status === "processing"
+                                      ? "bg-blue-50 text-blue-600"
+                                      : order.status === "confirmed"
+                                        ? "bg-emerald-50 text-emerald-600"
+                                        : "bg-amber-50 text-amber-600"
+                                  }`}>
+                                    {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                                  </span>
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+
+                          <button
+                            type="button"
+                            onClick={() => setActiveTab("orders")}
+                            className={`${openSans.className} w-full rounded-xl bg-emerald-50/70 py-2 text-center text-[10px] font-semibold text-[#1f7a4d] transition hover:bg-emerald-100 mt-1`}
+                          >
+                            View all orders →
+                          </button>
+                        </div>
+                      );
+                    })()}
+                  </div>
                 </div>
               </div>
 
