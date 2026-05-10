@@ -2,13 +2,13 @@
 /* eslint-disable @next/next/no-img-element */
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { BiUser } from "react-icons/bi";
 import { CiMenuBurger } from "react-icons/ci";
 import { FiLogOut, FiX } from "react-icons/fi";
 import { HiOutlineShoppingBag } from "react-icons/hi";
 import { LiaSearchSolid } from "react-icons/lia";
-import { easeOut, motion } from "framer-motion";
+import { easeOut, motion, AnimatePresence } from "framer-motion";
 import { FaRegHeart } from "react-icons/fa";
 import { GoSearch } from "react-icons/go";
 import { useSelector } from "react-redux";
@@ -98,6 +98,10 @@ export default function Home() {
   const [openSearch, setOpenSearch] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [SignInUp, setSignInUp] = React.useState(false);
+  const [cachedProducts, setCachedProducts] = React.useState([]);
+  const [isLoadingProducts, setIsLoadingProducts] = React.useState(false);
+  const searchInputRef = useRef(null);
+  const searchResultsRef = useRef(null);
   // const profileRef = useRef(null);
 
   const handleToggle = () => {
@@ -111,10 +115,64 @@ export default function Home() {
   };
 
   const handleOpenSearch = () => {
-    setOpenSearch((prev) => !prev);
+    const willOpen = !openSearch;
+    setOpenSearch(willOpen);
     setToogleProfile(false);
     setToggle(false);
+    if (willOpen) {
+      // Focus the input after the panel animates open
+      setTimeout(() => searchInputRef.current?.focus(), 150);
+    }
   };
+
+  // Fetch products once when search opens (cache for session)
+  useEffect(() => {
+    if (!openSearch) return;
+    if (cachedProducts.length > 0) return;
+
+    let cancelled = false;
+    const fetchProducts = async () => {
+      setIsLoadingProducts(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/products`);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!cancelled && Array.isArray(data)) {
+          setCachedProducts(data);
+        }
+      } catch {
+        // silently fail
+      } finally {
+        if (!cancelled) setIsLoadingProducts(false);
+      }
+    };
+
+    fetchProducts();
+    return () => { cancelled = true; };
+  }, [openSearch, cachedProducts.length]);
+
+  // Filter products based on search query
+  const searchResults = useMemo(() => {
+    const trimmed = searchQuery.trim().toLowerCase();
+    if (!trimmed || cachedProducts.length === 0) return [];
+
+    return cachedProducts
+      .filter((product) => {
+        const haystacks = [product?.name, product?.description, product?.category_name]
+          .filter(Boolean)
+          .map((v) => String(v).toLowerCase());
+        return haystacks.some((v) => v.includes(trimmed));
+      })
+      .slice(0, 8); // Limit to 8 results for UX
+  }, [searchQuery, cachedProducts]);
+
+  const hasSearchQuery = searchQuery.trim().length > 0;
+
+  const handleSearchResultClick = useCallback((productId) => {
+    setOpenSearch(false);
+    setSearchQuery("");
+    router.push(`/productDetails?id=${productId}`);
+  }, [router]);
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
@@ -124,6 +182,7 @@ export default function Home() {
       : "/shop";
     router.push(destination);
     setOpenSearch(false);
+    setSearchQuery("");
     setToggle(false);
     setToogleProfile(false);
   };
@@ -505,6 +564,7 @@ export default function Home() {
           </div>
         </motion.div>
 
+        {/* Search panel */}
         <motion.div
           initial={{ height: 0, opacity: 0 }}
           animate={{
@@ -512,19 +572,21 @@ export default function Home() {
             opacity: openSearch ? 1 : 0,
           }}
           transition={{ duration: 0.3, ease: easeOut }}
-          className="absolute left-0 top-full w-full overflow-hidden border-t border-emerald-100 bg-white shadow-lg z-40"
+          className="absolute left-0 top-full w-full overflow-hidden z-40"
         >
-          <div className="flex items-center justify-center px-4 py-5 md:px-8 lg:px-10 xl:px-10">
+          <div className="mx-auto max-w-2xl px-4 py-5 md:px-8 lg:px-10">
             <form
-              className="relative flex w-full max-w-2xl items-center"
+              className="relative flex w-full items-center"
               onSubmit={handleSearchSubmit}
             >
               <LiaSearchSolid className="absolute left-4 text-lg text-gray-400" />
               <input
+                ref={searchInputRef}
                 type="text"
                 placeholder="Search for plants..."
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
+                autoComplete="off"
                 className={`${openSans.className} w-full rounded-full bg-gray-50 py-3 pl-11 pr-28 text-base text-gray-700 outline-none transition-all placeholder-gray-400 focus:ring-2 focus:ring-green-500/20`}
               />
               <button
@@ -536,12 +598,106 @@ export default function Home() {
               <button
                 type="button"
                 className="absolute right-4"
-                onClick={() => setOpenSearch(false)}
+                onClick={() => { setOpenSearch(false); setSearchQuery(""); }}
                 aria-label="Close search"
               >
                 <FiX className="text-lg text-gray-400 transition-colors hover:text-red-500" />
               </button>
             </form>
+
+            {/* Live search results dropdown */}
+            <AnimatePresence>
+              {hasSearchQuery && (
+                <motion.div
+                  ref={searchResultsRef}
+                  key="search-results"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, ease: easeOut }}
+                  className="mt-3 max-h-[60vh] overflow-y-auto rounded-2xl border border-emerald-100 bg-white shadow-lg"
+                >
+                  {isLoadingProducts ? (
+                    <div className="flex items-center justify-center gap-2 px-4 py-8">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#00be62] border-t-transparent" />
+                      <p className={`${openSans.className} text-sm text-gray-500`}>Loading products...</p>
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    <ul className="divide-y divide-emerald-50">
+                      {searchResults.map((product) => {
+                        const imgSrc = product.image_url
+                          ? product.image_url.startsWith("/")
+                            ? `${API_BASE_URL}${product.image_url}`
+                            : product.image_url
+                          : product.thumbnail || "/plant-placeholder.png";
+
+                        return (
+                          <li key={product.id}>
+                            <button
+                              type="button"
+                              onClick={() => handleSearchResultClick(product.id)}
+                              className="flex w-full items-center gap-3.5 px-4 py-3 text-left transition-colors hover:bg-emerald-50/60 focus-visible:bg-emerald-50/60 focus-visible:outline-none"
+                            >
+                              <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-[#f0f0f0]">
+                                <img
+                                  src={imgSrc}
+                                  alt={product.name}
+                                  className="h-full w-full object-cover"
+                                  onError={(e) => { e.target.src = "/plant-placeholder.png"; }}
+                                />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className={`${inter.className} truncate text-sm font-semibold text-[#1f1f1f]`}>
+                                  {product.name}
+                                </p>
+                                <div className="mt-0.5 flex items-center gap-2">
+                                  <span className={`${openSans.className} text-xs font-semibold text-[#00be62]`}>
+                                    {product.price} BDT
+                                  </span>
+                                  {product.category_name && (
+                                    <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-[#4e6559]">
+                                      {product.category_name}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <GoSearch className="shrink-0 text-gray-300" />
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : (
+                    <div className="px-4 py-8 text-center">
+                      <p className={`${inter.className} text-sm font-medium text-gray-500`}>
+                        No plants found for &ldquo;{searchQuery.trim()}&rdquo;
+                      </p>
+                      <p className={`${openSans.className} mt-1 text-xs text-gray-400`}>
+                        Try a different keyword or browse the shop
+                      </p>
+                    </div>
+                  )}
+
+                  {/* View all results link */}
+                  {searchResults.length > 0 && (
+                    <div className="border-t border-emerald-100 px-4 py-2.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const trimmed = searchQuery.trim();
+                          router.push(trimmed ? `/shop?search=${encodeURIComponent(trimmed)}` : "/shop");
+                          setOpenSearch(false);
+                          setSearchQuery("");
+                        }}
+                        className={`${openSans.className} w-full rounded-xl bg-emerald-50 py-2 text-center text-xs font-semibold text-[#1f7a4d] transition hover:bg-emerald-100`}
+                      >
+                        View all results →
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       </div>
