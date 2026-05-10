@@ -2,6 +2,7 @@
 import Container from "@/components/container";
 import { arapey, inter, openSans } from "@/lib/fonts";
 import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { API_BASE_URL } from "@/app/config";
 import { AUTH_TOKEN_KEY, clearAuthStorage } from "@/lib/authGate";
 import { useRouter } from "next/navigation";
@@ -15,29 +16,45 @@ import {
   FiBox,
   FiChevronRight,
   FiX,
+  FiMail,
+  FiPhone,
+  FiCalendar,
 } from "react-icons/fi";
 
 function ProfileSkeleton() {
   return (
     <>
       <div className="relative z-10 bg-white/80 backdrop-blur-sm border border-emerald-100 rounded-4xl p-7 md:p-9 mb-8 overflow-hidden animate-pulse">
-        <div className="flex flex-col md:flex-row items-center gap-8">
-          <div className="w-30 h-30 rounded-full bg-emerald-100" />
-          <div className="flex-1 w-full space-y-3">
-            <div className="h-3 w-28 bg-emerald-100 rounded" />
-            <div className="h-10 w-56 bg-emerald-100 rounded" />
-            <div className="h-4 w-64 bg-emerald-100 rounded" />
-            <div className="h-4 w-48 bg-emerald-100 rounded" />
-            <div className="h-4 w-40 bg-emerald-100 rounded" />
-          </div>
-          <div className="grid grid-cols-2 gap-3 w-full md:w-auto">
-            <div className="bg-[#f4fbf6] border border-emerald-100 rounded-xl p-4 text-center min-w-28">
-              <div className="h-8 w-12 mx-auto bg-emerald-100 rounded" />
-              <div className="h-3 w-12 mx-auto mt-2 bg-emerald-100 rounded" />
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col sm:flex-row items-start gap-6 flex-1">
+            <div className="w-28 h-28 rounded-full bg-emerald-100" />
+            <div className="flex-1 space-y-3">
+              <div className="h-3 w-24 bg-emerald-100 rounded" />
+              <div className="h-10 w-56 bg-emerald-100 rounded" />
+              <div className="h-4 w-64 bg-emerald-100 rounded" />
+              <div className="h-4 w-48 bg-emerald-100 rounded" />
+              <div className="flex flex-wrap gap-2">
+                <div className="h-7 w-28 bg-emerald-100 rounded-full" />
+                <div className="h-7 w-32 bg-emerald-100 rounded-full" />
+                <div className="h-7 w-36 bg-emerald-100 rounded-full" />
+              </div>
+              <div className="flex flex-wrap gap-2 pt-2">
+                <div className="h-9 w-28 bg-emerald-100 rounded-full" />
+                <div className="h-9 w-32 bg-emerald-100 rounded-full" />
+                <div className="h-9 w-36 bg-emerald-100 rounded-full" />
+              </div>
             </div>
-            <div className="bg-[#f4fbf6] border border-emerald-100 rounded-xl p-4 text-center min-w-28">
-              <div className="h-8 w-12 mx-auto bg-emerald-100 rounded" />
-              <div className="h-3 w-16 mx-auto mt-2 bg-emerald-100 rounded" />
+          </div>
+
+          <div className="w-full lg:w-[320px]">
+            <div className="rounded-2xl border border-emerald-100 bg-white/90 p-4">
+              <div className="h-3 w-20 bg-emerald-100 rounded" />
+              <div className="grid grid-cols-3 gap-3 mt-3">
+                <div className="h-20 bg-emerald-100 rounded-xl" />
+                <div className="h-20 bg-emerald-100 rounded-xl" />
+                <div className="h-20 bg-emerald-100 rounded-xl" />
+              </div>
+              <div className="h-10 bg-emerald-100 rounded-xl mt-4" />
             </div>
           </div>
         </div>
@@ -1129,12 +1146,24 @@ export default function Profile() {
                 Recent Orders
               </h3>
               <div className="overflow-x-auto">
-                {isRecentOrdersLoading || recentOrderRows.length === 0 ? (
+                {isRecentOrdersLoading ? (
                   <div className="space-y-3 animate-pulse">
                     <div className="h-10 bg-[#f7fbf8] rounded-xl" />
                     <div className="h-11 bg-[#f9fcfa] rounded-lg" />
                     <div className="h-11 bg-[#f9fcfa] rounded-lg" />
                     <div className="h-11 bg-[#f9fcfa] rounded-lg" />
+                  </div>
+                ) : recentOrderRows.length === 0 ? (
+                  <div className="rounded-2xl border border-emerald-100 bg-[#f9fcfa] p-6 text-center">
+                    <p className="text-sm text-[#5f6f66]">
+                      No orders yet. Start exploring our freshest plants.
+                    </p>
+                    <Link
+                      href="/shop"
+                      className="mt-4 inline-flex items-center justify-center rounded-full bg-[#00be62] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#00a757]"
+                    >
+                      Browse plants
+                    </Link>
                   </div>
                 ) : (
                   <table className="w-full text-left">
@@ -1185,11 +1214,23 @@ export default function Profile() {
             >
               My Orders
             </h3>
-            {isAllOrdersLoading || allOrderRows.length === 0 ? (
+            {isAllOrdersLoading ? (
               <div className="space-y-4 animate-pulse">
                 <div className="h-24 rounded-xl bg-[#f9fcfa] border border-emerald-100" />
                 <div className="h-24 rounded-xl bg-[#f9fcfa] border border-emerald-100" />
                 <div className="h-24 rounded-xl bg-[#f9fcfa] border border-emerald-100" />
+              </div>
+            ) : allOrderRows.length === 0 ? (
+              <div className="rounded-2xl border border-emerald-100 bg-[#f9fcfa] p-6 text-center">
+                <p className="text-sm text-[#5f6f66]">
+                  You have not placed any orders yet.
+                </p>
+                <Link
+                  href="/shop"
+                  className="mt-4 inline-flex items-center justify-center rounded-full border border-emerald-200 px-5 py-2.5 text-sm font-semibold text-[#1f6a43] transition hover:bg-emerald-50"
+                >
+                  Shop now
+                </Link>
               </div>
             ) : (
               <div className="space-y-4">
@@ -1259,51 +1300,67 @@ export default function Profile() {
               </div>
             ) : null}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {addresses.map((address, index) => (
-                <div
-                  key={address.id ?? `${address.address_type}-${index}`}
-                  className="border border-emerald-200 bg-emerald-50/60 p-6 rounded-xl relative"
+            {addresses.length === 0 ? (
+              <div className="rounded-2xl border border-emerald-100 bg-[#f9fcfa] p-6 text-center">
+                <p className="text-sm text-[#5f6f66]">
+                  No saved addresses yet. Add one to speed up checkout.
+                </p>
+                <button
+                  type="button"
+                  onClick={openAddAddressModal}
+                  className="mt-4 inline-flex items-center justify-center rounded-full bg-[#00be62] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#00a757]"
                 >
-                  {address.is_default ? (
-                    <span className="absolute top-4 right-4 bg-[#00be62] text-white text-xs px-2 py-1 rounded">
-                      Default
-                    </span>
-                  ) : null}
-                  <h4 className="font-bold text-[#1f3128] mb-2">
-                    {address.address_type}
-                  </h4>
-                  <p className="text-[#5f6f66] text-sm leading-relaxed mb-4">
-                    {address.street} <br />
-                    {address.city}, {address.state} {address.postal_code} <br />
-                    {address.country}
-                  </p>
-                  <p className="text-xs text-[#5f6f66] mb-3">
-                    {address.phone || "N/A"}
-                  </p>
-                  <div className="flex gap-3 text-sm font-medium">
-                    <button
-                      onClick={() => openEditAddressModal(address)}
-                      disabled={
-                        isAddressUpdating || deletingAddressId === address.id
-                      }
-                      className="text-[#00be62] hover:underline disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteAddress(address.id)}
-                      disabled={deletingAddressId === address.id}
-                      className="text-red-500 hover:underline disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      {deletingAddressId === address.id
-                        ? "Deleting..."
-                        : "Delete"}
-                    </button>
+                  Add an address
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {addresses.map((address, index) => (
+                  <div
+                    key={address.id ?? `${address.address_type}-${index}`}
+                    className="border border-emerald-200 bg-emerald-50/60 p-6 rounded-xl relative"
+                  >
+                    {address.is_default ? (
+                      <span className="absolute top-4 right-4 bg-[#00be62] text-white text-xs px-2 py-1 rounded">
+                        Default
+                      </span>
+                    ) : null}
+                    <h4 className="font-bold text-[#1f3128] mb-2">
+                      {address.address_type}
+                    </h4>
+                    <p className="text-[#5f6f66] text-sm leading-relaxed mb-4">
+                      {address.street} <br />
+                      {address.city}, {address.state} {address.postal_code}{" "}
+                      <br />
+                      {address.country}
+                    </p>
+                    <p className="text-xs text-[#5f6f66] mb-3">
+                      {address.phone || "N/A"}
+                    </p>
+                    <div className="flex gap-3 text-sm font-medium">
+                      <button
+                        onClick={() => openEditAddressModal(address)}
+                        disabled={
+                          isAddressUpdating || deletingAddressId === address.id
+                        }
+                        className="text-[#00be62] hover:underline disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteAddress(address.id)}
+                        disabled={deletingAddressId === address.id}
+                        className="text-red-500 hover:underline disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {deletingAddressId === address.id
+                          ? "Deleting..."
+                          : "Delete"}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         );
       case "account":
@@ -1501,66 +1558,143 @@ export default function Profile() {
         ) : (
           <>
             <div className="relative z-10 bg-white/80 backdrop-blur-sm border border-emerald-100 rounded-4xl p-7 md:p-9 shadow-[0_28px_70px_-40px_rgba(17,42,28,0.45)] mb-8 overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#eaf7ef_0%,transparent_58%)] opacity-70" />
               <div className="absolute top-0 right-0 h-48 w-48 rounded-full border border-emerald-200/50 -translate-y-1/2 translate-x-1/3" />
 
-              <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
-                <div className="relative group">
-                  <div className="w-30 h-30 rounded-full border-4 border-white shadow-lg bg-[linear-gradient(145deg,#def5e7_0%,#bceacb_100%)] flex items-center justify-center">
-                    <span
-                      className={`${inter.className} text-4xl text-[#0f6b3d]`}
-                    >
-                      {userInitial}
+              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] gap-8">
+                <div className="flex flex-col sm:flex-row items-start gap-6">
+                  <div className="relative">
+                    <div className="w-28 h-28 rounded-full border-4 border-white shadow-lg bg-[linear-gradient(145deg,#def5e7_0%,#bceacb_100%)] flex items-center justify-center">
+                      <span
+                        className={`${inter.className} text-4xl text-[#0f6b3d]`}
+                      >
+                        {userInitial}
+                      </span>
+                    </div>
+                    <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-[#2d7d53] shadow-sm border border-emerald-100">
+                      Active
                     </span>
                   </div>
-                </div>
 
-                <div className="text-center md:text-left flex-1">
-                  <p
-                    className={`${openSans.className} text-xs uppercase tracking-[0.2em] text-[#2d7d53]`}
-                  >
-                    Profile Overview
-                  </p>
-                  <h1
-                    className={`${arapey.className} text-5xl leading-tight text-[#16261f] mt-2`}
-                  >
-                    {user.name}
-                  </h1>
-                  <p className={`${openSans.className} text-[#617169] mt-1`}>
-                    {user.email}
-                  </p>
-                  <p
-                    className={`${openSans.className} text-sm text-[#7c8a84] mt-1`}
-                  >
-                    ID: {user.id ?? "N/A"} • {user.role || "Customer"}
-                  </p>
-                  <p
-                    className={`${openSans.className} text-sm text-[#7c8a84] mt-1`}
-                  >
-                    {user.phone}
-                  </p>
-                  <p
-                    className={`${openSans.className} text-sm text-[#7c8a84] mt-1`}
-                  >
-                    Member since {user.joinDate}
-                  </p>
-                </div>
+                  <div className="flex-1">
+                    <p
+                      className={`${openSans.className} text-xs uppercase tracking-[0.2em] text-[#2d7d53]`}
+                    >
+                      Profile Overview
+                    </p>
+                    <h1
+                      className={`${arapey.className} text-5xl leading-tight text-[#16261f] mt-2`}
+                    >
+                      {user.name}
+                    </h1>
+                    <p className={`${openSans.className} text-[#617169] mt-1`}>
+                      {user.email || "Add your email"}
+                    </p>
+                    <p
+                      className={`${openSans.className} text-sm text-[#7c8a84] mt-1`}
+                    >
+                      {user.role || "Customer"} • ID: {user.id ?? "N/A"}
+                    </p>
 
-                <div className="grid grid-cols-2 gap-3 w-full md:w-auto">
-                  <div className="bg-[#f4fbf6] border border-emerald-100 rounded-xl p-4 text-center min-w-28">
-                    <p className={`${inter.className} text-2xl text-[#1b2b22]`}>
-                      {user.totalOrder}
-                    </p>
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-[#72827a]">
-                      Orders
-                    </p>
+                    <div className="mt-4 flex flex-wrap gap-2 text-xs text-[#4c5f55]">
+                      <span className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/70 px-3 py-1.5">
+                        <FiMail size={13} className="text-[#00be62]" />
+                        {user.email || "No email on file"}
+                      </span>
+                      <span className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/70 px-3 py-1.5">
+                        <FiPhone size={13} className="text-[#00be62]" />
+                        {user.phone || "Add phone number"}
+                      </span>
+                      <span className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/70 px-3 py-1.5">
+                        <FiCalendar size={13} className="text-[#00be62]" />
+                        Member since {user.joinDate}
+                      </span>
+                    </div>
+
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("account")}
+                        className="inline-flex items-center justify-center rounded-full bg-[#00be62] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#00a757]"
+                      >
+                        Edit Profile
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("orders")}
+                        className="inline-flex items-center justify-center rounded-full border border-emerald-200 px-5 py-2.5 text-sm font-semibold text-[#1f6a43] transition hover:bg-emerald-50"
+                      >
+                        View Orders
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("address")}
+                        className="inline-flex items-center justify-center rounded-full border border-emerald-200 px-5 py-2.5 text-sm font-semibold text-[#1f6a43] transition hover:bg-emerald-50"
+                      >
+                        Manage Addresses
+                      </button>
+                    </div>
                   </div>
-                  <div className="bg-[#f4fbf6] border border-emerald-100 rounded-xl p-4 text-center min-w-28">
-                    <p className={`${inter.className} text-2xl text-[#1b2b22]`}>
-                      {user.pending}
+                </div>
+
+                <div className="w-full">
+                  <div className="rounded-2xl border border-emerald-100 bg-white/80 p-5 shadow-[0_18px_40px_-30px_rgba(17,42,28,0.35)]">
+                    <p className="text-xs uppercase tracking-[0.18em] text-[#6f7f77] font-semibold">
+                      Activity
                     </p>
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-[#72827a]">
-                      Pending
-                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+                      <div className="rounded-xl border border-emerald-100 bg-[#f4fbf6] p-3">
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-xl bg-emerald-100 text-[#00be62] flex items-center justify-center">
+                            <FiBox size={16} />
+                          </div>
+                          <div>
+                            <p
+                              className={`${inter.className} text-lg text-[#1b2b22]`}
+                            >
+                              {user.totalOrder}
+                            </p>
+                            <p className="text-[11px] uppercase tracking-[0.12em] text-[#72827a]">
+                              Orders
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="rounded-xl border border-amber-100 bg-[#fff8ee] p-3">
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                            <FiPackage size={16} />
+                          </div>
+                          <div>
+                            <p
+                              className={`${inter.className} text-lg text-[#1b2b22]`}
+                            >
+                              {user.pending}
+                            </p>
+                            <p className="text-[11px] uppercase tracking-[0.12em] text-[#72827a]">
+                              Pending
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="rounded-xl border border-rose-100 bg-[#fff4f6] p-3">
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                            <FiHeart size={16} />
+                          </div>
+                          <div>
+                            <p
+                              className={`${inter.className} text-lg text-[#1b2b22]`}
+                            >
+                              {user.wishlist}
+                            </p>
+                            <p className="text-[11px] uppercase tracking-[0.12em] text-[#72827a]">
+                              Wishlist
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1568,13 +1702,16 @@ export default function Profile() {
 
             <div className="relative z-10 flex flex-col lg:flex-row gap-8">
               <div className="w-full lg:w-1/4">
-                <div className="bg-white/85 backdrop-blur-sm border border-emerald-100 rounded-2xl p-3 sticky top-24 shadow-[0_18px_50px_-36px_rgba(17,42,28,0.45)]">
-                  <div className="px-3 pt-2 pb-3 border-b border-emerald-50">
+                <div className="bg-white/85 backdrop-blur-sm border border-emerald-100 rounded-2xl p-3 lg:sticky lg:top-24 shadow-[0_18px_50px_-36px_rgba(17,42,28,0.45)]">
+                  <div className="flex items-center justify-between px-3 pt-2 pb-3 border-b border-emerald-50">
                     <span className="text-xs font-bold text-[#7d8b84] uppercase tracking-[0.16em]">
-                      Navigation
+                      Account Menu
+                    </span>
+                    <span className="text-[10px] uppercase tracking-[0.18em] text-[#9aa7a1] lg:hidden">
+                      Swipe
                     </span>
                   </div>
-                  <nav className="flex flex-col p-1 mt-2">
+                  <nav className="flex lg:flex-col gap-2 p-2 mt-2 overflow-x-auto lg:overflow-visible">
                     {navigation.map((item) => {
                       const Icon = item.icon;
                       const active = activeTab === item.key;
@@ -1582,9 +1719,9 @@ export default function Profile() {
                         <button
                           key={item.key}
                           onClick={() => setActiveTab(item.key)}
-                          className={`flex items-center justify-between gap-3 px-3 py-3 rounded-xl text-sm font-medium transition ${
+                          className={`flex items-center justify-between gap-3 px-3 py-3 rounded-xl text-sm font-medium transition min-w-[160px] lg:min-w-0 whitespace-nowrap ${
                             active
-                              ? "bg-[#00be62]/10 text-[#0a7f42]"
+                              ? "bg-[#00be62]/10 text-[#0a7f42] shadow-sm"
                               : "text-[#5f6f67] hover:bg-emerald-50"
                           }`}
                         >
@@ -1593,7 +1730,9 @@ export default function Profile() {
                           </span>
                           <FiChevronRight
                             size={14}
-                            className={active ? "opacity-100" : "opacity-40"}
+                            className={`hidden lg:block ${
+                              active ? "opacity-100" : "opacity-40"
+                            }`}
                           />
                         </button>
                       );
@@ -1601,7 +1740,7 @@ export default function Profile() {
 
                     <button
                       onClick={handleLogout}
-                      className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition mt-2"
+                      className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition mt-1 min-w-[160px] lg:min-w-0 whitespace-nowrap"
                     >
                       <FiLogOut size={17} /> Logout
                     </button>
