@@ -15,6 +15,11 @@ export default function ShopContents() {
   const dispatch = useDispatch();
   const searchParams = useSearchParams();
   const selectedCategory = searchParams.get("category");
+  const searchTerm = searchParams.get("search") || "";
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+  const normalizedCategory = String(selectedCategory || "")
+    .trim()
+    .toLowerCase();
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -61,19 +66,30 @@ export default function ShopContents() {
 
   // Filter products based on selected category and update loading state
   useEffect(() => {
-    if (selectedCategory) {
-      const filtered = allProducts.filter(
-        (product) =>
-          product.category_name &&
-          product.category_name.toLowerCase() ===
-            selectedCategory.toLowerCase(),
-      );
-      setFilteredProducts(filtered);
-    } else {
-      setFilteredProducts(allProducts);
-    }
+    const filtered = allProducts.filter((product) => {
+      const matchesCategory =
+        !normalizedCategory ||
+        String(product?.category_name || "").toLowerCase() ===
+          normalizedCategory;
+
+      if (!matchesCategory) return false;
+
+      if (!normalizedSearch) return true;
+
+      const haystacks = [
+        product?.name,
+        product?.description,
+        product?.category_name,
+      ]
+        .filter(Boolean)
+        .map((value) => String(value).toLowerCase());
+
+      return haystacks.some((value) => value.includes(normalizedSearch));
+    });
+
+    setFilteredProducts(filtered);
     setCurrentPage(1); // Reset to first page on filter change
-  }, [allProducts, selectedCategory]);
+  }, [allProducts, normalizedCategory, normalizedSearch]);
 
   // Pagination calculations
   const totalProducts = filteredProducts.length;
@@ -92,6 +108,25 @@ export default function ShopContents() {
     });
     return [...set].sort((a, b) => a.localeCompare(b));
   }, [allProducts]);
+
+  const activeSearch = searchTerm.trim();
+  const hasSearch = Boolean(activeSearch);
+  const searchLabel = hasSearch ? ` for "${activeSearch}"` : "";
+  const categoryLabel = selectedCategory ? ` in ${selectedCategory}` : "";
+  const filterLabel = `${searchLabel}${categoryLabel}`;
+  const hasFilters = hasSearch || Boolean(selectedCategory);
+
+  const buildShopLink = (category) => {
+    const params = new URLSearchParams();
+    if (hasSearch) {
+      params.set("search", activeSearch);
+    }
+    if (category) {
+      params.set("category", category);
+    }
+    const query = params.toString();
+    return query ? `/shop?${query}` : "/shop";
+  };
 
   const pageWindow = useMemo(() => {
     const maxVisible = 5;
@@ -128,12 +163,12 @@ export default function ShopContents() {
               className={`${openSans.className} mt-3 text-sm text-[#55665d] md:text-base`}
             >
               Showing {displayStart}-{displayEnd} of {totalProducts} products
-              {selectedCategory ? ` in ${selectedCategory}` : ""}.
+              {filterLabel ? `${filterLabel}.` : "."}
             </p>
 
             <div className="mt-5 flex flex-wrap items-center gap-2.5">
               <Link
-                href="/shop"
+                href={buildShopLink()}
                 className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                   !selectedCategory
                     ? "border-[#00be62] bg-[#e8f7ef] text-[#1f7a4d]"
@@ -149,7 +184,7 @@ export default function ShopContents() {
                 return (
                   <Link
                     key={category}
-                    href={`/shop?category=${encodeURIComponent(category)}`}
+                    href={buildShopLink(category)}
                     className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                       isActive
                         ? "border-[#00be62] bg-[#e8f7ef] text-[#1f7a4d]"
@@ -172,12 +207,12 @@ export default function ShopContents() {
           >
             Curated Green Collection
           </p>
-          {selectedCategory ? (
+          {hasFilters ? (
             <Link
               href="/shop"
               className="rounded-full border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-[#356f50] hover:border-[#00be62]"
             >
-              Clear Filter
+              Clear Filters
             </Link>
           ) : null}
         </div>
@@ -218,10 +253,14 @@ export default function ShopContents() {
             // Show empty state when no products
             <div className="col-span-full rounded-2xl border border-emerald-100 bg-[#f8fbf7] text-center py-14">
               <p className={`${inter.className} text-xl text-[#27392f]`}>
-                No products found
+                {hasSearch
+                  ? `No results for "${activeSearch}"`
+                  : "No products found"}
               </p>
               <p className="mt-2 text-sm text-[#64746c]">
-                Try switching category or browsing all products.
+                {hasFilters
+                  ? "Try a different keyword or clear filters."
+                  : "Try switching category or browsing all products."}
               </p>
             </div>
           )}

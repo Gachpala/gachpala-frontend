@@ -96,6 +96,7 @@ export default function Home() {
   const [toggle, setToggle] = React.useState(false);
   const [toogleProfile, setToogleProfile] = React.useState(false);
   const [openSearch, setOpenSearch] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [SignInUp, setSignInUp] = React.useState(false);
   // const profileRef = useRef(null);
 
@@ -113,6 +114,18 @@ export default function Home() {
     setOpenSearch((prev) => !prev);
     setToogleProfile(false);
     setToggle(false);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const trimmed = searchQuery.trim();
+    const destination = trimmed
+      ? `/shop?search=${encodeURIComponent(trimmed)}`
+      : "/shop";
+    router.push(destination);
+    setOpenSearch(false);
+    setToggle(false);
+    setToogleProfile(false);
   };
 
   const handleToogleSignInUp = () => {
@@ -502,13 +515,24 @@ export default function Home() {
           className="absolute left-0 top-full w-full overflow-hidden border-t border-emerald-100 bg-white shadow-lg z-40"
         >
           <div className="flex items-center justify-center px-4 py-5 md:px-8 lg:px-10 xl:px-10">
-            <div className="relative flex w-full max-w-2xl items-center">
+            <form
+              className="relative flex w-full max-w-2xl items-center"
+              onSubmit={handleSearchSubmit}
+            >
               <LiaSearchSolid className="absolute left-4 text-lg text-gray-400" />
               <input
                 type="text"
                 placeholder="Search for plants..."
-                className={`${openSans.className} w-full rounded-full bg-gray-50 py-3 pl-11 pr-10 text-base text-gray-700 outline-none transition-all placeholder-gray-400 focus:ring-2 focus:ring-green-500/20`}
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className={`${openSans.className} w-full rounded-full bg-gray-50 py-3 pl-11 pr-28 text-base text-gray-700 outline-none transition-all placeholder-gray-400 focus:ring-2 focus:ring-green-500/20`}
               />
+              <button
+                type="submit"
+                className="absolute right-12 rounded-full bg-[#00be62] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-[#00a757]"
+              >
+                Search
+              </button>
               <button
                 type="button"
                 className="absolute right-4"
@@ -517,7 +541,7 @@ export default function Home() {
               >
                 <FiX className="text-lg text-gray-400 transition-colors hover:text-red-500" />
               </button>
-            </div>
+            </form>
           </div>
         </motion.div>
       </div>
