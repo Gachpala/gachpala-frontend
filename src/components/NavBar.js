@@ -5,7 +5,7 @@ import Link from "next/link";
 import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { BiUser } from "react-icons/bi";
 import { CiMenuBurger } from "react-icons/ci";
-import { FiLogOut, FiX, FiPackage, FiChevronRight } from "react-icons/fi";
+import { FiLogOut, FiX } from "react-icons/fi";
 import { HiOutlineShoppingBag } from "react-icons/hi";
 import { LiaSearchSolid } from "react-icons/lia";
 import { easeOut, motion, AnimatePresence } from "framer-motion";
@@ -100,8 +100,6 @@ export default function Home() {
   const [SignInUp, setSignInUp] = React.useState(false);
   const [cachedProducts, setCachedProducts] = React.useState([]);
   const [isLoadingProducts, setIsLoadingProducts] = React.useState(false);
-  const [currentOrders, setCurrentOrders] = React.useState([]);
-  const [isOrdersLoading, setIsOrdersLoading] = React.useState(false);
   const searchInputRef = useRef(null);
   const searchResultsRef = useRef(null);
   // const profileRef = useRef(null);
@@ -198,66 +196,6 @@ export default function Home() {
     }
     setSignInUp(true);
   };
-
-  // Fetch current orders when profile dropdown opens
-  useEffect(() => {
-    if (!toogleProfile) return;
-    if (!isAuthenticated()) return;
-
-    let cancelled = false;
-    const fetchOrders = async () => {
-      setIsOrdersLoading(true);
-      try {
-        const token = localStorage.getItem(AUTH_TOKEN_KEY);
-        if (!token) return;
-
-        const res = await fetch(`${API_BASE_URL}/users/orders`, {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!res.ok) return;
-        const text = await res.text();
-        if (!text) return;
-
-        let data;
-        try { data = JSON.parse(text); } catch { return; }
-
-        const orders = Array.isArray(data?.recent_orders) ? data.recent_orders : [];
-        if (!cancelled) setCurrentOrders(orders);
-      } catch {
-        // silently fail
-      } finally {
-        if (!cancelled) setIsOrdersLoading(false);
-      }
-    };
-
-    fetchOrders();
-    return () => { cancelled = true; };
-  }, [toogleProfile]);
-
-  // Derive active orders (pending/processing) for display, limit to 3
-  const activeOrders = useMemo(() => {
-    return currentOrders
-      .filter((o) => {
-        const s = String(o?.status || "").toLowerCase();
-        return s === "pending" || s === "processing" || s === "confirmed";
-      })
-      .slice(0, 3)
-      .map((order) => {
-        const normalizedStatus = String(order?.status || "pending").toLowerCase();
-        const createdAtMs = Number(order?.created_at || 0) * 1000;
-        return {
-          orderId: order?.order_id ?? "N/A",
-          id: `#ORD-${order?.order_id ?? "N/A"}`,
-          date: createdAtMs
-            ? new Date(createdAtMs).toLocaleDateString("en-US", { month: "short", day: "2-digit" })
-            : "N/A",
-          total: Number(order?.total_amount ?? 0),
-          status: normalizedStatus,
-        };
-      });
-  }, [currentOrders]);
 
   const handleCloseSignInUp = () => {
     setSignInUp(false);
@@ -531,84 +469,6 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-              </div>
-
-              {/* Current Orders section */}
-              <div className="border-b border-emerald-50 px-3 py-3">
-                <div className="mb-2 flex items-center justify-between px-1">
-                  <p className={`${openSans.className} text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8a9790]`}>
-                    Current Orders
-                  </p>
-                  {activeOrders.length > 0 && (
-                    <span className="flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-[#00be62] px-1.5 text-[10px] font-bold text-white">
-                      {activeOrders.length}
-                    </span>
-                  )}
-                </div>
-
-                {isOrdersLoading ? (
-                  <div className="space-y-2">
-                    {[1, 2].map((i) => (
-                      <div key={i} className="animate-pulse rounded-xl bg-[#f5f9f6] p-3">
-                        <div className="flex items-center justify-between">
-                          <div className="h-3 w-20 rounded bg-emerald-100" />
-                          <div className="h-3 w-14 rounded bg-emerald-100" />
-                        </div>
-                        <div className="mt-2 flex items-center justify-between">
-                          <div className="h-2.5 w-16 rounded bg-emerald-50" />
-                          <div className="h-5 w-16 rounded-full bg-emerald-50" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : activeOrders.length > 0 ? (
-                  <div className="space-y-1.5">
-                    {activeOrders.map((order) => (
-                      <Link
-                        key={order.orderId}
-                        href="/profile"
-                        onClick={() => setToogleProfile(false)}
-                        className="group flex items-center gap-3 rounded-xl bg-[#f8fbf8] px-3 py-2.5 transition-colors hover:bg-[#edf7ef]"
-                      >
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-500">
-                          <FiPackage size={16} />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between">
-                            <p className={`${inter.className} text-xs font-semibold text-[#1b2b22]`}>
-                              {order.id}
-                            </p>
-                            <p className={`${openSans.className} text-[11px] font-medium text-[#1b2b22]`}>
-                              ৳{order.total}
-                            </p>
-                          </div>
-                          <div className="mt-0.5 flex items-center justify-between">
-                            <span className={`${openSans.className} text-[10px] text-[#8a9790]`}>
-                              {order.date}
-                            </span>
-                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                              order.status === "processing"
-                                ? "bg-blue-50 text-blue-600"
-                                : order.status === "confirmed"
-                                  ? "bg-emerald-50 text-emerald-600"
-                                  : "bg-amber-50 text-amber-600"
-                            }`}>
-                              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                            </span>
-                          </div>
-                        </div>
-                        <FiChevronRight className="shrink-0 text-[#c4cec8] transition-colors group-hover:text-[#00be62]" size={14} />
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="rounded-xl bg-[#f8fbf8] px-3 py-4 text-center">
-                    <FiPackage className="mx-auto mb-1.5 text-[#c4cec8]" size={20} />
-                    <p className={`${openSans.className} text-[11px] text-[#8a9790]`}>
-                      No active orders right now
-                    </p>
-                  </div>
-                )}
               </div>
 
               {/* Navigation links */}
