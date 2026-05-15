@@ -7,11 +7,7 @@ import Link from "next/link";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 import { API_BASE_URL } from "@/app/config";
-import {
-  AUTH_CHANGED_EVENT,
-  AUTH_TOKEN_KEY,
-  isAuthenticated,
-} from "@/lib/authGate";
+import { AUTH_CHANGED_EVENT, AUTH_TOKEN_KEY } from "@/lib/authGate";
 import { useRouter } from "next/navigation";
 
 const inputClassName =
@@ -29,19 +25,23 @@ function SignInUpPageComponent({ isOpen, onClose }) {
   const [signUpPhone, setSignUpPhone] = useState("");
   const [signInEmail, setSignInEmail] = useState("");
   const [signInPassword, setSignInPassword] = useState("");
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotPasswordContact, setForgotPasswordContact] = useState("");
+  const [forgotPasswordError, setForgotPasswordError] = useState("");
+  const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [signInError, setSignInError] = useState("");
   const [signInSuccess, setSignInSuccess] = useState("");
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [signUpError, setSignUpError] = useState("");
   const [signUpSuccess, setSignUpSuccess] = useState("");
-  const [hasSession, setHasSession] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
   const isModalMode = typeof isOpen === "boolean";
   const router = useRouter();
 
   const switchTab = useCallback((tabName) => {
     setActiveTab(tabName);
+    setShowForgotPassword(false);
   }, []);
 
   const toggleSignInPassword = useCallback(() => {
@@ -60,23 +60,35 @@ function SignInUpPageComponent({ isOpen, onClose }) {
     onClose?.();
   }, [onClose]);
 
+  const handleForgotPasswordOpen = useCallback(() => {
+    setShowForgotPassword(true);
+    setForgotPasswordError("");
+    setForgotPasswordSuccess("");
+  }, []);
+
+  const handleForgotPasswordSendCode = useCallback(
+    (e) => {
+      e.preventDefault();
+
+      const contact = forgotPasswordContact.trim();
+
+      if (!contact) {
+        setForgotPasswordError("Please enter your email or phone number.");
+        setForgotPasswordSuccess("");
+        return;
+      }
+
+      setForgotPasswordError("");
+      setForgotPasswordSuccess(
+        "If an account exists, a reset code has been sent.",
+      );
+    },
+    [forgotPasswordContact],
+  );
+
   useEffect(() => {
     setPortalReady(true);
   }, []);
-
-  useEffect(() => {
-    const loggedIn = isAuthenticated();
-    setHasSession(loggedIn);
-
-    if (!loggedIn) return;
-
-    if (isModalMode) {
-      onClose?.();
-      return;
-    }
-
-    router.replace("/");
-  }, [isModalMode, isOpen, onClose, router]);
 
   const handleSignIn = useCallback(
     async (e) => {
@@ -135,7 +147,6 @@ function SignInUpPageComponent({ isOpen, onClose }) {
         localStorage.setItem("currentUser", JSON.stringify(userProfile));
         localStorage.setItem("user_name", userProfile.name);
         localStorage.setItem("user_email", userProfile.email);
-        setHasSession(true);
         setSignInSuccess("Signed in successfully.");
         setSignInEmail("");
         setSignInPassword("");
@@ -249,10 +260,6 @@ function SignInUpPageComponent({ isOpen, onClose }) {
     ],
   );
 
-  if (hasSession) {
-    return null;
-  }
-
   const content = (
     <main
       className={`relative overflow-hidden ${
@@ -325,7 +332,11 @@ function SignInUpPageComponent({ isOpen, onClose }) {
             <h2
               className={`${inter.className} mt-2 text-2xl text-[#1d2f24] sm:text-3xl`}
             >
-              {activeTab === "signin" ? "Welcome Back" : "Create Account"}
+              {activeTab === "signin"
+                ? showForgotPassword
+                  ? "Forgot Password"
+                  : "Welcome Back"
+                : "Create Account"}
             </h2>
           </div>
 
@@ -355,79 +366,120 @@ function SignInUpPageComponent({ isOpen, onClose }) {
           </div>
 
           {activeTab === "signin" ? (
-            <form className="space-y-4" onSubmit={handleSignIn}>
-              <input
-                type="email"
-                placeholder="Email Address"
-                value={signInEmail}
-                onChange={(e) => setSignInEmail(e.target.value)}
-                className={inputClassName}
-              />
-              <div className="relative">
+            showForgotPassword ? (
+              <form
+                onSubmit={handleForgotPasswordSendCode}
+                className="space-y-4 rounded-2xl border border-[#cde1d2] bg-[#f8fcf8] p-4"
+              >
+                <p className={`${openSans.className} text-sm text-[#365447]`}>
+                  Enter your email or phone to receive a reset code.
+                </p>
                 <input
-                  type={signInPasswordVisible ? "text" : "password"}
-                  placeholder="Password"
-                  value={signInPassword}
-                  onChange={(e) => setSignInPassword(e.target.value)}
+                  type="text"
+                  placeholder="Email or Phone"
+                  value={forgotPasswordContact}
+                  onChange={(e) => setForgotPasswordContact(e.target.value)}
                   className={inputClassName}
                 />
+
                 <button
-                  type="button"
-                  onClick={toggleSignInPassword}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-[#648073] hover:text-[#00be62]"
+                  type="submit"
+                  className={`${inter.className} w-full rounded-xl bg-[#00be62] px-5 py-3 text-sm tracking-wider text-white transition hover:bg-[#00a757]`}
                 >
-                  {signInPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+                  Send Code
                 </button>
-              </div>
 
-              <div className="flex items-center justify-between text-sm">
-                <label
-                  className={`${openSans.className} flex items-center gap-2 text-[#5b6d63]`}
-                >
-                  <input type="checkbox" className="h-4 w-4 accent-[#00be62]" />
-                  Remember me
-                </label>
+                {forgotPasswordError ? (
+                  <p className={`${openSans.className} text-sm text-red-600`}>
+                    {forgotPasswordError}
+                  </p>
+                ) : null}
+
+                {forgotPasswordSuccess ? (
+                  <p className={`${openSans.className} text-sm text-[#00be62]`}>
+                    {forgotPasswordSuccess}
+                  </p>
+                ) : null}
+              </form>
+            ) : (
+              <form className="space-y-4" onSubmit={handleSignIn}>
+                <input
+                  type="email"
+                  placeholder="Email Address"
+                  value={signInEmail}
+                  onChange={(e) => setSignInEmail(e.target.value)}
+                  className={inputClassName}
+                />
+                <div className="relative">
+                  <input
+                    type={signInPasswordVisible ? "text" : "password"}
+                    placeholder="Password"
+                    value={signInPassword}
+                    onChange={(e) => setSignInPassword(e.target.value)}
+                    className={inputClassName}
+                  />
+                  <button
+                    type="button"
+                    onClick={toggleSignInPassword}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-[#648073] hover:text-[#00be62]"
+                  >
+                    {signInPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between text-sm">
+                  <label
+                    className={`${openSans.className} flex items-center gap-2 text-[#5b6d63]`}
+                  >
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 accent-[#00be62]"
+                    />
+                    Remember me
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleForgotPasswordOpen}
+                    className={`${openSans.className} text-[#00be62] hover:underline`}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+
                 <button
-                  type="button"
-                  className={`${openSans.className} text-[#00be62] hover:underline`}
+                  type="submit"
+                  disabled={isSigningIn}
+                  className={`${inter.className} mt-2 w-full rounded-xl bg-[#00be62] px-5 py-3 text-sm tracking-widest text-white transition hover:bg-[#00a757]`}
                 >
-                  Forgot password?
+                  {isSigningIn ? "SIGNING IN..." : "SIGN IN"}
                 </button>
-              </div>
 
-              <button
-                type="submit"
-                disabled={isSigningIn}
-                className={`${inter.className} mt-2 w-full rounded-xl bg-[#00be62] px-5 py-3 text-sm tracking-widest text-white transition hover:bg-[#00a757]`}
-              >
-                {isSigningIn ? "SIGNING IN..." : "SIGN IN"}
-              </button>
+                {signInError ? (
+                  <p className={`${openSans.className} text-sm text-red-600`}>
+                    {signInError}
+                  </p>
+                ) : null}
 
-              {signInError ? (
-                <p className={`${openSans.className} text-sm text-red-600`}>
-                  {signInError}
+                {signInSuccess ? (
+                  <p className={`${openSans.className} text-sm text-[#00be62]`}>
+                    {signInSuccess}
+                  </p>
+                ) : null}
+
+                <p
+                  className={`${openSans.className} pt-3 text-center text-sm text-[#5e7166]`}
+                >
+                  New to Gachpala?{" "}
+                  <button
+                    type="button"
+                    onClick={() => switchTab("signup")}
+                    className={`${inter.className} text-[#00be62] hover:underline`}
+                  >
+                    Create an account
+                  </button>
                 </p>
-              ) : null}
-
-              {signInSuccess ? (
-                <p className={`${openSans.className} text-sm text-[#00be62]`}>
-                  {signInSuccess}
-                </p>
-              ) : null}
-
-              <p
-                className={`${openSans.className} pt-3 text-center text-sm text-[#5e7166]`}
-              >
-                New to Gachpala?{" "}
-                <button
-                  type="button"
-                  onClick={() => switchTab("signup")}
-                  className={`${inter.className} text-[#00be62] hover:underline`}
-                >
-                  Create an account
-                </button>
-              </p>
-            </form>
+              </form>
+            )
           ) : (
             <form
               className="grid grid-cols-1 gap-4 sm:grid-cols-2"
