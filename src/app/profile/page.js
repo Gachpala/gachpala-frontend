@@ -177,6 +177,13 @@ function ReviewOrderModal({ isOpen, order, onClose, onSubmit }) {
   const [rating, setRating] = useState(5);
   const [title, setTitle] = useState("");
   const [comment, setComment] = useState("");
+  const [selectedProductId, setSelectedProductId] = useState(null);
+
+  const products = Array.isArray(order?.reviewTargets)
+    ? order.reviewTargets
+    : Array.isArray(order?.items)
+      ? order.items
+      : [];
 
   useEffect(() => {
     if (!isOpen) return;
@@ -184,14 +191,40 @@ function ReviewOrderModal({ isOpen, order, onClose, onSubmit }) {
     setRating(5);
     setTitle("");
     setComment("");
+    setSelectedProductId(null);
   }, [isOpen, order]);
 
   if (!isOpen || !order) return null;
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    const selectedProduct = products.find((item) => {
+      const itemId = Number(
+        item?.product_id ?? item?.productId ?? item?.id ?? item?.product?.id,
+      );
+      return itemId === Number(selectedProductId);
+    });
+
+    if (!selectedProduct) return;
+
+    const productId = Number(
+      selectedProduct?.product_id ??
+        selectedProduct?.productId ??
+        selectedProduct?.id ??
+        selectedProduct?.product?.id,
+    );
+    const productName =
+      selectedProduct?.name ||
+      selectedProduct?.title ||
+      selectedProduct?.product_name ||
+      selectedProduct?.product_title ||
+      "Product";
+
     onSubmit?.({
       orderId: order.id,
+      productId,
+      productName,
       rating,
       title: title.trim(),
       comment: comment.trim(),
@@ -225,70 +258,124 @@ function ReviewOrderModal({ isOpen, order, onClose, onSubmit }) {
           </button>
         </div>
 
-        <form className="p-6 space-y-5" onSubmit={handleSubmit}>
+        <div className="p-6 space-y-5">
           <div>
             <p className="text-xs uppercase tracking-[0.12em] text-[#6f7f77] mb-3">
-              Rating out of 5
+              Select a product
             </p>
-            <div className="flex items-center gap-2">
-              {[1, 2, 3, 4, 5].map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setRating(value)}
-                  className={`text-3xl transition-transform duration-150 hover:scale-110 ${
-                    value <= rating ? "text-[#00be62]" : "text-emerald-100"
-                  }`}
-                  aria-label={`Set rating to ${value}`}
-                >
-                  ★
-                </button>
-              ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {products.map((product) => {
+                const productId = Number(
+                  product?.product_id ??
+                    product?.productId ??
+                    product?.id ??
+                    product?.product?.id,
+                );
+                const productName =
+                  product?.name ||
+                  product?.title ||
+                  product?.product_name ||
+                  product?.product_title ||
+                  `Product ${productId || ""}`;
+
+                return (
+                  <button
+                    key={productId || productName}
+                    type="button"
+                    onClick={() => setSelectedProductId(productId)}
+                    className={`rounded-2xl border px-4 py-3 text-left transition-colors ${
+                      selectedProductId === productId
+                        ? "border-[#00be62] bg-emerald-50"
+                        : "border-emerald-100 bg-[#f9fcfa] hover:border-[#00be62]/40 hover:bg-white"
+                    }`}
+                  >
+                    <p className="text-sm font-semibold text-[#1f3127]">
+                      {productName}
+                    </p>
+                    <p className="mt-1 text-xs text-[#6f7f77]">
+                      Click to review this product
+                    </p>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs uppercase tracking-[0.12em] text-[#6f7f77] mb-2">
-              Title
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              placeholder="Write a short title"
-              className="w-full rounded-xl border border-emerald-200 bg-[#f9fcfa] px-4 py-3 text-[#1d2e25] outline-none focus:ring-2 focus:ring-[#00be62]/20"
-            />
-          </div>
+          {products.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-emerald-200 bg-[#f9fcfa] px-4 py-4 text-sm text-[#5f6f67]">
+              No products were found for this order.
+            </div>
+          ) : selectedProductId !== null ? (
+            <form className="space-y-5 pt-1" onSubmit={handleSubmit}>
+              <div>
+                <p className="text-xs uppercase tracking-[0.12em] text-[#6f7f77] mb-3">
+                  Rating out of 5
+                </p>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setRating(value)}
+                      className={`text-3xl transition-transform duration-150 hover:scale-110 ${
+                        value <= rating ? "text-[#00be62]" : "text-emerald-100"
+                      }`}
+                      aria-label={`Set rating to ${value}`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          <div>
-            <label className="block text-xs uppercase tracking-[0.12em] text-[#6f7f77] mb-2">
-              Comment
-            </label>
-            <textarea
-              value={comment}
-              onChange={(event) => setComment(event.target.value)}
-              placeholder="Share your experience"
-              rows={5}
-              className="w-full rounded-xl border border-emerald-200 bg-[#f9fcfa] px-4 py-3 text-[#1d2e25] outline-none focus:ring-2 focus:ring-[#00be62]/20 resize-none"
-            />
-          </div>
+              <div>
+                <label className="block text-xs uppercase tracking-[0.12em] text-[#6f7f77] mb-2">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(event) => setTitle(event.target.value)}
+                  placeholder="Write a short title"
+                  className="w-full rounded-xl border border-emerald-200 bg-[#f9fcfa] px-4 py-3 text-[#1d2e25] outline-none focus:ring-2 focus:ring-[#00be62]/20"
+                />
+              </div>
 
-          <div className="flex items-center justify-end gap-3 pt-1">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-emerald-200 text-[#2b5f46] font-medium hover:bg-emerald-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-2.5 rounded-xl bg-[#00be62] text-white font-semibold hover:bg-[#00a757] transition-colors"
-            >
-              Submit Review
-            </button>
-          </div>
-        </form>
+              <div>
+                <label className="block text-xs uppercase tracking-[0.12em] text-[#6f7f77] mb-2">
+                  Comment
+                </label>
+                <textarea
+                  value={comment}
+                  onChange={(event) => setComment(event.target.value)}
+                  placeholder="Share your experience"
+                  rows={5}
+                  className="w-full rounded-xl border border-emerald-200 bg-[#f9fcfa] px-4 py-3 text-[#1d2e25] outline-none focus:ring-2 focus:ring-[#00be62]/20 resize-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-1">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-5 py-2.5 rounded-xl border border-emerald-200 text-[#2b5f46] font-medium hover:bg-emerald-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl bg-[#00be62] text-white font-semibold hover:bg-[#00a757] transition-colors"
+                >
+                  Submit Review
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-emerald-200 bg-[#f9fcfa] px-4 py-4 text-sm text-[#5f6f67]">
+              Select a product above to reveal the review form.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -636,9 +723,15 @@ export default function Profile() {
     setReviewOrder(null);
   };
 
-  const handleSubmitReview = ({ orderId, rating, title, comment }) => {
+  const handleSubmitReview = ({
+    orderId,
+    productName,
+    rating,
+    title,
+    comment,
+  }) => {
     setReviewSuccessMessage(
-      `Review saved for ${orderId}: ${rating}/5${title ? ` - ${title}` : ""}`,
+      `Review saved for ${productName || orderId}: ${rating}/5${title ? ` - ${title}` : ""}`,
     );
     console.log("Review submitted", { orderId, rating, title, comment });
     setReviewOrder(null);
