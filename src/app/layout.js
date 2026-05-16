@@ -13,6 +13,11 @@ export const metadata = {
   description:
     "GachPala.com a online store for plants and gardening essentials.",
   applicationName: "GachPala",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icon/icon-192x192.png",
+    apple: "/icon/icon-192x192.png",
+  },
   openGraph: {
     title: "GachPala",
     description:
