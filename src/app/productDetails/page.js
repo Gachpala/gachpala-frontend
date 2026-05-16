@@ -21,6 +21,7 @@ function ProductDetailsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get("id");
+  const openReviews = searchParams.get("review") === "1";
 
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -178,6 +179,12 @@ function ProductDetailsContent() {
     setSelectedImage(0);
     setQuantity(1);
   }, [productId]);
+
+  useEffect(() => {
+    if (openReviews) {
+      setShowReviews(true);
+    }
+  }, [openReviews]);
 
   useEffect(() => {
     if (!productId) {
@@ -815,7 +822,10 @@ function ProductDetailsContent() {
           </div>
         </div>
 
-        <div className="mt-6 md:mt-8 rounded-3xl border border-emerald-100 bg-white/95 p-5 md:p-8 shadow-[0_24px_60px_-42px_rgba(17,42,28,0.36)] backdrop-blur-sm">
+        <div
+          id="reviews"
+          className="mt-6 md:mt-8 rounded-3xl border border-emerald-100 bg-white/95 p-5 md:p-8 shadow-[0_24px_60px_-42px_rgba(17,42,28,0.36)] backdrop-blur-sm"
+        >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <p

@@ -173,6 +173,127 @@ function OrderDetailsModal({ isOpen, order, onClose }) {
   );
 }
 
+function ReviewOrderModal({ isOpen, order, onClose, onSubmit }) {
+  const [rating, setRating] = useState(5);
+  const [title, setTitle] = useState("");
+  const [comment, setComment] = useState("");
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    setRating(5);
+    setTitle("");
+    setComment("");
+  }, [isOpen, order]);
+
+  if (!isOpen || !order) return null;
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onSubmit?.({
+      orderId: order.id,
+      rating,
+      title: title.trim(),
+      comment: comment.trim(),
+    });
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-[#102017]/45 backdrop-blur-[2px] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-xl rounded-3xl border border-emerald-100 bg-white shadow-[0_30px_80px_-40px_rgba(17,42,28,0.65)] overflow-hidden"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-center justify-between px-6 py-5 border-b border-emerald-50 bg-[linear-gradient(140deg,#f5fcf7_0%,#edf7ef_100%)]">
+          <div>
+            <p className="text-xs tracking-[0.14em] uppercase text-[#4c6a5b] font-semibold">
+              Give Review
+            </p>
+            <h3 className={`${inter.className} text-xl text-[#1b2b22] mt-1`}>
+              {order.id}
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="h-9 w-9 rounded-full border border-emerald-200 text-[#2a5a43] hover:bg-emerald-50 transition-colors flex items-center justify-center"
+            aria-label="Close review modal"
+          >
+            <FiX size={17} />
+          </button>
+        </div>
+
+        <form className="p-6 space-y-5" onSubmit={handleSubmit}>
+          <div>
+            <p className="text-xs uppercase tracking-[0.12em] text-[#6f7f77] mb-3">
+              Rating out of 5
+            </p>
+            <div className="flex items-center gap-2">
+              {[1, 2, 3, 4, 5].map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setRating(value)}
+                  className={`text-3xl transition-transform duration-150 hover:scale-110 ${
+                    value <= rating ? "text-[#00be62]" : "text-emerald-100"
+                  }`}
+                  aria-label={`Set rating to ${value}`}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs uppercase tracking-[0.12em] text-[#6f7f77] mb-2">
+              Title
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="Write a short title"
+              className="w-full rounded-xl border border-emerald-200 bg-[#f9fcfa] px-4 py-3 text-[#1d2e25] outline-none focus:ring-2 focus:ring-[#00be62]/20"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs uppercase tracking-[0.12em] text-[#6f7f77] mb-2">
+              Comment
+            </label>
+            <textarea
+              value={comment}
+              onChange={(event) => setComment(event.target.value)}
+              placeholder="Share your experience"
+              rows={5}
+              className="w-full rounded-xl border border-emerald-200 bg-[#f9fcfa] px-4 py-3 text-[#1d2e25] outline-none focus:ring-2 focus:ring-[#00be62]/20 resize-none"
+            />
+          </div>
+
+          <div className="flex items-center justify-end gap-3 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2.5 rounded-xl border border-emerald-200 text-[#2b5f46] font-medium hover:bg-emerald-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-2.5 rounded-xl bg-[#00be62] text-white font-semibold hover:bg-[#00a757] transition-colors"
+            >
+              Submit Review
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function AddAddressModal({
   isOpen,
   form,
@@ -443,6 +564,8 @@ export default function Profile() {
   const [recentOrders, setRecentOrders] = useState([]);
   const [allOrders, setAllOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [reviewOrder, setReviewOrder] = useState(null);
+  const [reviewSuccessMessage, setReviewSuccessMessage] = useState("");
   const [trackingOrder, setTrackingOrder] = useState(null);
   const [profileForm, setProfileForm] = useState({
     name: "",
@@ -502,6 +625,23 @@ export default function Profile() {
 
   const closeOrderDetails = () => {
     setSelectedOrder(null);
+  };
+
+  const openReviewModal = (order) => {
+    setReviewSuccessMessage("");
+    setReviewOrder(order);
+  };
+
+  const closeReviewModal = () => {
+    setReviewOrder(null);
+  };
+
+  const handleSubmitReview = ({ orderId, rating, title, comment }) => {
+    setReviewSuccessMessage(
+      `Review saved for ${orderId}: ${rating}/5${title ? ` - ${title}` : ""}`,
+    );
+    console.log("Review submitted", { orderId, rating, title, comment });
+    setReviewOrder(null);
   };
 
   const resetAddressForm = () => {
@@ -1055,6 +1195,13 @@ export default function Profile() {
     return allOrders.map((order) => {
       const normalizedStatus = String(order?.status || "pending").toLowerCase();
       const createdAtMs = Number(order?.created_at || 0) * 1000;
+      const reviewTargets = Array.isArray(order?.items)
+        ? order.items
+        : Array.isArray(order?.order_items)
+          ? order.order_items
+          : Array.isArray(order?.products)
+            ? order.products
+            : [];
 
       return {
         id: `#ORD-${order?.order_id ?? "N/A"}`,
@@ -1067,9 +1214,18 @@ export default function Profile() {
           : "N/A",
         total: Number(order?.total_amount ?? 0),
         status: normalizedStatus,
+        reviewTargets,
       };
     });
   }, [allOrders]);
+
+  const firstDeliveredOrderId = useMemo(() => {
+    const deliveredOrder = allOrderRows.find(
+      (order) => order.status === "delivered",
+    );
+
+    return deliveredOrder?.id ?? null;
+  }, [allOrderRows]);
 
   const navigation = [
     { key: "dashboard", label: "Dashboard", icon: FiUser },
@@ -1229,48 +1385,69 @@ export default function Profile() {
               </div>
             ) : (
               <div className="space-y-4">
-                {allOrderRows.map((order, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border border-emerald-100 rounded-xl hover:shadow-sm transition-shadow bg-[#fafdfa]"
-                  >
-                    <div className="mb-4 md:mb-0">
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className="font-bold text-[#1e2f26]">
-                          {order.id}
-                        </span>
-                        <span className="text-[#7d8b84] text-sm">
-                          • {order.date}
-                        </span>
-                      </div>
-                      <p className="text-sm text-[#6b7a72]">
-                        Total amount{" "}
-                        <span className="text-[#1e2f26] font-medium">
-                          ৳{order.total}
-                        </span>
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-4 w-full md:w-auto">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold flex-1 md:flex-none text-center ${
-                          statusClasses[order.status] || statusClasses.pending
-                        }`}
-                      >
-                        {order.status.charAt(0).toUpperCase() +
-                          order.status.slice(1)}
-                      </span>
-                      <button
-                        onClick={() => {
-                          setTrackingOrder(order);
-                          setActiveTab("tracking");
-                        }}
-                        className="px-4 py-2 border border-[#00be62] text-[#00be62] rounded-lg text-sm font-medium hover:bg-emerald-50 transition-colors"
-                      >
-                        Track Order
-                      </button>
-                    </div>
+                {reviewSuccessMessage ? (
+                  <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                    {reviewSuccessMessage}
                   </div>
-                ))}
+                ) : null}
+
+                {allOrderRows.map((order, i) => {
+                  const canReview =
+                    order.status === "delivered" &&
+                    order.id === firstDeliveredOrderId;
+
+                  return (
+                    <div
+                      key={i}
+                      className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border border-emerald-100 rounded-xl hover:shadow-sm transition-shadow bg-[#fafdfa]"
+                    >
+                      <div className="mb-4 md:mb-0">
+                        <div className="flex items-center gap-3 mb-1">
+                          <span className="font-bold text-[#1e2f26]">
+                            {order.id}
+                          </span>
+                          <span className="text-[#7d8b84] text-sm">
+                            • {order.date}
+                          </span>
+                        </div>
+                        <p className="text-sm text-[#6b7a72]">
+                          Total amount{" "}
+                          <span className="text-[#1e2f26] font-medium">
+                            ৳{order.total}
+                          </span>
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-4 w-full md:w-auto">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold flex-1 md:flex-none text-center ${
+                            statusClasses[order.status] || statusClasses.pending
+                          }`}
+                        >
+                          {order.status.charAt(0).toUpperCase() +
+                            order.status.slice(1)}
+                        </span>
+                        {canReview ? (
+                          <button
+                            type="button"
+                            onClick={() => openReviewModal(order)}
+                            className="px-4 py-2 border border-[#00be62] text-[#00be62] rounded-lg text-sm font-medium hover:bg-emerald-50 transition-colors"
+                          >
+                            Give Review
+                          </button>
+                        ) : null}
+                        <button
+                          onClick={() => {
+                            setTrackingOrder(order);
+                            setActiveTab("tracking");
+                          }}
+                          className="px-4 py-2 border border-[#00be62] text-[#00be62] rounded-lg text-sm font-medium hover:bg-emerald-50 transition-colors"
+                        >
+                          Track Order
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -2179,6 +2356,13 @@ export default function Profile() {
           isOpen={Boolean(selectedOrder)}
           order={selectedOrder}
           onClose={closeOrderDetails}
+        />
+
+        <ReviewOrderModal
+          isOpen={Boolean(reviewOrder)}
+          order={reviewOrder}
+          onClose={closeReviewModal}
+          onSubmit={handleSubmitReview}
         />
 
         <AddAddressModal

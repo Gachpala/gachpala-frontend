@@ -289,7 +289,6 @@ export default function CheckoutPage() {
 
       const response = await fetch(`${API_BASE_URL}/orders`, {
         method: "POST",
-        headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
@@ -327,57 +326,6 @@ export default function CheckoutPage() {
       }
 
       setCartData((prev) => ({
-        ...prev,
-        items: [],
-        summary: {
-          ...(prev?.summary || {}),
-          subtotal: 0,
-          items_count: 0,
-        },
-      }));
-
-      setOrderSuccessMessage(data?.message || "Order placed successfully.");
-      setShowOrderSuccess(true);
-      setCheckoutMessage("");
-      setDiscountCodes([]);
-      setDiscountCodeInput("");
-    } catch (submitError) {
-      setCheckoutMessage(submitError?.message || "Unable to place order.");
-    } finally {
-      setIsPlacingOrder(false);
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="relative min-h-screen overflow-hidden bg-[linear-gradient(180deg,#f8fbf6_0%,#eef4ea_100%)] py-10 md:py-14">
-        <Container>
-          <div className="bg-white/85 rounded-3xl border border-emerald-100 p-8 max-w-4xl mx-auto animate-pulse">
-            <div className="h-7 w-48 bg-emerald-100 rounded mb-4" />
-            <div className="h-4 w-72 bg-emerald-100 rounded mb-8" />
-            <div className="h-32 w-full bg-emerald-50 rounded-xl mb-4" />
-            <div className="h-32 w-full bg-emerald-50 rounded-xl" />
-          </div>
-        </Container>
-      </div>
-    );
-  }
-
-  if (showOrderSuccess) {
-    return (
-      <div className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_20%_20%,#d8ffe8_0%,#eef8f1_40%,#f7fbf8_100%)] py-10 md:py-16">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute left-[8%] top-[18%] h-4 w-4 rounded-full bg-emerald-400/40 animate-bounce" />
-          <div className="absolute left-[24%] top-[10%] h-3 w-3 rounded-full bg-lime-400/40 animate-pulse" />
-          <div className="absolute right-[15%] top-[22%] h-5 w-5 rounded-full bg-teal-400/35 animate-bounce [animation-delay:180ms]" />
-          <div className="absolute right-[22%] bottom-[24%] h-4 w-4 rounded-full bg-green-400/35 animate-pulse [animation-delay:260ms]" />
-          <div className="absolute left-[18%] bottom-[18%] h-3 w-3 rounded-full bg-emerald-300/35 animate-bounce [animation-delay:320ms]" />
-        </div>
-
-        <Container>
-          <div className="max-w-2xl mx-auto">
-            <div className="relative rounded-4xl border border-emerald-100 bg-white/90 backdrop-blur-sm px-6 py-12 md:px-10 md:py-14 shadow-[0_30px_90px_-38px_rgba(16,40,26,0.45)] text-center overflow-hidden">
-              <div className="absolute -top-14 left-1/2 -translate-x-1/2 h-36 w-36 rounded-full bg-emerald-200/30 blur-2xl" />
 
               <div className="relative mx-auto mb-6 w-24 h-24 rounded-full bg-emerald-100 flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full border-4 border-emerald-300/60 animate-ping" />
@@ -400,6 +348,59 @@ export default function CheckoutPage() {
                 {orderSuccessMessage ||
                   "Your order has been placed successfully."}
               </p>
+
+              {placedOrderItems.length > 0 ? (
+                <div className="mt-8 rounded-3xl border border-emerald-100 bg-emerald-50/70 p-5 text-left">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                      <p
+                        className={`${openSans.className} text-xs uppercase tracking-[0.18em] text-[#2d7d53]`}
+                      >
+                        Review your order
+                      </p>
+                      <h2
+                        className={`${inter.className} text-xl text-[#173026] mt-1`}
+                      >
+                        Leave a review for what you bought
+                      </h2>
+                    </div>
+                    <p className="text-sm text-[#5f6f67] sm:max-w-xs sm:text-right">
+                      Open a product page to view its feedback section and share
+                      your experience.
+                    </p>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {placedOrderItems.map((item) => (
+                      <div
+                        key={item.productId}
+                        className="flex items-center gap-3 rounded-2xl border border-emerald-100 bg-white px-4 py-3"
+                      >
+                        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-[#eef6ef]">
+                          <Image
+                            src={item.image || "/plant-placeholder.png"}
+                            alt={item.name}
+                            width={56}
+                            height={56}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-semibold text-[#1f3127]">
+                            {item.name}
+                          </p>
+                          <Link
+                            href={`/productDetails?id=${item.productId}&review=1`}
+                            className="mt-1 inline-flex text-sm font-semibold text-[#00be62] hover:text-[#00a757]"
+                          >
+                            Add review
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
 
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link
