@@ -39,6 +39,10 @@ function ProductDetailsContent() {
 
   const dispatch = useDispatch();
   const favorites = useSelector((state) => state.products.favorites);
+  const normalizedProductId = String(productId);
+  const wishlistProductId = Number.isFinite(Number(productId))
+    ? Number(productId)
+    : productId;
 
   const normalizeProduct = (rawProduct) => {
     if (!rawProduct) return null;
@@ -127,8 +131,9 @@ function ProductDetailsContent() {
   };
 
   const isFavorited =
-    favorites?.some((item) => String(item.id) === String(productId)) ||
-    Boolean(product?.wishlist);
+    favorites?.some(
+      (item) => String(item?.id ?? item?.product_id) === normalizedProductId,
+    ) || Boolean(product?.wishlist);
 
   // 🔹 Fetch product
   useEffect(() => {
@@ -468,12 +473,15 @@ function ProductDetailsContent() {
       if (!token) return;
 
       if (isFavorited) {
-        const response = await fetch(`${API_BASE_URL}/wishlist/${product.id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await fetch(
+          `${API_BASE_URL}/wishlist/${normalizedProductId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         if (!response.ok) {
           const text = await response.text();
@@ -484,7 +492,7 @@ function ProductDetailsContent() {
           return;
         }
 
-        dispatch(removeFromFavorites(product.id));
+        dispatch(removeFromFavorites(normalizedProductId));
       } else {
         const response = await fetch(`${API_BASE_URL}/wishlist`, {
           method: "POST",
@@ -492,7 +500,8 @@ function ProductDetailsContent() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ product_id: product.id }),
+          body: JSON.stringify({ product_id: normalizedProductId }),
+          body: JSON.stringify({ product_id: wishlistProductId }),
         });
 
         if (!response.ok) {
@@ -503,7 +512,7 @@ function ProductDetailsContent() {
 
         dispatch(
           addToFavorites({
-            id: product.id,
+            id: wishlistProductId,
             name: product.title,
             price: product.price,
             image: product.thumbnail,

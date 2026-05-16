@@ -60,11 +60,14 @@ export const product_Slice = createSlice({
     },
     addToFavorites: (state, action) => {
       const existingFavorite = state.favorites.find(
-        (item) => item.id === action.payload.id,
+        (item) => String(item.id) === String(action.payload.id),
       );
 
       if (!existingFavorite) {
-        state.favorites.push(action.payload);
+        state.favorites.push({
+          ...action.payload,
+          id: String(action.payload.id),
+        });
       }
 
       if (typeof window !== "undefined") {
@@ -73,7 +76,7 @@ export const product_Slice = createSlice({
     },
     removeFromFavorites: (state, action) => {
       state.favorites = state.favorites.filter(
-        (item) => item.id !== action.payload,
+        (item) => String(item.id) !== String(action.payload),
       );
       if (typeof window !== "undefined") {
         localStorage.setItem("favorites", JSON.stringify(state.favorites));

@@ -36,7 +36,12 @@ const ProductCard = ({
   const [usePlaceholder, setUsePlaceholder] = useState(!img);
   const dispatch = useDispatch();
   const favorites = useSelector((state) => state.products.favorites);
-  const isFavorited = favorites?.some((item) => item.id === id) || false;
+  const normalizedId = String(id);
+  const wishlistProductId = Number.isFinite(Number(id)) ? Number(id) : id;
+  const isFavorited =
+    favorites?.some(
+      (item) => String(item?.id ?? item?.product_id) === normalizedId,
+    ) || false;
 
   useEffect(() => {
     if (isCartAdded) {
@@ -124,12 +129,15 @@ const ProductCard = ({
       if (!token) return;
 
       if (isFavorited) {
-        const response = await fetch(`${API_BASE_URL}/wishlist/${id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await fetch(
+          `${API_BASE_URL}/wishlist/${normalizedId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         if (!response.ok) {
           const text = await response.text();
@@ -140,7 +148,7 @@ const ProductCard = ({
           return;
         }
 
-        dispatch(removeFromFavorites(id));
+        dispatch(removeFromFavorites(normalizedId));
       } else {
         const response = await fetch(`${API_BASE_URL}/wishlist`, {
           method: "POST",
@@ -148,7 +156,7 @@ const ProductCard = ({
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ product_id: id }),
+          body: JSON.stringify({ product_id: wishlistProductId }),
         });
 
         if (!response.ok) {
@@ -158,7 +166,7 @@ const ProductCard = ({
         }
 
         const newItem = {
-          id,
+          id: wishlistProductId,
           name: title,
           price: parseFloat(price),
           image: img,
