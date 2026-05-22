@@ -84,37 +84,19 @@ export default function Cart() {
     const groups = new Map();
 
     cartItems.forEach((item) => {
-      const sellerName =
-        item.seller_name ||
-        item.seller?.name ||
-        item.shop_name ||
-        item.seller_shop_name ||
-        item.store_name ||
-        "Gachpala Store";
-      const shopName =
-        item.shop_name ||
-        item.seller?.shop ||
-        item.seller_shop_name ||
-        "Verified Plant Seller";
-      const location =
-        item.seller_location ||
-        item.seller?.location ||
-        item.store_location ||
-        "Bangladesh";
-      const storeUrl =
-        item.seller_store_url ||
-        item.store_url ||
-        item.seller?.store_url ||
-        item.seller?.storeUrl ||
-        null;
+      const sellerId = item.seller_id || 0;
+      const sellerName = item.seller_name || "Gachpala Store";
+      const shopName = item.shop_name || "Verified Plant Seller";
+      const location = item.seller_location || "Bangladesh";
 
-      const key = `${sellerName}__${shopName}__${location}`;
+      const key = sellerId > 0 ? String(sellerId) : `unknown_${sellerName}`;
       if (!groups.has(key)) {
         groups.set(key, {
+          sellerId,
           sellerName,
           shopName,
           location,
-          storeUrl,
+          storeUrl: null,
           items: [],
         });
       }
@@ -175,7 +157,15 @@ export default function Cart() {
           return {
             ...prev,
             items: prev.items.map((entry) =>
-              entry.id === id ? { ...entry, quantity: nextQuantity } : entry,
+              entry.id === id
+                ? {
+                    ...entry,
+                    quantity: nextQuantity,
+                    subtotal: parseFloat(
+                      (entry.unit_price * nextQuantity).toFixed(2),
+                    ),
+                  }
+                : entry,
             ),
           };
         });
@@ -421,16 +411,11 @@ export default function Cart() {
               const sellerSubtotal = sellerGroup.items
                 .reduce((acc, item) => acc + item.unit_price * item.quantity, 0)
                 .toFixed(2);
-              const storeQuery = sellerGroup.items[0]?.product_id
-                ? `?${new URLSearchParams({
-                    productId: String(sellerGroup.items[0].product_id),
-                    seller: sellerGroup.sellerName,
-                    shop: sellerGroup.shopName,
-                    location: sellerGroup.location,
-                  }).toString()}`
-                : "";
               const storeLink =
-                sellerGroup.storeUrl || `/sellerStore${storeQuery}`;
+                sellerGroup.storeUrl ||
+                (sellerGroup.sellerId > 0
+                  ? `/sellerStore?sellerId=${sellerGroup.sellerId}`
+                  : "/shop");
 
               return (
                 <div
@@ -520,17 +505,21 @@ export default function Cart() {
                                     {item.product_name}
                                   </h3>
                                 </Link>
-                                <div className="flex items-center gap-2 mt-1">
+                                <div className="flex items-center gap-2 mt-1 flex-wrap">
                                   <span
                                     className={`${openSans.className} text-xs text-[#8a9790] bg-[#f5f9f6] px-2.5 py-0.5 rounded-full`}
                                   >
                                     {item.size || "Standard"}
                                   </span>
-                                  {item.stock && item.stock < 5 && (
+                                  {item.in_stock === false ? (
+                                    <span className="text-[10px] font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">
+                                      Out of Stock
+                                    </span>
+                                  ) : item.stock && item.stock < 5 ? (
                                     <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
                                       Only {item.stock} left
                                     </span>
-                                  )}
+                                  ) : null}
                                 </div>
 
                                 <p
@@ -544,10 +533,10 @@ export default function Cart() {
 
                               <div className="flex items-center gap-4 md:flex-col md:items-end md:gap-3 mt-2 md:mt-0 shrink-0">
                                 <p
-                                  className={`${inter.className} text-lg md:text-xl font-bold text-[#1b2b22]`}
+                                  className={`${inter.className} text-lg md:text-xl font-bold ${item.in_stock === false ? 'text-[#a0aaa5] line-through' : 'text-[#1b2b22]'}`}
                                 >
                                   {currencySymbol}
-                                  {parseFloat(
+                                  {item.subtotal ?? parseFloat(
                                     (item.unit_price * item.quantity).toFixed(
                                       2,
                                     ),
@@ -559,7 +548,8 @@ export default function Cart() {
                                     onClick={() => updateQuantity(item.id, -1)}
                                     disabled={
                                       updatingItemId === item.id ||
-                                      item.quantity <= 1
+                                      item.quantity <= 1 ||
+                                      item.in_stock === false
                                     }
                                     className="w-9 h-9 flex items-center justify-center text-[#6a766f] hover:text-[#00be62] hover:bg-emerald-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#6a766f]"
                                   >
@@ -579,7 +569,8 @@ export default function Cart() {
                                     disabled={
                                       updatingItemId === item.id ||
                                       (item.stock &&
-                                        item.quantity >= item.stock)
+                                        item.quantity >= item.stock) ||
+                                      item.in_stock === false
                                     }
                                     className="w-9 h-9 flex items-center justify-center text-[#6a766f] hover:text-[#00be62] hover:bg-emerald-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#6a766f]"
                                   >
