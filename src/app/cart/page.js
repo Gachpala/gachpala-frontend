@@ -80,6 +80,51 @@ export default function Cart() {
 
   const cartItems = useMemo(() => cartData?.items || [], [cartData]);
 
+  const groupedSellers = useMemo(() => {
+    const groups = new Map();
+
+    cartItems.forEach((item) => {
+      const sellerName =
+        item.seller_name ||
+        item.seller?.name ||
+        item.shop_name ||
+        item.seller_shop_name ||
+        item.store_name ||
+        "Gachpala Store";
+      const shopName =
+        item.shop_name ||
+        item.seller?.shop ||
+        item.seller_shop_name ||
+        "Verified Plant Seller";
+      const location =
+        item.seller_location ||
+        item.seller?.location ||
+        item.store_location ||
+        "Bangladesh";
+      const storeUrl =
+        item.seller_store_url ||
+        item.store_url ||
+        item.seller?.store_url ||
+        item.seller?.storeUrl ||
+        null;
+
+      const key = `${sellerName}__${shopName}__${location}`;
+      if (!groups.has(key)) {
+        groups.set(key, {
+          sellerName,
+          shopName,
+          location,
+          storeUrl,
+          items: [],
+        });
+      }
+
+      groups.get(key).items.push(item);
+    });
+
+    return Array.from(groups.values());
+  }, [cartItems]);
+
   const updateQuantity = async (id, change) => {
     const token = localStorage.getItem(AUTH_TOKEN_KEY);
     if (!token) {
@@ -356,7 +401,9 @@ export default function Cart() {
             </h1>
             <p className={`${openSans.className} text-sm text-[#67756d] mt-2`}>
               {cartData?.summary?.items_count ?? cartItems.length}{" "}
-              {cartItems.length === 1 ? "item" : "items"} ready for checkout
+              {cartItems.length === 1 ? "item" : "items"} from{" "}
+              {groupedSellers.length} seller
+              {groupedSellers.length === 1 ? "" : "s"}
             </p>
           </div>
           <Link
@@ -369,129 +416,197 @@ export default function Cart() {
 
         <div className="relative z-10 flex flex-col lg:flex-row gap-8">
           {/* ─── Cart Items ──────────────────────────────── */}
-          <div className="grow space-y-3">
-            {cartItems.map((item, index) => (
-              <div
-                key={item.id}
-                className={`group bg-white/90 backdrop-blur-sm rounded-2xl border border-emerald-100 p-4 md:p-5 shadow-[0_8px_30px_-20px_rgba(16,40,26,0.2)] transition-all hover:shadow-[0_12px_40px_-20px_rgba(16,40,26,0.3)] hover:border-emerald-200 ${
-                  deletingItemId === item.id ? "opacity-50 scale-[0.98]" : ""
-                }`}
-                style={{
-                  animationDelay: `${index * 60}ms`,
-                }}
-              >
-                <div className="flex gap-4 md:gap-5">
-                  {/* Product Image */}
-                  <Link
-                    href={`/productDetails/${item.product_id || ""}`}
-                    className="shrink-0"
-                  >
-                    <div className="w-24 h-24 md:w-28 md:h-28 bg-gradient-to-br from-[#f0f7f1] to-[#e4f0e6] rounded-2xl overflow-hidden border border-emerald-50 group-hover:border-emerald-100 transition-colors">
-                      <img
-                        src={getProductImage(item.product_image)}
-                        alt={item.product_name}
-                        onError={(event) => {
-                          event.currentTarget.src = "/plant-placeholder.png";
+          <div className="grow space-y-6">
+            {groupedSellers.map((sellerGroup, groupIndex) => {
+              const sellerSubtotal = sellerGroup.items
+                .reduce((acc, item) => acc + item.unit_price * item.quantity, 0)
+                .toFixed(2);
+              const storeQuery = sellerGroup.items[0]?.product_id
+                ? `?${new URLSearchParams({
+                    productId: String(sellerGroup.items[0].product_id),
+                    seller: sellerGroup.sellerName,
+                    shop: sellerGroup.shopName,
+                    location: sellerGroup.location,
+                  }).toString()}`
+                : "";
+              const storeLink =
+                sellerGroup.storeUrl || `/sellerStore${storeQuery}`;
+
+              return (
+                <div
+                  key={`${sellerGroup.sellerName}-${groupIndex}`}
+                  className="rounded-3xl border border-emerald-100 bg-white/85 backdrop-blur-sm shadow-[0_18px_50px_-32px_rgba(16,40,26,0.3)]"
+                >
+                  <div className="flex flex-col gap-4 border-b border-emerald-100 bg-[linear-gradient(140deg,#f6fbf7_0%,#ecf5ef_100%)] px-5 py-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <p
+                        className={`${openSans.className} text-[11px] uppercase tracking-[0.22em] text-[#3a7f59]`}
+                      >
+                        Seller Store
+                      </p>
+                      <h2
+                        className={`${inter.className} text-lg font-bold text-[#173024]`}
+                      >
+                        {sellerGroup.sellerName}
+                      </h2>
+                      <p
+                        className={`${openSans.className} text-xs text-[#5f7268] mt-1`}
+                      >
+                        {sellerGroup.shopName}
+                        {sellerGroup.location
+                          ? ` • ${sellerGroup.location}`
+                          : ""}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#3e6d55] shadow-sm">
+                        {sellerGroup.items.length} item
+                        {sellerGroup.items.length === 1 ? "" : "s"}
+                      </div>
+                      <div className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-[#158a54]">
+                        Subtotal {currencySymbol}
+                        {sellerSubtotal}
+                      </div>
+                      <Link
+                        href={storeLink}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-white px-3 py-1 text-xs font-semibold text-[#2f7f54] hover:bg-emerald-50 transition"
+                      >
+                        Visit Store
+                        <FiChevronRight size={14} />
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 p-4 md:p-5">
+                    {sellerGroup.items.map((item, index) => (
+                      <div
+                        key={item.id}
+                        className={`group bg-white/90 rounded-2xl border border-emerald-100 p-4 md:p-5 shadow-[0_8px_30px_-20px_rgba(16,40,26,0.2)] transition-all hover:shadow-[0_12px_40px_-20px_rgba(16,40,26,0.3)] hover:border-emerald-200 ${
+                          deletingItemId === item.id
+                            ? "opacity-50 scale-[0.98]"
+                            : ""
+                        }`}
+                        style={{
+                          animationDelay: `${index * 60}ms`,
                         }}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    </div>
-                  </Link>
+                      >
+                        <div className="flex gap-4 md:gap-5">
+                          <Link
+                            href={`/productDetails/${item.product_id || ""}`}
+                            className="shrink-0"
+                          >
+                            <div className="w-24 h-24 md:w-28 md:h-28 bg-gradient-to-br from-[#f0f7f1] to-[#e4f0e6] rounded-2xl overflow-hidden border border-emerald-50 group-hover:border-emerald-100 transition-colors">
+                              <img
+                                src={getProductImage(item.product_image)}
+                                alt={item.product_name}
+                                onError={(event) => {
+                                  event.currentTarget.src =
+                                    "/plant-placeholder.png";
+                                }}
+                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                            </div>
+                          </Link>
 
-                  {/* Product Details */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 md:gap-4">
-                      {/* Left: Name + meta */}
-                      <div className="min-w-0 flex-1">
-                        <Link href={`/productDetails/${item.product_id || ""}`}>
-                          <h3
-                            className={`${inter.className} font-bold text-[#1a2b22] text-base md:text-lg truncate hover:text-[#00be62] transition-colors`}
-                          >
-                            {item.product_name}
-                          </h3>
-                        </Link>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span
-                            className={`${openSans.className} text-xs text-[#8a9790] bg-[#f5f9f6] px-2.5 py-0.5 rounded-full`}
-                          >
-                            {item.size || "Standard"}
-                          </span>
-                          {item.stock && item.stock < 5 && (
-                            <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
-                              Only {item.stock} left
-                            </span>
-                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 md:gap-4">
+                              <div className="min-w-0 flex-1">
+                                <Link
+                                  href={`/productDetails/${item.product_id || ""}`}
+                                >
+                                  <h3
+                                    className={`${inter.className} font-bold text-[#1a2b22] text-base md:text-lg truncate hover:text-[#00be62] transition-colors`}
+                                  >
+                                    {item.product_name}
+                                  </h3>
+                                </Link>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <span
+                                    className={`${openSans.className} text-xs text-[#8a9790] bg-[#f5f9f6] px-2.5 py-0.5 rounded-full`}
+                                  >
+                                    {item.size || "Standard"}
+                                  </span>
+                                  {item.stock && item.stock < 5 && (
+                                    <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                                      Only {item.stock} left
+                                    </span>
+                                  )}
+                                </div>
+
+                                <p
+                                  className={`${openSans.className} text-sm text-[#6b7c73] mt-1.5`}
+                                >
+                                  {currencySymbol}
+                                  {item.unit_price}{" "}
+                                  <span className="text-[#a9b5ae]">each</span>
+                                </p>
+                              </div>
+
+                              <div className="flex items-center gap-4 md:flex-col md:items-end md:gap-3 mt-2 md:mt-0 shrink-0">
+                                <p
+                                  className={`${inter.className} text-lg md:text-xl font-bold text-[#1b2b22]`}
+                                >
+                                  {currencySymbol}
+                                  {parseFloat(
+                                    (item.unit_price * item.quantity).toFixed(
+                                      2,
+                                    ),
+                                  )}
+                                </p>
+
+                                <div className="flex items-center rounded-xl border border-emerald-100 bg-[#f8fbf8] overflow-hidden">
+                                  <button
+                                    onClick={() => updateQuantity(item.id, -1)}
+                                    disabled={
+                                      updatingItemId === item.id ||
+                                      item.quantity <= 1
+                                    }
+                                    className="w-9 h-9 flex items-center justify-center text-[#6a766f] hover:text-[#00be62] hover:bg-emerald-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#6a766f]"
+                                  >
+                                    <FaMinus size={10} />
+                                  </button>
+                                  <span
+                                    className={`${inter.className} w-9 text-center font-semibold text-[#1c2a22] text-sm select-none`}
+                                  >
+                                    {updatingItemId === item.id ? (
+                                      <span className="inline-block w-3 h-3 border-2 border-emerald-200 border-t-[#00be62] rounded-full animate-spin" />
+                                    ) : (
+                                      item.quantity
+                                    )}
+                                  </span>
+                                  <button
+                                    onClick={() => updateQuantity(item.id, 1)}
+                                    disabled={
+                                      updatingItemId === item.id ||
+                                      (item.stock &&
+                                        item.quantity >= item.stock)
+                                    }
+                                    className="w-9 h-9 flex items-center justify-center text-[#6a766f] hover:text-[#00be62] hover:bg-emerald-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#6a766f]"
+                                  >
+                                    <FaPlus size={10} />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => removeItem(item.id)}
+                              disabled={deletingItemId === item.id}
+                              className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[#a0aaa5] hover:text-red-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                              <BsTrash size={12} />
+                              {deletingItemId === item.id
+                                ? "Removing..."
+                                : "Remove"}
+                            </button>
+                          </div>
                         </div>
-
-                        {/* Price per unit — visible on all screens */}
-                        <p
-                          className={`${openSans.className} text-sm text-[#6b7c73] mt-1.5`}
-                        >
-                          {currencySymbol}
-                          {item.unit_price}{" "}
-                          <span className="text-[#a9b5ae]">each</span>
-                        </p>
                       </div>
-
-                      {/* Right: total + actions */}
-                      <div className="flex items-center gap-4 md:flex-col md:items-end md:gap-3 mt-2 md:mt-0 shrink-0">
-                        {/* Line total */}
-                        <p
-                          className={`${inter.className} text-lg md:text-xl font-bold text-[#1b2b22]`}
-                        >
-                          {currencySymbol}
-                          {parseFloat(
-                            (item.unit_price * item.quantity).toFixed(2),
-                          )}
-                        </p>
-
-                        {/* Quantity controls */}
-                        <div className="flex items-center rounded-xl border border-emerald-100 bg-[#f8fbf8] overflow-hidden">
-                          <button
-                            onClick={() => updateQuantity(item.id, -1)}
-                            disabled={
-                              updatingItemId === item.id || item.quantity <= 1
-                            }
-                            className="w-9 h-9 flex items-center justify-center text-[#6a766f] hover:text-[#00be62] hover:bg-emerald-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#6a766f]"
-                          >
-                            <FaMinus size={10} />
-                          </button>
-                          <span
-                            className={`${inter.className} w-9 text-center font-semibold text-[#1c2a22] text-sm select-none`}
-                          >
-                            {updatingItemId === item.id ? (
-                              <span className="inline-block w-3 h-3 border-2 border-emerald-200 border-t-[#00be62] rounded-full animate-spin" />
-                            ) : (
-                              item.quantity
-                            )}
-                          </span>
-                          <button
-                            onClick={() => updateQuantity(item.id, 1)}
-                            disabled={
-                              updatingItemId === item.id ||
-                              (item.stock && item.quantity >= item.stock)
-                            }
-                            className="w-9 h-9 flex items-center justify-center text-[#6a766f] hover:text-[#00be62] hover:bg-emerald-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#6a766f]"
-                          >
-                            <FaPlus size={10} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Remove button — always visible */}
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      disabled={deletingItemId === item.id}
-                      className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[#a0aaa5] hover:text-red-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      <BsTrash size={12} />
-                      {deletingItemId === item.id ? "Removing..." : "Remove"}
-                    </button>
+                    ))}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* ─── Order Summary — Right Side ───────────────── */}
@@ -629,9 +744,7 @@ export default function Cart() {
                     >
                       Easy Returns
                       <br />
-                      <span className="font-normal text-[#8a9790]">
-                        7 Days
-                      </span>
+                      <span className="font-normal text-[#8a9790]">7 Days</span>
                     </span>
                   </div>
                 </div>
