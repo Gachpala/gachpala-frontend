@@ -4,7 +4,11 @@ import { arapey, inter, openSans } from "@/lib/fonts";
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { API_BASE_URL } from "@/app/config";
-import { AUTH_TOKEN_KEY, clearAuthStorage } from "@/lib/authGate";
+import {
+  AUTH_CHANGED_EVENT,
+  AUTH_TOKEN_KEY,
+  clearAuthStorage,
+} from "@/lib/authGate";
 import { useRouter } from "next/navigation";
 import {
   FiUser,
@@ -701,8 +705,33 @@ export default function Profile() {
     is_default: false,
   });
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const token =
+      typeof window === "undefined"
+        ? null
+        : localStorage.getItem(AUTH_TOKEN_KEY);
+
+    if (token) {
+      try {
+        await fetch(`${API_BASE_URL}/users/logout`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch {
+        // ignore logout network errors
+      }
+    }
+
     clearAuthStorage();
+    localStorage.removeItem("user_name");
+    localStorage.removeItem("user_email");
+    window.dispatchEvent(
+      new CustomEvent(AUTH_CHANGED_EVENT, {
+        detail: { authenticated: false },
+      }),
+    );
     router.push("/");
   };
 

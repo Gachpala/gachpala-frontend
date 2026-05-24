@@ -2,7 +2,13 @@
 /* eslint-disable @next/next/no-img-element */
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
-import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import { BiUser } from "react-icons/bi";
 import { CiMenuBurger } from "react-icons/ci";
 import { FiLogOut, FiX } from "react-icons/fi";
@@ -148,7 +154,9 @@ export default function Home() {
     };
 
     fetchProducts();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [openSearch, cachedProducts.length]);
 
   // Filter products based on search query
@@ -158,7 +166,11 @@ export default function Home() {
 
     return cachedProducts
       .filter((product) => {
-        const haystacks = [product?.name, product?.description, product?.category_name]
+        const haystacks = [
+          product?.name,
+          product?.description,
+          product?.category_name,
+        ]
           .filter(Boolean)
           .map((v) => String(v).toLowerCase());
         return haystacks.some((v) => v.includes(trimmed));
@@ -168,11 +180,14 @@ export default function Home() {
 
   const hasSearchQuery = searchQuery.trim().length > 0;
 
-  const handleSearchResultClick = useCallback((productId) => {
-    setOpenSearch(false);
-    setSearchQuery("");
-    router.push(`/productDetails?id=${productId}`);
-  }, [router]);
+  const handleSearchResultClick = useCallback(
+    (productId) => {
+      setOpenSearch(false);
+      setSearchQuery("");
+      router.push(`/productDetails?id=${productId}`);
+    },
+    [router],
+  );
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
@@ -201,7 +216,25 @@ export default function Home() {
     setSignInUp(false);
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
+    const token =
+      typeof window === "undefined"
+        ? null
+        : localStorage.getItem(AUTH_TOKEN_KEY);
+
+    if (token) {
+      try {
+        await fetch(`${API_BASE_URL}/users/logout`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch {
+        // ignore logout network errors
+      }
+    }
+
     clearAuthStorage();
     localStorage.removeItem("user_name");
     localStorage.removeItem("user_email");
@@ -461,10 +494,14 @@ export default function Home() {
                     {(profile.name || "U").charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className={`${inter.className} truncate font-semibold text-[#1b2b22]`}>
+                    <p
+                      className={`${inter.className} truncate font-semibold text-[#1b2b22]`}
+                    >
                       {profile.name || "My Account"}
                     </p>
-                    <p className={`${openSans.className} truncate text-xs text-[#6b7c73]`}>
+                    <p
+                      className={`${openSans.className} truncate text-xs text-[#6b7c73]`}
+                    >
                       {profile.email || "Signed in"}
                     </p>
                   </div>
@@ -611,7 +648,10 @@ export default function Home() {
               <button
                 type="button"
                 className="absolute right-4"
-                onClick={() => { setOpenSearch(false); setSearchQuery(""); }}
+                onClick={() => {
+                  setOpenSearch(false);
+                  setSearchQuery("");
+                }}
                 aria-label="Close search"
               >
                 <FiX className="text-lg text-gray-400 transition-colors hover:text-red-500" />
@@ -633,7 +673,11 @@ export default function Home() {
                   {isLoadingProducts ? (
                     <div className="flex items-center justify-center gap-2 px-4 py-8">
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#00be62] border-t-transparent" />
-                      <p className={`${openSans.className} text-sm text-gray-500`}>Loading products...</p>
+                      <p
+                        className={`${openSans.className} text-sm text-gray-500`}
+                      >
+                        Loading products...
+                      </p>
                     </div>
                   ) : searchResults.length > 0 ? (
                     <ul className="divide-y divide-emerald-50">
@@ -648,7 +692,9 @@ export default function Home() {
                           <li key={product.id}>
                             <button
                               type="button"
-                              onClick={() => handleSearchResultClick(product.id)}
+                              onClick={() =>
+                                handleSearchResultClick(product.id)
+                              }
                               className="flex w-full items-center gap-3.5 px-4 py-3 text-left transition-colors hover:bg-emerald-50/60 focus-visible:bg-emerald-50/60 focus-visible:outline-none"
                             >
                               <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-[#f0f0f0]">
@@ -656,15 +702,21 @@ export default function Home() {
                                   src={imgSrc}
                                   alt={product.name}
                                   className="h-full w-full object-cover"
-                                  onError={(e) => { e.target.src = "/plant-placeholder.png"; }}
+                                  onError={(e) => {
+                                    e.target.src = "/plant-placeholder.png";
+                                  }}
                                 />
                               </div>
                               <div className="min-w-0 flex-1">
-                                <p className={`${inter.className} truncate text-sm font-semibold text-[#1f1f1f]`}>
+                                <p
+                                  className={`${inter.className} truncate text-sm font-semibold text-[#1f1f1f]`}
+                                >
                                   {product.name}
                                 </p>
                                 <div className="mt-0.5 flex items-center gap-2">
-                                  <span className={`${openSans.className} text-xs font-semibold text-[#00be62]`}>
+                                  <span
+                                    className={`${openSans.className} text-xs font-semibold text-[#00be62]`}
+                                  >
                                     {product.price} BDT
                                   </span>
                                   {product.category_name && (
@@ -682,10 +734,14 @@ export default function Home() {
                     </ul>
                   ) : (
                     <div className="px-4 py-8 text-center">
-                      <p className={`${inter.className} text-sm font-medium text-gray-500`}>
+                      <p
+                        className={`${inter.className} text-sm font-medium text-gray-500`}
+                      >
                         No plants found for &ldquo;{searchQuery.trim()}&rdquo;
                       </p>
-                      <p className={`${openSans.className} mt-1 text-xs text-gray-400`}>
+                      <p
+                        className={`${openSans.className} mt-1 text-xs text-gray-400`}
+                      >
                         Try a different keyword or browse the shop
                       </p>
                     </div>
@@ -698,7 +754,11 @@ export default function Home() {
                         type="button"
                         onClick={() => {
                           const trimmed = searchQuery.trim();
-                          router.push(trimmed ? `/shop?search=${encodeURIComponent(trimmed)}` : "/shop");
+                          router.push(
+                            trimmed
+                              ? `/shop?search=${encodeURIComponent(trimmed)}`
+                              : "/shop",
+                          );
                           setOpenSearch(false);
                           setSearchQuery("");
                         }}
