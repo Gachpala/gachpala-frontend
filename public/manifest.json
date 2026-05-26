@@ -1,22 +1,52 @@
 {
-  "name": "GachPala",
+  "id": "/",
+  "name": "GachPala - Plants & Gardening Marketplace",
   "short_name": "GachPala",
-  "description": "Gachpala marketplace, your one-stop shop for gardening.",
+  "description": "GachPala.com — your one-stop online marketplace for plants, gardening tools, and essentials.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#00be62",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["shopping", "lifestyle"],
+  "prefer_related_applications": false,
   "icons": [
-    {
-      "src": "/icon/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    },
     {
       "src": "/icon/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "GachPala Desktop Homepage"
+    },
+    {
+      "src": "/screenshots/mobile.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "GachPala Mobile Homepage"
     }
   ]
 }
