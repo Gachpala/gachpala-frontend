@@ -27,6 +27,7 @@ import {
   AUTH_TOKEN_KEY,
   clearAuthStorage,
   isAuthenticated,
+  performLogout,
 } from "@/lib/authGate";
 
 const CART_UPDATED_EVENT = "gachpala:cart-updated";
@@ -217,33 +218,8 @@ export default function Home() {
   };
 
   const handleSignOut = async () => {
-    const token =
-      typeof window === "undefined"
-        ? null
-        : localStorage.getItem(AUTH_TOKEN_KEY);
-
-    if (token) {
-      try {
-        await fetch(`${API_BASE_URL}/users/logout`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      } catch {
-        // ignore logout network errors
-      }
-    }
-
-    clearAuthStorage();
-    localStorage.removeItem("user_name");
-    localStorage.removeItem("user_email");
+    await performLogout();
     setProfile({ name: "", email: "" });
-    window.dispatchEvent(
-      new CustomEvent(AUTH_CHANGED_EVENT, {
-        detail: { authenticated: false },
-      }),
-    );
     setToogleProfile(false);
     setSignInUp(false);
     router.push("/");

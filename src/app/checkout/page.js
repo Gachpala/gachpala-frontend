@@ -2,16 +2,27 @@
 
 import Container from "@/components/container";
 import { API_BASE_URL } from "@/app/config";
-import { AUTH_TOKEN_KEY } from "@/lib/authGate";
+import { AUTH_TOKEN_KEY, isAuthenticated, openAuthModal } from "@/lib/authGate";
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { BsArrowLeft, BsCheckCircleFill } from "react-icons/bs";
 
 const CART_UPDATED_EVENT = "gachpala:cart-updated";
 
 export default function CheckoutPage() {
+  const router = useRouter();
+
+  // ── Route guard: redirect unauthenticated users ──
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      openAuthModal("checkout");
+      router.replace("/");
+    }
+  }, [router]);
+
   const [cartData, setCartData] = useState(null);
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState("");

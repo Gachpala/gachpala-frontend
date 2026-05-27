@@ -8,6 +8,9 @@ import {
   AUTH_CHANGED_EVENT,
   AUTH_TOKEN_KEY,
   clearAuthStorage,
+  isAuthenticated,
+  openAuthModal,
+  performLogout,
 } from "@/lib/authGate";
 import { useRouter } from "next/navigation";
 import {
@@ -645,6 +648,15 @@ function EditAddressModal({
 
 export default function Profile() {
   const router = useRouter();
+
+  // ── Route guard: redirect unauthenticated users ──
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      openAuthModal("profile");
+      router.replace("/");
+    }
+  }, [router]);
+
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [isRecentOrdersLoading, setIsRecentOrdersLoading] = useState(true);
@@ -706,32 +718,7 @@ export default function Profile() {
   });
 
   const handleLogout = async () => {
-    const token =
-      typeof window === "undefined"
-        ? null
-        : localStorage.getItem(AUTH_TOKEN_KEY);
-
-    if (token) {
-      try {
-        await fetch(`${API_BASE_URL}/users/logout`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      } catch {
-        // ignore logout network errors
-      }
-    }
-
-    clearAuthStorage();
-    localStorage.removeItem("user_name");
-    localStorage.removeItem("user_email");
-    window.dispatchEvent(
-      new CustomEvent(AUTH_CHANGED_EVENT, {
-        detail: { authenticated: false },
-      }),
-    );
+    await performLogout();
     router.push("/");
   };
 

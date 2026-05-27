@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import AIButton from "@/components/aiButton";
 import { Providers } from "./providers";
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
+import SessionGuard from "@/components/SessionGuard";
 
 export const metadata = {
   metadataBase: new URL("https://gachpala.com"),
@@ -51,6 +52,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <ServiceWorkerRegistrar />
+        <SessionGuard />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#0f5132]"

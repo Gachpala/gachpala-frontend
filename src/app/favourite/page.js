@@ -5,10 +5,21 @@ import ProductSkeleton from "@/components/productSkeleton";
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/app/config";
-import { AUTH_TOKEN_KEY } from "@/lib/authGate";
+import { AUTH_TOKEN_KEY, isAuthenticated, openAuthModal } from "@/lib/authGate";
 
 export default function Favourite() {
+  const router = useRouter();
+
+  // ── Route guard: redirect unauthenticated users ──
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      openAuthModal("favourite");
+      router.replace("/");
+    }
+  }, [router]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [wishlistItems, setWishlistItems] = useState([]);
   const [wishlistError, setWishlistError] = useState("");
