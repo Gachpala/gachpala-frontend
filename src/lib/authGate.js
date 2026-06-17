@@ -18,28 +18,35 @@ const STORAGE_KEYS = [
   "isLoggedIn",
 ];
 
+/**
+ * Decode a JWT and return true if it carries an `exp` claim that is already
+ * in the past. Tokens without a readable `exp` are treated as non-expired so
+ * we never lock out a valid session on a parsing quirk.
+ */
+const isTokenExpired = (token) => {
+  try {
+    const [, payload] = token.split(".");
+    if (!payload) return false;
+    const decoded = JSON.parse(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/")),
+    );
+    if (!decoded?.exp) return false;
+    return decoded.exp * 1000 <= Date.now();
+  } catch {
+    return false;
+  }
+};
+
 export const isAuthenticated = () => {
   if (typeof window === "undefined") return false;
 
-  return STORAGE_KEYS.some((key) => {
-    const value = localStorage.getItem(key);
-    if (!value) return false;
+  // Authentication is gated solely on a present, non-expired auth token.
+  // Stale keys (currentUser, isLoggedIn, ...) left over from an incomplete
+  // logout must NOT count as authenticated, or guarded routes loop on 401.
+  const token = localStorage.getItem(AUTH_TOKEN_KEY);
+  if (!token) return false;
 
-    if (key === "isLoggedIn") {
-      return value === "true";
-    }
-
-    if (key === "user" || key === "currentUser") {
-      try {
-        const parsed = JSON.parse(value);
-        return Boolean(parsed);
-      } catch {
-        return value.length > 0;
-      }
-    }
-
-    return value.length > 0;
-  });
+  return !isTokenExpired(token);
 };
 
 export const openAuthModal = (source = "unknown") => {

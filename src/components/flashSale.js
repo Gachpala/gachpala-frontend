@@ -8,18 +8,18 @@ import ProductSkeleton from "./productSkeleton";
 import { IoFlash } from "react-icons/io5";
 import Countdown from "react-countdown";
 
-const COUNTDOWN_END_TIME = new Date("2026-04-05 23:59:59 UTC").getTime();
+// Flash sale runs for 24h from when the module first loads unless an explicit
+// end time is passed. Computed at module scope (not during render) to stay pure.
+const DEFAULT_END_TIME = Date.now() + 24 * 60 * 60 * 1000;
 
 function Completionist() {
   return <span>Flash Sale is over!</span>;
 }
 
-export default function FlashSale({ products }) {
-  const isLoading = !products || products.length === 0;
-
+export default function FlashSale({ products, isLoading = false, endTime }) {
   const countdownDate = useMemo(() => {
-    return COUNTDOWN_END_TIME;
-  }, []);
+    return endTime ? new Date(endTime).getTime() : DEFAULT_END_TIME;
+  }, [endTime]);
 
   return (
     <section className="py-8 bg-white border-b border-gray-100">
@@ -64,10 +64,10 @@ export default function FlashSale({ products }) {
                 <Product
                   key={product.id}
                   id={product.id}
-                  img={product.thumbnail}
-                  alt={product.title}
-                  title={product.title}
-                  price={`${product.price}`}
+                  img={product.image_url || product.thumbnail || product.image}
+                  alt={product.name || product.title || "Product"}
+                  title={product.name || product.title || "Product"}
+                  price={`${product.price ?? 0}`}
                 />
               ))
           )}

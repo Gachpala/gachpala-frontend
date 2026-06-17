@@ -146,6 +146,9 @@ function SellerStoreContent() {
             <span className="inline-flex items-center rounded-full bg-[#f4f7f1] px-3 py-1 text-xs font-semibold text-[#4f6157]">
               {stats?.total_reviews ?? 0} reviews
             </span>
+            <span className="inline-flex items-center rounded-full bg-[#f4f7f1] px-3 py-1 text-xs font-semibold text-[#4f6157]">
+              {stats?.total_sold ?? 0} sold
+            </span>
           </div>
         </div>
 

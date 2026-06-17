@@ -97,8 +97,11 @@ export default function Home() {
     );
   };
 
-  const [cartCount, setCartCount] = useState(getLocalCartCount());
-  const [profile, setProfile] = useState(getStoredProfile());
+  // Initialize to SSR-safe defaults so the server and the client's first
+  // render match. The mount effect below syncs the real values from
+  // localStorage/API after hydration, avoiding a hydration mismatch.
+  const [cartCount, setCartCount] = useState(0);
+  const [profile, setProfile] = useState({ name: "", email: "" });
 
   const [toggle, setToggle] = React.useState(false);
   const [toogleProfile, setToogleProfile] = React.useState(false);
@@ -144,8 +147,13 @@ export default function Home() {
         const response = await fetch(`${API_BASE_URL}/products`);
         if (!response.ok) return;
         const data = await response.json();
-        if (!cancelled && Array.isArray(data)) {
-          setCachedProducts(data);
+        const rows = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.products)
+            ? data.products
+            : [];
+        if (!cancelled) {
+          setCachedProducts(rows);
         }
       } catch {
         // silently fail
@@ -327,6 +335,9 @@ export default function Home() {
       }
     };
 
+    // Sync from localStorage now that we're on the client (post-hydration).
+    setProfile(getStoredProfile());
+    setCartCount(getLocalCartCount());
     fetchCartCount();
     hydrateProfileFromApi();
 

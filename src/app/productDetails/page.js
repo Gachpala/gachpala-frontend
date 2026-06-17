@@ -267,11 +267,14 @@ function ProductDetailsContent() {
         }
 
         const data = await response.json();
-        const normalized = Array.isArray(data)
+        const rows = Array.isArray(data)
           ? data
-              .filter((item) => String(item.id) !== String(productId))
-              .slice(0, 4)
-          : [];
+          : Array.isArray(data?.products)
+            ? data.products
+            : [];
+        const normalized = rows
+          .filter((item) => String(item.id) !== String(productId))
+          .slice(0, 4);
 
         setSuggestedProducts(normalized);
       } catch (error) {
@@ -303,7 +306,7 @@ function ProductDetailsContent() {
       try {
         setIsSellerLoading(true);
         const response = await fetch(
-          `${API_BASE_URL}/products/product-details/${productId}/seller`,
+          `${API_BASE_URL}/product-details/${productId}/seller`,
           {
             method: "GET",
             cache: "no-store",

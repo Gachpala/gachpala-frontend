@@ -2,25 +2,20 @@
 
 import { useEffect } from "react";
 
+// Service worker support is currently disabled: the old cache-first worker
+// served stale assets and caused hydration mismatches. This component now only
+// tears down any previously-installed service worker and clears its caches.
+// Reintroduce registration here once a properly tested PWA worker is ready.
 export default function ServiceWorkerRegistrar() {
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((registration) => {
-          console.log("[SW] Registered with scope:", registration.scope);
+    if (!("serviceWorker" in navigator)) return;
 
-          // Check for updates periodically (every 60 minutes)
-          setInterval(
-            () => {
-              registration.update();
-            },
-            60 * 60 * 1000
-          );
-        })
-        .catch((error) => {
-          console.error("[SW] Registration failed:", error);
-        });
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => registration.unregister());
+    });
+
+    if (typeof caches !== "undefined") {
+      caches.keys().then((keys) => keys.forEach((key) => caches.delete(key)));
     }
   }, []);
 

@@ -42,8 +42,13 @@ const App = () => {
           return;
         }
         const data = await response.json();
+        const rows = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.products)
+            ? data.products
+            : [];
 
-        const mappedProducts = data.map((item) => ({
+        const mappedProducts = rows.map((item) => ({
           id: item.id.toString(),
           name: item.name,
           scientificName: "",

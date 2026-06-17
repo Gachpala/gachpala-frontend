@@ -32,7 +32,12 @@ export default function ShopContents() {
       try {
         setIsLoading(true);
         const response = await axios.get(`${API_BASE_URL}/products`);
-        const products = Array.isArray(response.data) ? response.data : [];
+        const body = response.data;
+        const products = Array.isArray(body)
+          ? body
+          : Array.isArray(body?.products)
+            ? body.products
+            : [];
         setAllProducts(products);
         dispatch(productReducer(products));
       } catch (error) {

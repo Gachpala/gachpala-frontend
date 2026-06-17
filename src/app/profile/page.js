@@ -678,18 +678,7 @@ export default function Profile() {
   const [isProfileUpdating, setIsProfileUpdating] = useState(false);
   const [profileUpdateError, setProfileUpdateError] = useState("");
   const [profileUpdateSuccess, setProfileUpdateSuccess] = useState("");
-  const [addresses, setAddresses] = useState([
-    {
-      address_type: "Home",
-      phone: "",
-      street: "House 12, Road 5, Block B",
-      city: "Mirpur 12",
-      state: "Dhaka",
-      postal_code: "1216",
-      country: "Bangladesh",
-      is_default: true,
-    },
-  ]);
+  const [addresses, setAddresses] = useState([]);
   const [isAddAddressModalOpen, setIsAddAddressModalOpen] = useState(false);
   const [isAddressSubmitting, setIsAddressSubmitting] = useState(false);
   const [deletingAddressId, setDeletingAddressId] = useState(null);

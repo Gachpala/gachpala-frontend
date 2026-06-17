@@ -24,7 +24,12 @@ export default function Landing() {
       try {
         setIsLoading(true);
         const data = await axios.get(`${API_BASE_URL}/products`);
-        const rows = Array.isArray(data.data) ? data.data : [];
+        const body = data.data;
+        const rows = Array.isArray(body)
+          ? body
+          : Array.isArray(body?.products)
+            ? body.products
+            : [];
 
         if (isCancelled) return;
 
