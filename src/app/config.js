@@ -2,7 +2,7 @@ const CONFIG = {
   API: {
     //https://api.gachpala.com
     //http://localhost:7575
-    BASE_URL: "http://localhost:7575",
+    BASE_URL: "https://api.gachpala.com",
     INTERNAL_BASE_URL: "",
   },
 };
