@@ -454,6 +454,30 @@ function SignInUpPageComponent({ isOpen, onClose }) {
                   {isSigningIn ? "SIGNING IN..." : "SIGN IN"}
                 </button>
 
+                {/* Quick Test Demo Account */}
+                <div className="mt-4 rounded-xl border border-dashed border-[#00be62]/50 bg-[#eef7f0] p-3 text-left">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-[#1f2f26] flex items-center gap-1.5">
+                      <span>👤</span> Quick Test Demo Account
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSignInEmail("demo.customer@gachpala.demo");
+                        setSignInPassword("Demo@123");
+                        setSignInError("");
+                      }}
+                      className="rounded-lg bg-[#00be62] px-2.5 py-1 text-xs font-semibold text-white transition hover:bg-[#009b50] active:scale-95 shadow-sm"
+                    >
+                      Fill Demo
+                    </button>
+                  </div>
+                  <p className="mt-1 font-mono text-[11px] text-[#4f6257]">
+                    Email: <span className="font-semibold text-[#1f2f26]">demo.customer@gachpala.demo</span><br />
+                    Password: <span className="font-semibold text-[#1f2f26]">Demo@123</span>
+                  </p>
+                </div>
+
                 {signInError ? (
                   <p className={`${openSans.className} text-sm text-red-600`}>
                     {signInError}
