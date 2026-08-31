@@ -409,6 +409,7 @@ export default function Home() {
             alt="gachpala_logo"
             className="w-24 md:w-30 lg:w-34 xl:w-36"
           />
+          <h1>demo</h1>
         </Link>
 
         <div className="hidden items-center rounded-full border border-emerald-200 bg-white px-2 py-1 shadow-sm md:flex">
