@@ -1,0 +1,157 @@
+<svg width="1600" height="700" viewBox="0 0 1600 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Banner placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f0f7ee"/>
+      <stop offset="0.5" stop-color="#e6f2e3"/>
+      <stop offset="1" stop-color="#dcefd8"/>
+    </linearGradient>
+    <linearGradient id="leaf1" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#4ade80"/>
+      <stop offset="1" stop-color="#16a34a"/>
+    </linearGradient>
+    <linearGradient id="leaf2" x1="0" y1="0" x2="0.5" y2="1">
+      <stop stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#15803d"/>
+    </linearGradient>
+    <linearGradient id="leaf3" x1="0.3" y1="0" x2="0.8" y2="1">
+      <stop stop-color="#86efac"/>
+      <stop offset="1" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="pot" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#d97706"/>
+      <stop offset="1" stop-color="#92400e"/>
+    </linearGradient>
+    <linearGradient id="shimmer" x1="0" y1="0" x2="1600" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+      <animate attributeName="x1" from="-1600" to="1600" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="x2" from="0" to="3200" dur="3s" repeatCount="indefinite"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#15803d" flood-opacity="0.15"/>
+    </filter>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="700" fill="url(#bg)"/>
+
+  <!-- Shimmer overlay -->
+  <rect width="1600" height="700" fill="url(#shimmer)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="180" cy="580" r="260" fill="#bbf7d0" opacity="0.25"/>
+  <circle cx="1420" cy="100" r="200" fill="#bbf7d0" opacity="0.2"/>
+  <circle cx="900" cy="650" r="150" fill="#dcfce7" opacity="0.3"/>
+  <circle cx="400" cy="80" r="100" fill="#d1fae5" opacity="0.2"/>
+
+  <!-- Dotted pattern left -->
+  <g opacity="0.08" fill="#16a34a">
+    <circle cx="100" cy="100" r="3"/><circle cx="140" cy="100" r="3"/><circle cx="180" cy="100" r="3"/>
+    <circle cx="100" cy="140" r="3"/><circle cx="140" cy="140" r="3"/><circle cx="180" cy="140" r="3"/>
+    <circle cx="100" cy="180" r="3"/><circle cx="140" cy="180" r="3"/><circle cx="180" cy="180" r="3"/>
+    <circle cx="100" cy="220" r="3"/><circle cx="140" cy="220" r="3"/><circle cx="180" cy="220" r="3"/>
+  </g>
+
+  <!-- Dotted pattern right -->
+  <g opacity="0.08" fill="#16a34a">
+    <circle cx="1420" cy="480" r="3"/><circle cx="1460" cy="480" r="3"/><circle cx="1500" cy="480" r="3"/>
+    <circle cx="1420" cy="520" r="3"/><circle cx="1460" cy="520" r="3"/><circle cx="1500" cy="520" r="3"/>
+    <circle cx="1420" cy="560" r="3"/><circle cx="1460" cy="560" r="3"/><circle cx="1500" cy="560" r="3"/>
+    <circle cx="1420" cy="600" r="3"/><circle cx="1460" cy="600" r="3"/><circle cx="1500" cy="600" r="3"/>
+  </g>
+
+  <!-- Left decorative leaf -->
+  <g transform="translate(250, 250) rotate(-30)" opacity="0.12">
+    <path d="M0 80 C20 -10, 70 -20, 90 60 C100 100, 50 130, 0 80Z" fill="#16a34a"/>
+    <line x1="45" y1="70" x2="30" y2="20" stroke="#15803d" stroke-width="1.5" opacity="0.5"/>
+  </g>
+
+  <!-- Right decorative leaf -->
+  <g transform="translate(1300, 180) rotate(20)" opacity="0.12">
+    <path d="M0 80 C20 -10, 70 -20, 90 60 C100 100, 50 130, 0 80Z" fill="#16a34a"/>
+    <line x1="45" y1="70" x2="30" y2="20" stroke="#15803d" stroke-width="1.5" opacity="0.5"/>
+  </g>
+
+  <!-- Main plant illustration group -->
+  <g filter="url(#shadow)" transform="translate(800, 340)">
+    <!-- Pot -->
+    <path d="M-42 50 L-52 120 C-52 140, 52 140, 52 120 L42 50Z" fill="url(#pot)" opacity="0.85"/>
+    <rect x="-55" y="42" width="110" height="16" rx="8" fill="#b45309" opacity="0.9"/>
+    <path d="M-30 80 L-36 110 C-36 122, 36 122, 36 110 L30 80Z" fill="#a16207" opacity="0.15"/>
+
+    <!-- Soil -->
+    <ellipse cx="0" cy="52" rx="42" ry="8" fill="#78350f" opacity="0.3"/>
+
+    <!-- Main stem -->
+    <path d="M0 48 C-2 20, 2 -20, 0 -60" stroke="#15803d" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+    <!-- Left branch -->
+    <path d="M-2 10 C-20 -5, -45 -20, -55 -50" stroke="#16a34a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Right branch -->
+    <path d="M2 -10 C25 -30, 50 -40, 60 -70" stroke="#16a34a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Small left branch -->
+    <path d="M-1 30 C-15 20, -30 15, -35 5" stroke="#22c55e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- Large leaf left -->
+    <g transform="translate(-55, -50) rotate(-15)">
+      <ellipse cx="0" cy="0" rx="38" ry="56" fill="url(#leaf1)"/>
+      <line x1="0" y1="-40" x2="0" y2="40" stroke="#15803d" stroke-width="1.5" opacity="0.3"/>
+      <line x1="-15" y1="-20" x2="0" y2="-10" stroke="#15803d" stroke-width="1" opacity="0.2"/>
+      <line x1="15" y1="-20" x2="0" y2="-10" stroke="#15803d" stroke-width="1" opacity="0.2"/>
+      <line x1="-20" y1="5" x2="0" y2="10" stroke="#15803d" stroke-width="1" opacity="0.2"/>
+      <line x1="20" y1="5" x2="0" y2="10" stroke="#15803d" stroke-width="1" opacity="0.2"/>
+    </g>
+
+    <!-- Large leaf right -->
+    <g transform="translate(60, -70) rotate(20)">
+      <ellipse cx="0" cy="0" rx="35" ry="50" fill="url(#leaf2)"/>
+      <line x1="0" y1="-35" x2="0" y2="35" stroke="#166534" stroke-width="1.5" opacity="0.3"/>
+      <line x1="-14" y1="-15" x2="0" y2="-8" stroke="#166534" stroke-width="1" opacity="0.2"/>
+      <line x1="14" y1="-15" x2="0" y2="-8" stroke="#166534" stroke-width="1" opacity="0.2"/>
+      <line x1="-18" y1="8" x2="0" y2="12" stroke="#166534" stroke-width="1" opacity="0.2"/>
+      <line x1="18" y1="8" x2="0" y2="12" stroke="#166534" stroke-width="1" opacity="0.2"/>
+    </g>
+
+    <!-- Top leaf -->
+    <g transform="translate(0, -75) rotate(-5)">
+      <ellipse cx="0" cy="0" rx="28" ry="45" fill="url(#leaf3)"/>
+      <line x1="0" y1="-30" x2="0" y2="30" stroke="#16a34a" stroke-width="1.5" opacity="0.3"/>
+      <line x1="-12" y1="-10" x2="0" y2="-5" stroke="#16a34a" stroke-width="1" opacity="0.2"/>
+      <line x1="12" y1="-10" x2="0" y2="-5" stroke="#16a34a" stroke-width="1" opacity="0.2"/>
+    </g>
+
+    <!-- Small leaf left bottom -->
+    <g transform="translate(-35, 5) rotate(-40)">
+      <ellipse cx="0" cy="0" rx="18" ry="28" fill="#4ade80" opacity="0.8"/>
+      <line x1="0" y1="-18" x2="0" y2="18" stroke="#16a34a" stroke-width="1" opacity="0.3"/>
+    </g>
+
+    <!-- Tiny new growth leaf -->
+    <g transform="translate(10, -105) rotate(10)">
+      <ellipse cx="0" cy="0" rx="10" ry="18" fill="#86efac" opacity="0.9"/>
+    </g>
+  </g>
+
+  <!-- Text -->
+  <text x="800" y="540" text-anchor="middle" fill="#1a3a2a" font-family="'Inter', 'Segoe UI', Arial, sans-serif" font-size="22" font-weight="600" letter-spacing="0.15em" opacity="0.5">
+    LOADING BANNER
+  </text>
+
+  <!-- Loading dots animation -->
+  <g transform="translate(800, 575)">
+    <circle cx="-20" cy="0" r="4" fill="#22c55e" opacity="0.6">
+      <animate attributeName="opacity" values="0.2;0.8;0.2" dur="1.5s" begin="0s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="0" cy="0" r="4" fill="#22c55e" opacity="0.6">
+      <animate attributeName="opacity" values="0.2;0.8;0.2" dur="1.5s" begin="0.3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="20" cy="0" r="4" fill="#22c55e" opacity="0.6">
+      <animate attributeName="opacity" values="0.2;0.8;0.2" dur="1.5s" begin="0.6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

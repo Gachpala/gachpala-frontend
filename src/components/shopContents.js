@@ -5,11 +5,10 @@ import ProductSkeleton from "@/components/productSkeleton";
 import { inter, openSans } from "@/lib/fonts";
 import { useDispatch } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
 import { productReducer } from "@/app/slices/products_slices";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { API_BASE_URL } from "@/app/config";
+import { STATIC_PRODUCTS } from "@/data/staticProducts";
 
 export default function ShopContents() {
   const dispatch = useDispatch();
@@ -20,36 +19,37 @@ export default function ShopContents() {
   const normalizedCategory = String(selectedCategory || "")
     .trim()
     .toLowerCase();
-  const [allProducts, setAllProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [allProducts] = useState(STATIC_PRODUCTS);
+  const isLoading = false;
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 20;
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`${API_BASE_URL}/products`);
-        const body = response.data;
-        const products = Array.isArray(body)
-          ? body
-          : Array.isArray(body?.products)
-            ? body.products
-            : [];
-        setAllProducts(products);
-        dispatch(productReducer(products));
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-        setAllProducts([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProducts();
+    dispatch(productReducer(STATIC_PRODUCTS));
   }, [dispatch]);
+
+  // Filter products based on selected category
+  const filteredProducts = allProducts.filter((product) => {
+    const matchesCategory =
+      !normalizedCategory ||
+      String(product?.category_name || "").toLowerCase() ===
+        normalizedCategory;
+
+    if (!matchesCategory) return false;
+
+    if (!normalizedSearch) return true;
+
+    const haystacks = [
+      product?.name,
+      product?.description,
+      product?.category_name,
+    ]
+      .filter(Boolean)
+      .map((value) => String(value).toLowerCase());
+
+    return haystacks.some((value) => value.includes(normalizedSearch));
+  });
 
   useEffect(() => {
     if (isLoading) return;
@@ -68,33 +68,6 @@ export default function ShopContents() {
 
     sessionStorage.removeItem("shopScrollY");
   }, [isLoading, filteredProducts.length]);
-
-  // Filter products based on selected category and update loading state
-  useEffect(() => {
-    const filtered = allProducts.filter((product) => {
-      const matchesCategory =
-        !normalizedCategory ||
-        String(product?.category_name || "").toLowerCase() ===
-          normalizedCategory;
-
-      if (!matchesCategory) return false;
-
-      if (!normalizedSearch) return true;
-
-      const haystacks = [
-        product?.name,
-        product?.description,
-        product?.category_name,
-      ]
-        .filter(Boolean)
-        .map((value) => String(value).toLowerCase());
-
-      return haystacks.some((value) => value.includes(normalizedSearch));
-    });
-
-    setFilteredProducts(filtered);
-    setCurrentPage(1); // Reset to first page on filter change
-  }, [allProducts, normalizedCategory, normalizedSearch]);
 
   // Pagination calculations
   const totalProducts = filteredProducts.length;

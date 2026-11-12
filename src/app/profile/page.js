@@ -195,6 +195,7 @@ function ReviewOrderModal({ isOpen, order, onClose, onSubmit }) {
   useEffect(() => {
     if (!isOpen) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRating(5);
     setTitle("");
     setComment("");

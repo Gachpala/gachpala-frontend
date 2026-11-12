@@ -6,51 +6,18 @@ import HeroSection from "@/components/heroSection";
 import AutoPlayText from "@/components/autoPlayText";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import { productReducer } from "@/app/slices/products_slices";
-import { API_BASE_URL } from "@/app/config";
+import { STATIC_PRODUCTS } from "@/data/staticProducts";
 import { inter } from "@/lib/fonts";
 
 export default function Landing() {
-  const [allProducts, setAllProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [allProducts, setAllProducts] = useState(STATIC_PRODUCTS);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    let isCancelled = false;
-
-    const fetchProducts = async () => {
-      try {
-        setIsLoading(true);
-        const data = await axios.get(`${API_BASE_URL}/products`);
-        const body = data.data;
-        const rows = Array.isArray(body)
-          ? body
-          : Array.isArray(body?.products)
-            ? body.products
-            : [];
-
-        if (isCancelled) return;
-
-        setAllProducts(rows);
-        dispatch(productReducer(rows));
-      } catch (error) {
-        if (isCancelled) return;
-        console.error("Error fetching products:", error);
-        setAllProducts([]);
-      } finally {
-        if (!isCancelled) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchProducts();
-
-    return () => {
-      isCancelled = true;
-    };
+    dispatch(productReducer(STATIC_PRODUCTS));
   }, [dispatch]);
 
   useEffect(() => {

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Container from "./container";
 import Product from "./product";
 import ProductSkeleton from "./productSkeleton";
+import { STATIC_PRODUCTS } from "@/data/staticProducts";
 import { IoFlash } from "react-icons/io5";
 import Countdown from "react-countdown";
 
@@ -16,7 +17,11 @@ function Completionist() {
   return <span>Flash Sale is over!</span>;
 }
 
-export default function FlashSale({ products, isLoading = false, endTime }) {
+export default function FlashSale({
+  products = STATIC_PRODUCTS,
+  isLoading = false,
+  endTime,
+}) {
   const countdownDate = useMemo(() => {
     return endTime ? new Date(endTime).getTime() : DEFAULT_END_TIME;
   }, [endTime]);

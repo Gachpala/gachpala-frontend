@@ -1,10 +1,11 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Container from "@/components/container";
+import Product from "@/components/product";
 import { arapey, inter, openSans } from "@/lib/fonts";
 import { FaRegHeart } from "react-icons/fa";
 import { IoHeart } from "react-icons/io5";
@@ -15,7 +16,8 @@ import {
   removeFromFavorites,
 } from "@/app/slices/products_slices";
 import { API_BASE_URL } from "@/app/config";
-import { AUTH_TOKEN_KEY, requireAuthOrRun } from "@/lib/authGate";
+import { AUTH_TOKEN_KEY } from "@/lib/authGate";
+import { STATIC_PRODUCTS, getStaticProductById } from "@/data/staticProducts";
 
 function ProductDetailsContent() {
   const router = useRouter();
@@ -23,19 +25,14 @@ function ProductDetailsContent() {
   const productId = searchParams.get("id");
   const openReviews = searchParams.get("review") === "1";
 
-  const [product, setProduct] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [isCartSubmitting, setIsCartSubmitting] = useState(false);
-  const [showReviews, setShowReviews] = useState(false);
-  const [reviews, setReviews] = useState([]);
-  const [isReviewsLoading, setIsReviewsLoading] = useState(false);
-  const [suggestedProducts, setSuggestedProducts] = useState([]);
-  const [isSuggestedLoading, setIsSuggestedLoading] = useState(false);
-  const [sellerInfo, setSellerInfo] = useState(null);
-  const [isSellerLoading, setIsSellerLoading] = useState(false);
+  const [showReviews, setShowReviews] = useState(openReviews);
+  const isLoading = false;
+  const isReviewsLoading = false;
+  const isSuggestedLoading = false;
 
   const dispatch = useDispatch();
   const favorites = useSelector((state) => state.products.favorites);
@@ -48,9 +45,12 @@ function ProductDetailsContent() {
     if (!rawProduct) return null;
 
     const toAbsolute = (url) => {
-      if (!url) return "/plant-placeholder.png";
-      if (String(url).startsWith("http")) return url;
-      return `${API_BASE_URL}${url}`;
+      if (!url) return "/images/plant-placeholder.png";
+      const clean = String(url).trim();
+      if (clean.startsWith("http") || clean.startsWith("data:")) return clean;
+      if (clean.startsWith("/")) return clean;
+      if (clean.startsWith("images/")) return `/${clean}`;
+      return `/images/${clean}`;
     };
 
     const thumbnail = toAbsolute(
@@ -135,216 +135,58 @@ function ProductDetailsContent() {
       (item) => String(item?.id ?? item?.product_id) === normalizedProductId,
     ) || Boolean(product?.wishlist);
 
-  // 🔹 Fetch product
-  useEffect(() => {
-    if (!productId) {
-      setProduct(null);
-      setIsLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    const fetchProduct = async () => {
-      try {
-        setIsLoading(true);
-
-        const response = await fetch(
-          `${API_BASE_URL}/products/product-details/${productId}`,
-          {
-            cache: "no-store",
-            signal: controller.signal,
-          },
-        );
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch product details: ${response.status}`,
-          );
-        }
-
-        const data = await response.json();
-        setProduct(normalizeProduct(data));
-      } catch (error) {
-        if (error?.name === "AbortError") return;
-        console.error("Fetch error:", error);
-        setProduct(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProduct();
-
-    return () => {
-      controller.abort();
-    };
+  const product = useMemo(() => {
+    const staticItem = getStaticProductById(productId) || STATIC_PRODUCTS[0];
+    return normalizeProduct(staticItem);
   }, [productId]);
 
-  useEffect(() => {
-    setSelectedImage(0);
-    setQuantity(1);
+  const reviews = useMemo(() => {
+    const title = product?.title || "the plant";
+    return [
+      {
+        id: 1,
+        name: "Tanvir Ahmed",
+        rating: 5,
+        comment: `Received ${title} in pristine condition! Leaves are green, lush and vibrant.`,
+        date: "2026-03-12",
+      },
+      {
+        id: 2,
+        name: "Farhana Islam",
+        rating: 5,
+        comment:
+          "Excellent packaging and healthy roots. Looks gorgeous in my living room.",
+        date: "2026-03-08",
+      },
+      {
+        id: 3,
+        name: "Nafis Rahman",
+        rating: 4,
+        comment:
+          "Great quality plant from Gachpala. Delivery was fast and seamless.",
+        date: "2026-03-01",
+      },
+    ];
+  }, [product?.title]);
+
+  const suggestedProducts = useMemo(() => {
+    return STATIC_PRODUCTS.filter(
+      (item) => String(item.id) !== String(productId),
+    ).slice(0, 4);
   }, [productId]);
 
-  useEffect(() => {
-    if (openReviews) {
-      setShowReviews(true);
-    }
-  }, [openReviews]);
-
-  useEffect(() => {
-    if (!productId) {
-      setReviews([]);
-      setIsReviewsLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    const fetchReviews = async () => {
-      try {
-        setIsReviewsLoading(true);
-        const response = await fetch(
-          `${API_BASE_URL}/products/${productId}/reviews`,
-          {
-            method: "GET",
-            cache: "no-store",
-            signal: controller.signal,
-          },
-        );
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch reviews: ${response.status}`);
-        }
-
-        const data = await response.json();
-        const normalized = Array.isArray(data)
-          ? data.map((item) => ({
-              id: item.id,
-              name: item.user_name || `Customer #${item.user_id || ""}`.trim(),
-              rating: Number(item.rating) || 0,
-              comment: item.comment || "",
-              date: String(item.created_at || "").slice(0, 10) || "Recent",
-            }))
-          : [];
-
-        setReviews(normalized);
-      } catch (error) {
-        if (error?.name === "AbortError") return;
-        console.error("Review fetch error:", error);
-        setReviews([]);
-      } finally {
-        setIsReviewsLoading(false);
-      }
-    };
-
-    fetchReviews();
-
-    return () => {
-      controller.abort();
-    };
-  }, [productId]);
-
-  useEffect(() => {
-    if (!productId) {
-      setSuggestedProducts([]);
-      setIsSuggestedLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    const fetchSuggestedProducts = async () => {
-      try {
-        setIsSuggestedLoading(true);
-        const response = await fetch(`${API_BASE_URL}/products`, {
-          method: "GET",
-          cache: "no-store",
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch products: ${response.status}`);
-        }
-
-        const data = await response.json();
-        const rows = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.products)
-            ? data.products
-            : [];
-        const normalized = rows
-          .filter((item) => String(item.id) !== String(productId))
-          .slice(0, 4);
-
-        setSuggestedProducts(normalized);
-      } catch (error) {
-        if (error?.name === "AbortError") return;
-        console.error("Suggested products fetch error:", error);
-        setSuggestedProducts([]);
-      } finally {
-        setIsSuggestedLoading(false);
-      }
-    };
-
-    fetchSuggestedProducts();
-
-    return () => {
-      controller.abort();
-    };
-  }, [productId]);
-
-  useEffect(() => {
-    if (!productId) {
-      setSellerInfo(null);
-      setIsSellerLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    const fetchSellerInfo = async () => {
-      try {
-        setIsSellerLoading(true);
-        const response = await fetch(
-          `${API_BASE_URL}/product-details/${productId}/seller`,
-          {
-            method: "GET",
-            cache: "no-store",
-            signal: controller.signal,
-          },
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch seller information: ${response.status}`,
-          );
-        }
-
-        const data = await response.json();
-        setSellerInfo({
-          about: data?.about_this_seller || "About This Seller",
-          sellerId: data?.seller_id,
-          name: data?.seller_name || "Gachpala Store",
-          shop: data?.shop_name || "Verified Plant Seller",
-          location: data?.location || "Bangladesh",
-          status: String(data?.status || "active"),
-          verified: Boolean(data?.verified_seller),
-          storeUrl:
-            data?.seller_store_url || data?.store_url || data?.storeUrl || null,
-        });
-      } catch (error) {
-        if (error?.name === "AbortError") return;
-        console.error("Seller fetch error:", error);
-        setSellerInfo(null);
-      } finally {
-        setIsSellerLoading(false);
-      }
-    };
-
-    fetchSellerInfo();
-
-    return () => {
-      controller.abort();
+  const sellerInfo = useMemo(() => {
+    const currentItem = getStaticProductById(productId) || STATIC_PRODUCTS[0];
+    return {
+      about:
+        "Gachpala Certified Nursery providing organically nurtured, pest-free healthy indoor & outdoor plants across Bangladesh.",
+      sellerId: currentItem.seller_id || 1,
+      name: currentItem.seller_name || "Green Flora Nursery",
+      shop: currentItem.shop_name || "Gachpala Official Garden",
+      location: currentItem.seller_location || "Dhaka, Bangladesh",
+      status: "active",
+      verified: true,
+      storeUrl: null,
     };
   }, [productId]);
 
@@ -354,12 +196,6 @@ function ProductDetailsContent() {
     const timer = setTimeout(() => setIsAddedToCart(false), 2000);
     return () => clearTimeout(timer);
   }, [isAddedToCart]);
-
-  useEffect(() => {
-    const stockValue = Number(product?.stock || 0);
-    const allowedMax = stockValue > 0 ? stockValue : 1;
-    setQuantity((prev) => Math.min(Math.max(1, prev), allowedMax));
-  }, [product?.stock]);
 
   if (isLoading) {
     return (
@@ -423,106 +259,86 @@ function ProductDetailsContent() {
   // ✅ CART — uses cartReducer (your slice)
   const handleAddToCart = () => {
     if (isCartSubmitting || !inStock) return;
+    setIsCartSubmitting(true);
 
-    requireAuthOrRun(async () => {
-      setIsCartSubmitting(true);
-      try {
-        const token = localStorage.getItem(AUTH_TOKEN_KEY);
-        if (!token) return;
+    const safeQuantity = Math.min(Math.max(1, quantity), maxQuantity);
 
-        const safeQuantity = Math.min(Math.max(1, quantity), maxQuantity);
+    dispatch(
+      cartReducer({
+        id: product.id,
+        name: product.title,
+        price: product.price,
+        quantity: safeQuantity,
+        image: product.thumbnail,
+        size: "Standard",
+        stock: product.stock,
+      }),
+    );
+    setIsAddedToCart(true);
 
-        const payload = {
-          product_id: product.id,
-          quantity: safeQuantity,
-        };
-
-        const response = await fetch(`${API_BASE_URL}/cart`, {
+    try {
+      const token =
+        typeof window !== "undefined"
+          ? localStorage.getItem(AUTH_TOKEN_KEY)
+          : null;
+      if (token && API_BASE_URL) {
+        fetch(`${API_BASE_URL}/cart`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-          const text = await response.text();
-          console.error("Add to cart failed:", text || response.status);
-          return;
-        }
-
-        dispatch(
-          cartReducer({
-            id: product.id,
-            name: product.title,
-            price: product.price,
+          body: JSON.stringify({
+            product_id: product.id,
             quantity: safeQuantity,
-            image: product.thumbnail,
-            size: "Standard",
           }),
-        );
-        setIsAddedToCart(true);
-      } finally {
-        setIsCartSubmitting(false);
+        }).catch(() => {});
       }
-    }, "product-details:add-to-cart");
+    } catch {}
+
+    setTimeout(() => {
+      setIsCartSubmitting(false);
+    }, 250);
   };
 
   // ✅ FAVORITES — matches slice
   const handleAddToFavorites = () => {
-    requireAuthOrRun(async () => {
-      const token = localStorage.getItem(AUTH_TOKEN_KEY);
-      if (!token) return;
+    if (isFavorited) {
+      dispatch(removeFromFavorites(normalizedProductId));
+    } else {
+      dispatch(
+        addToFavorites({
+          id: wishlistProductId,
+          name: product.title,
+          price: product.price,
+          image: product.thumbnail,
+        }),
+      );
+    }
 
-      if (isFavorited) {
-        const response = await fetch(
-          `${API_BASE_URL}/wishlist/${normalizedProductId}`,
-          {
+    try {
+      const token =
+        typeof window !== "undefined"
+          ? localStorage.getItem(AUTH_TOKEN_KEY)
+          : null;
+      if (token && API_BASE_URL) {
+        if (isFavorited) {
+          fetch(`${API_BASE_URL}/wishlist/${normalizedProductId}`, {
             method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          }).catch(() => {});
+        } else {
+          fetch(`${API_BASE_URL}/wishlist`, {
+            method: "POST",
             headers: {
               Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
             },
-          },
-        );
-
-        if (!response.ok) {
-          const text = await response.text();
-          console.error(
-            "Remove from wishlist failed:",
-            text || response.status,
-          );
-          return;
+            body: JSON.stringify({ product_id: wishlistProductId }),
+          }).catch(() => {});
         }
-
-        dispatch(removeFromFavorites(normalizedProductId));
-      } else {
-        const response = await fetch(`${API_BASE_URL}/wishlist`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ product_id: normalizedProductId }),
-          body: JSON.stringify({ product_id: wishlistProductId }),
-        });
-
-        if (!response.ok) {
-          const text = await response.text();
-          console.error("Add to wishlist failed:", text || response.status);
-          return;
-        }
-
-        dispatch(
-          addToFavorites({
-            id: wishlistProductId,
-            name: product.title,
-            price: product.price,
-            image: product.thumbnail,
-          }),
-        );
       }
-    }, "product-details:wishlist");
+    } catch {}
   };
 
   const handleDecreaseQuantity = () => {
@@ -955,38 +771,25 @@ function ProductDetailsContent() {
               ))}
             </div>
           ) : suggestedProducts.length > 0 ? (
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
               {suggestedProducts.map((item) => (
-                <Link
+                <Product
                   key={item.id}
-                  href={`/productDetails?id=${item.id}`}
-                  className="group rounded-2xl border border-emerald-100 bg-[#f8fbf7] overflow-hidden hover:border-[#00be62] hover:shadow-md transition"
-                >
-                  <div className="h-44 bg-[#edf4ea] overflow-hidden">
-                    <img
-                      src={resolveSuggestedImage(item)}
-                      alt={item.name || item.title || "Suggested product"}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3
-                      className={`${inter.className} text-base text-[#1f3127] line-clamp-1`}
-                    >
-                      {item.name || item.title || "Product"}
-                    </h3>
-                    <p
-                      className={`${openSans.className} mt-1 text-sm text-[#00be62] font-semibold`}
-                    >
-                      ${Number(item.price || 0).toFixed(2)}
-                    </p>
-                    <p
-                      className={`${openSans.className} mt-2 text-xs text-[#6b7a72]`}
-                    >
-                      View details
-                    </p>
-                  </div>
-                </Link>
+                  id={item.id}
+                  img={item.image_url || item.thumbnail}
+                  alt={item.name || item.title}
+                  title={item.name || item.title}
+                  price={`${item.price}`}
+                  description={item.description}
+                  stock={item.stock}
+                  category_id={item.category_id}
+                  category_name={item.category_name}
+                  is_featured={item.is_featured}
+                  created_at={item.created_at}
+                  status={item.status}
+                  weight={item.weight}
+                  dimensions={item.dimensions}
+                />
               ))}
             </div>
           ) : (

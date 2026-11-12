@@ -8,7 +8,7 @@ import {
   initializeChat,
 } from "../../services/geminiService.js";
 import ChatMessage from "../../components/ChatMessage.jsx";
-import { API_BASE_URL } from "@/app/config";
+import { STATIC_PRODUCTS } from "@/data/staticProducts";
 
 const SUGGESTIONS = [
   { text: "Best indoor plants? 🌿", label: "Indoor options" },
@@ -34,76 +34,24 @@ const App = () => {
   const [topSellingProducts, setTopSellingProducts] = useState([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/products`);
-        if (!response.ok) {
-          console.error("Failed to fetch products:", await response.text());
-          return;
-        }
-        const data = await response.json();
-        const rows = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.products)
-            ? data.products
-            : [];
+    const mappedProducts = STATIC_PRODUCTS.map((item) => ({
+      id: item.id.toString(),
+      name: item.name,
+      scientificName: "",
+      category: item.category_name || "Other",
+      price: item.price,
+      description: item.description,
+      careLevel: item.care_level || "Moderate",
+      imageUrl: item.image_url,
+      benefits: [],
+      popular: item.is_featured,
+    }));
+    setProducts(mappedProducts);
 
-        const mappedProducts = rows.map((item) => ({
-          id: item.id.toString(),
-          name: item.name,
-          scientificName: "",
-          category: item.category_name || "Other",
-          price: item.price,
-          description: item.description,
-          careLevel: "Moderate",
-          imageUrl: item.image_url.startsWith("http")
-            ? item.image_url
-            : `${API_BASE_URL}${item.image_url}`,
-          benefits: [],
-          popular: item.is_featured,
-        }));
-
-        setProducts(mappedProducts);
-      } catch (error) {
-        console.error("Failed to fetch products", error);
-      }
-    };
-
-    const fetchTopSelling = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/products/topselling`);
-        if (!response.ok) {
-          console.error(
-            "Failed to fetch top selling products:",
-            await response.text(),
-          );
-          return;
-        }
-        const data = await response.json();
-
-        const mappedTopSelling = data.map((item) => ({
-          id: item.id.toString(),
-          name: item.name,
-          scientificName: "",
-          category: item.category_name || "Other",
-          price: item.price,
-          description: item.description,
-          careLevel: "Moderate",
-          imageUrl: item.image_url.startsWith("http")
-            ? item.image_url
-            : `${API_BASE_URL}${item.image_url}`,
-          benefits: [],
-          popular: item.is_featured,
-        }));
-
-        setTopSellingProducts(mappedTopSelling);
-      } catch (error) {
-        console.error("Failed to fetch top selling products", error);
-      }
-    };
-
-    fetchProducts();
-    fetchTopSelling();
+    const featuredOnly = mappedProducts.filter((p) => p.popular);
+    setTopSellingProducts(
+      featuredOnly.length > 0 ? featuredOnly : mappedProducts.slice(0, 6),
+    );
   }, []);
 
   useEffect(() => {

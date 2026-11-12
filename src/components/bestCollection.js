@@ -4,8 +4,9 @@ import Link from "next/link";
 import { BsArrowRight } from "react-icons/bs";
 import Product from "./product";
 import ProductSkeleton from "./productSkeleton";
+import { STATIC_PRODUCTS } from "@/data/staticProducts";
 
-export default function BestCollection({ products }) {
+export default function BestCollection({ products = STATIC_PRODUCTS }) {
   const isLoading = !products || products.length === 0;
   const allProducts = Array.isArray(products) ? products : [];
   const featuredProducts = allProducts.filter((item) => item?.is_featured);

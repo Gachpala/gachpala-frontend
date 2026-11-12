@@ -4,86 +4,31 @@ import Product from "@/components/product";
 import ProductSkeleton from "@/components/productSkeleton";
 import { inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { API_BASE_URL } from "@/app/config";
-import { AUTH_TOKEN_KEY, isAuthenticated, openAuthModal } from "@/lib/authGate";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
+import { STATIC_PRODUCTS } from "@/data/staticProducts";
 
 export default function Favourite() {
-  const router = useRouter();
+  const reduxFavorites = useSelector((state) => state.products.favorites);
+  const isLoading = false;
 
-  // ── Route guard: redirect unauthenticated users ──
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      openAuthModal("favourite");
-      router.replace("/");
+  const wishlistItems = useMemo(() => {
+    if (Array.isArray(reduxFavorites) && reduxFavorites.length > 0) {
+      return reduxFavorites;
     }
-  }, [router]);
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [wishlistItems, setWishlistItems] = useState([]);
-  const [wishlistError, setWishlistError] = useState("");
-
-  useEffect(() => {
-    const fetchWishlist = async () => {
-      if (typeof window === "undefined") return;
-
-      const token = localStorage.getItem(AUTH_TOKEN_KEY);
-      if (!token) {
-        setWishlistItems([]);
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        setWishlistError("");
-
-        const response = await fetch(`${API_BASE_URL}/wishlist`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const text = await response.text();
-        let data = [];
-
-        if (text) {
-          try {
-            data = JSON.parse(text);
-          } catch {
-            data = [];
+    try {
+      if (typeof window !== "undefined") {
+        const saved = localStorage.getItem("favorites");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
           }
         }
-
-        if (!response.ok) {
-          throw new Error(
-            data?.message ||
-              data?.error ||
-              `Failed to load wishlist (${response.status})`,
-          );
-        }
-
-        const rows = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.items)
-            ? data.items
-            : Array.isArray(data?.products)
-              ? data.products
-              : [];
-
-        setWishlistItems(rows);
-      } catch (error) {
-        setWishlistError(error?.message || "Unable to load wishlist.");
-        setWishlistItems([]);
-      } finally {
-        setIsLoading(false);
       }
-    };
-
-    fetchWishlist();
-  }, []);
+    } catch {}
+    return [STATIC_PRODUCTS[0], STATIC_PRODUCTS[1]];
+  }, [reduxFavorites]);
 
   return (
     <section className="pb-16 bg-[radial-gradient(circle_at_8%_15%,#e4f4e8_0%,#f5faf3_35%,#f8fbf6_100%)]">
@@ -143,12 +88,6 @@ export default function Favourite() {
           </Link>
         </div>
 
-        {wishlistError ? (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {wishlistError}
-          </div>
-        ) : null}
-
         {isLoading ? (
           <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-6 mb-8">
             {[...Array(8)].map((_, i) => (
@@ -162,16 +101,22 @@ export default function Favourite() {
                 key={product.product_id || product.id}
                 id={product.product_id || product.id}
                 img={
-                  product.product_image || product.image || product.thumbnail
+                  product.product_image ||
+                  product.image ||
+                  product.thumbnail ||
+                  product.image_url
                 }
                 alt={product.product_name || product.name || "Wishlist product"}
-                title={product.product_name || product.name}
+                title={product.product_name || product.title || product.name}
                 price={`${product.unit_price || product.price || 0}`}
+                description={product.description || ""}
+                category_name={product.category_name || "Indoor Plants"}
                 stock={
                   product.stock ??
                   product.product_stock ??
                   product.quantity ??
-                  product?.product?.stock
+                  product?.product?.stock ??
+                  15
                 }
               />
             ))}
@@ -183,17 +128,14 @@ export default function Favourite() {
             >
               No Favourites Yet
             </p>
-            <p
-              className={`${openSans.className} text-gray-600 text-center max-w-md px-4`}
-            >
-              Start adding your favourite plants to this collection. They will
-              appear here for easy access.
+            <p className={`${openSans.className} text-gray-600 mb-8`}>
+              Explore our fresh collection and save items you love!
             </p>
             <Link
               href="/shop"
-              className="mt-6 rounded-xl bg-[#00be62] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#00a757] transition"
+              className="bg-[#00be62] text-white px-6 py-3 rounded-full hover:bg-green-600 transition duration-300"
             >
-              Explore Shop
+              Start Exploring
             </Link>
           </div>
         )}

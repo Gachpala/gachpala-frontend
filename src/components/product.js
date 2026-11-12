@@ -10,7 +10,7 @@ import {
   removeFromFavorites,
 } from "@/app/slices/products_slices";
 import { API_BASE_URL } from "@/app/config";
-import { AUTH_TOKEN_KEY, requireAuthOrRun } from "@/lib/authGate";
+import { AUTH_TOKEN_KEY } from "@/lib/authGate";
 
 const ProductCard = ({
   id,
@@ -61,128 +61,123 @@ const ProductCard = ({
     }
   }, [isCartAnimating]);
 
-  const handleAddToCart = async (e) => {
+  const placeholder = "/images/plant-placeholder.png";
+  const imageSrc = useMemo(() => {
+    if (usePlaceholder || !img) return placeholder;
+    const cleanImg = String(img).trim();
+    if (
+      cleanImg.startsWith("/") ||
+      cleanImg.startsWith("http") ||
+      cleanImg.startsWith("data:")
+    ) {
+      return cleanImg;
+    }
+    if (cleanImg.startsWith("images/")) {
+      return `/${cleanImg}`;
+    }
+    return `/images/${cleanImg}`;
+  }, [img, usePlaceholder]);
+
+  const handleAddToCart = (e) => {
     e.stopPropagation();
     if (isCartSubmitting) return;
 
     setIsCartAnimating(true);
+    setIsCartSubmitting(true);
 
-    requireAuthOrRun(async () => {
-      setIsCartSubmitting(true);
-      try {
-        const token = localStorage.getItem(AUTH_TOKEN_KEY);
-        if (!token) return;
+    const newItem = {
+      id,
+      name: title,
+      price: parseFloat(price) || 0,
+      quantity: 1,
+      image: imageSrc,
+      size: "Standard",
+      description,
+      stock,
+      category_id,
+      category_name,
+      is_featured,
+      created_at,
+      status,
+      weight,
+      dimensions,
+    };
+    dispatch(cartReducer(newItem));
+    setIsCartAdded(true);
 
-        const payload = {
-          product_id: id,
-          quantity: 1,
-        };
-
-        const response = await fetch(`${API_BASE_URL}/cart`, {
+    // Optional background sync if token exists, silently ignore backend unavailability
+    try {
+      const token =
+        typeof window !== "undefined"
+          ? localStorage.getItem(AUTH_TOKEN_KEY)
+          : null;
+      if (token && API_BASE_URL) {
+        fetch(`${API_BASE_URL}/cart`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-          const text = await response.text();
-          console.error("Add to cart failed:", text || response.status);
-          return;
-        }
-
-        const newItem = {
-          id,
-          name: title,
-          price: parseFloat(price),
-          quantity: 1,
-          image: img,
-          size: "Standard",
-          description,
-          stock,
-          category_id,
-          category_name,
-          is_featured,
-          created_at,
-          status,
-          weight,
-          dimensions,
-        };
-        dispatch(cartReducer(newItem));
-
-        setIsCartAdded(true);
-      } catch (error) {
-        console.error("Add to cart request failed:", error);
-      } finally {
-        setIsCartSubmitting(false);
+          body: JSON.stringify({ product_id: id, quantity: 1 }),
+        }).catch(() => {});
       }
-    }, "product-card:add-to-cart");
+    } catch {}
+
+    setTimeout(() => {
+      setIsCartSubmitting(false);
+    }, 250);
   };
 
   const handleAddToFavorites = (e) => {
     e.stopPropagation();
 
-    requireAuthOrRun(async () => {
-      const token = localStorage.getItem(AUTH_TOKEN_KEY);
-      if (!token) return;
+    if (isFavorited) {
+      dispatch(removeFromFavorites(normalizedId));
+    } else {
+      const newItem = {
+        id: wishlistProductId,
+        name: title,
+        price: parseFloat(price) || 0,
+        image: imageSrc,
+        description,
+        stock,
+        category_id,
+        category_name,
+        is_featured,
+        created_at,
+        status,
+        weight,
+        dimensions,
+      };
+      dispatch(addToFavorites(newItem));
+    }
 
-      if (isFavorited) {
-        const response = await fetch(
-          `${API_BASE_URL}/wishlist/${normalizedId}`,
-          {
+    // Optional background sync if token exists, silently ignore backend unavailability
+    try {
+      const token =
+        typeof window !== "undefined"
+          ? localStorage.getItem(AUTH_TOKEN_KEY)
+          : null;
+      if (token && API_BASE_URL) {
+        if (isFavorited) {
+          fetch(`${API_BASE_URL}/wishlist/${normalizedId}`, {
             method: "DELETE",
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          },
-        );
-
-        if (!response.ok) {
-          const text = await response.text();
-          console.error(
-            "Remove from wishlist failed:",
-            text || response.status,
-          );
-          return;
+          }).catch(() => {});
+        } else {
+          fetch(`${API_BASE_URL}/wishlist`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ product_id: wishlistProductId }),
+          }).catch(() => {});
         }
-
-        dispatch(removeFromFavorites(normalizedId));
-      } else {
-        const response = await fetch(`${API_BASE_URL}/wishlist`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ product_id: wishlistProductId }),
-        });
-
-        if (!response.ok) {
-          const text = await response.text();
-          console.error("Add to wishlist failed:", text || response.status);
-          return;
-        }
-
-        const newItem = {
-          id: wishlistProductId,
-          name: title,
-          price: parseFloat(price),
-          image: img,
-          description,
-          stock,
-          category_id,
-          category_name,
-          is_featured,
-          created_at,
-          status,
-          weight,
-          dimensions,
-        };
-        dispatch(addToFavorites(newItem));
       }
-    }, "product-card:wishlist");
+    } catch {}
   };
 
   const handleDetails = (e) => {
@@ -192,15 +187,6 @@ const ProductCard = ({
     }
     router.push(`/productDetails?id=${id}`);
   };
-
-  const placeholder = "/plant-placeholder.png";
-  const imageSrc = useMemo(() => {
-    const src = usePlaceholder ? placeholder : img;
-    if (!usePlaceholder && src && src.startsWith("/")) {
-      return `${API_BASE_URL}${src}`;
-    }
-    return src || placeholder;
-  }, [img, usePlaceholder]);
 
   const textShorter = (text, maxLength) => {
     if (!text) return "";

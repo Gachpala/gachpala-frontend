@@ -4,8 +4,9 @@ import Link from "next/link";
 import { BsArrowRight } from "react-icons/bs";
 import Product from "./product";
 import ProductSkeleton from "./productSkeleton";
+import { STATIC_PRODUCTS } from "@/data/staticProducts";
 
-export default function Arrival({ products }) {
+export default function Arrival({ products = STATIC_PRODUCTS }) {
   const isLoading = !products || products.length === 0;
   const arrivalProducts = Array.isArray(products)
     ? [...products]

@@ -4,6 +4,11 @@ import Container from "@/components/container";
 import { arapey, inter, openSans } from "@/lib/fonts";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  updateCartQuantity,
+  removeFromCart,
+} from "@/app/slices/products_slices";
 import { BsArrowLeft, BsTrash } from "react-icons/bs";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import {
@@ -19,11 +24,38 @@ import { API_BASE_URL } from "@/app/config";
 import { AUTH_TOKEN_KEY } from "@/lib/authGate";
 
 export default function Cart() {
+  const dispatch = useDispatch();
+  const reduxCart = useSelector((state) => state.products.cart);
   const [cartData, setCartData] = useState(null);
   const [isCartLoading, setIsCartLoading] = useState(true);
   const [cartError, setCartError] = useState("");
   const [deletingItemId, setDeletingItemId] = useState(null);
   const [updatingItemId, setUpdatingItemId] = useState(null);
+
+  const mapLocalCart = (items) => {
+    const safeItems = Array.isArray(items) ? items : [];
+    return {
+      items: safeItems.map((item) => ({
+        id: item.id,
+        product_id: item.id,
+        product_name: item.name || item.title || "Plant",
+        product_image:
+          item.image || item.thumbnail || "/images/plant-placeholder.png",
+        unit_price: parseFloat(item.price) || 0,
+        quantity: Number(item.quantity) || 1,
+        subtotal: (parseFloat(item.price) || 0) * (Number(item.quantity) || 1),
+        stock: item.stock || 25,
+        size: item.size || "Standard",
+        seller_id: item.seller_id || 1,
+        seller_name: item.seller_name || "Green Flora Nursery",
+        shop_name: item.shop_name || "Gachpala Official Garden",
+        seller_location: item.seller_location || "Dhaka, Bangladesh",
+      })),
+      summary: {
+        currency: "BDT",
+      },
+    };
+  };
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -31,7 +63,7 @@ export default function Cart() {
 
       const token = localStorage.getItem(AUTH_TOKEN_KEY);
       if (!token) {
-        setCartData({ items: [], summary: { subtotal: 0, currency: "BDT" } });
+        setCartData(mapLocalCart(reduxCart));
         setIsCartLoading(false);
         return;
       }
@@ -58,25 +90,20 @@ export default function Cart() {
           }
         }
 
-        if (!response.ok) {
-          throw new Error(
-            data?.message ||
-              data?.error ||
-              `Failed to load cart (${response.status})`,
-          );
+        if (!response.ok || !data?.items?.length) {
+          setCartData(mapLocalCart(reduxCart));
+        } else {
+          setCartData(data);
         }
-
-        setCartData(data);
-      } catch (error) {
-        setCartError(error?.message || "Unable to load cart.");
-        setCartData({ items: [], summary: { subtotal: 0, currency: "BDT" } });
+      } catch {
+        setCartData(mapLocalCart(reduxCart));
       } finally {
         setIsCartLoading(false);
       }
     };
 
     fetchCart();
-  }, []);
+  }, [reduxCart]);
 
   const cartItems = useMemo(() => cartData?.items || [], [cartData]);
 
@@ -108,122 +135,86 @@ export default function Cart() {
   }, [cartItems]);
 
   const updateQuantity = async (id, change) => {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
-    if (!token) {
-      setCartError("Please sign in to update cart items.");
-      return;
-    }
-
     const item = cartItems.find((entry) => entry.id === id);
-    if (item) {
-      const nextQuantity = item.quantity + change;
-      if (nextQuantity < 1) return;
-      if (item.stock && nextQuantity > item.stock) return;
+    if (!item) return;
 
-      try {
-        setUpdatingItemId(id);
-        setCartError("");
+    const nextQuantity = item.quantity + change;
+    if (nextQuantity < 1) return;
+    if (item.stock && nextQuantity > item.stock) return;
 
-        const response = await fetch(`${API_BASE_URL}/cart/${id}`, {
+    setUpdatingItemId(id);
+    setCartError("");
+
+    // Update Redux slice
+    dispatch(updateCartQuantity({ id, quantity: nextQuantity }));
+
+    // Update local view
+    setCartData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        items: prev.items.map((entry) =>
+          entry.id === id
+            ? {
+                ...entry,
+                quantity: nextQuantity,
+                subtotal: parseFloat(
+                  (entry.unit_price * nextQuantity).toFixed(2),
+                ),
+              }
+            : entry,
+        ),
+      };
+    });
+
+    // Optional background sync
+    try {
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      if (token && API_BASE_URL) {
+        fetch(`${API_BASE_URL}/cart/${id}`, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ quantity: nextQuantity }),
-        });
-
-        const text = await response.text();
-        let data = {};
-
-        if (text) {
-          try {
-            data = JSON.parse(text);
-          } catch {
-            data = {};
-          }
-        }
-
-        if (!response.ok) {
-          throw new Error(
-            data?.message ||
-              data?.error ||
-              `Update failed (${response.status})`,
-          );
-        }
-
-        setCartData((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            items: prev.items.map((entry) =>
-              entry.id === id
-                ? {
-                    ...entry,
-                    quantity: nextQuantity,
-                    subtotal: parseFloat(
-                      (entry.unit_price * nextQuantity).toFixed(2),
-                    ),
-                  }
-                : entry,
-            ),
-          };
-        });
-      } catch (error) {
-        setCartError(error?.message || "Unable to update cart item.");
-      } finally {
-        setUpdatingItemId(null);
+        }).catch(() => {});
       }
-    }
+    } catch {}
+
+    setUpdatingItemId(null);
   };
 
   const removeItem = async (id) => {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
-    if (!token) {
-      setCartError("Please sign in to remove cart items.");
-      return;
-    }
+    setDeletingItemId(id);
+    setCartError("");
 
+    // Update Redux slice
+    dispatch(removeFromCart(id));
+
+    // Update local view
+    setCartData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        items: prev.items.filter((entry) => entry.id !== id),
+      };
+    });
+
+    // Optional background sync
     try {
-      setDeletingItemId(id);
-      setCartError("");
-
-      const response = await fetch(`${API_BASE_URL}/cart/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const text = await response.text();
-      let data = {};
-
-      if (text) {
-        try {
-          data = JSON.parse(text);
-        } catch {
-          data = {};
-        }
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      if (token && API_BASE_URL) {
+        fetch(`${API_BASE_URL}/cart/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).catch(() => {});
       }
+    } catch {}
 
-      if (!response.ok) {
-        throw new Error(
-          data?.message || data?.error || `Delete failed (${response.status})`,
-        );
-      }
-
-      setCartData((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          items: prev.items.filter((entry) => entry.id !== id),
-        };
-      });
-    } catch (error) {
-      setCartError(error?.message || "Unable to remove cart item.");
-    } finally {
-      setDeletingItemId(null);
-    }
+    setDeletingItemId(null);
   };
 
   const subtotal = parseFloat(
@@ -238,22 +229,27 @@ export default function Cart() {
   const currencySymbol = currency === "BDT" ? "৳" : `${currency} `;
 
   const getProductImage = (imagePath) => {
-    if (!imagePath) return "/plant-placeholder.png";
+    if (!imagePath) return "/images/plant-placeholder.png";
 
-    const normalizedPath = String(imagePath).replace(/\\/g, "/");
+    const normalizedPath = String(imagePath).replace(/\\/g, "/").trim();
 
     if (
       normalizedPath.startsWith("http://") ||
-      normalizedPath.startsWith("https://")
+      normalizedPath.startsWith("https://") ||
+      normalizedPath.startsWith("data:")
     ) {
       return encodeURI(normalizedPath);
     }
 
-    const withLeadingSlash = normalizedPath.startsWith("/")
-      ? normalizedPath
-      : `/${normalizedPath}`;
+    if (normalizedPath.startsWith("/")) {
+      return encodeURI(normalizedPath);
+    }
 
-    return encodeURI(`${API_BASE_URL}${withLeadingSlash}`);
+    if (normalizedPath.startsWith("images/")) {
+      return encodeURI(`/${normalizedPath}`);
+    }
+
+    return encodeURI(`/images/${normalizedPath}`);
   };
 
   // ─── Loading State ────────────────────────────────────────────────

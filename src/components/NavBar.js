@@ -30,6 +30,8 @@ import {
   performLogout,
 } from "@/lib/authGate";
 
+import { STATIC_PRODUCTS } from "@/data/staticProducts";
+
 const CART_UPDATED_EVENT = "gachpala:cart-updated";
 
 export default function Home() {
@@ -89,13 +91,13 @@ export default function Home() {
     };
   };
 
-  const getLocalCartCount = () => {
+  const getLocalCartCount = useCallback(() => {
     if (!Array.isArray(cartItems) || !cartItems.length) return 0;
     return cartItems.reduce(
       (acc, item) => acc + Number(item?.quantity || 1),
       0,
     );
-  };
+  }, [cartItems]);
 
   // Initialize to SSR-safe defaults so the server and the client's first
   // render match. The mount effect below syncs the real values from
@@ -108,7 +110,7 @@ export default function Home() {
   const [openSearch, setOpenSearch] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [SignInUp, setSignInUp] = React.useState(false);
-  const [cachedProducts, setCachedProducts] = React.useState([]);
+  const [cachedProducts, setCachedProducts] = React.useState(STATIC_PRODUCTS);
   const [isLoadingProducts, setIsLoadingProducts] = React.useState(false);
   const searchInputRef = useRef(null);
   const searchResultsRef = useRef(null);
@@ -376,7 +378,7 @@ export default function Home() {
       window.removeEventListener(AUTH_CHANGED_EVENT, handleAuthChanged);
       window.removeEventListener(CART_UPDATED_EVENT, handleCartUpdated);
     };
-  }, [cartItems]);
+  }, [cartItems, getLocalCartCount]);
 
   const displayedCartCount = cartCount;
 
@@ -670,11 +672,11 @@ export default function Home() {
                   ) : searchResults.length > 0 ? (
                     <ul className="divide-y divide-emerald-50">
                       {searchResults.map((product) => {
-                        const imgSrc = product.image_url
-                          ? product.image_url.startsWith("/")
-                            ? `${API_BASE_URL}${product.image_url}`
-                            : product.image_url
-                          : product.thumbnail || "/plant-placeholder.png";
+                        const imgSrc =
+                          product.image_url ||
+                          product.thumbnail ||
+                          product.img ||
+                          "/images/plant-placeholder.png";
 
                         return (
                           <li key={product.id}>

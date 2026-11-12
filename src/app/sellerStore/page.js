@@ -1,77 +1,63 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Container from "@/components/container";
 import Product from "@/components/product";
 import ProductSkeleton from "@/components/productSkeleton";
 import { inter, openSans, arapey } from "@/lib/fonts";
-import { API_BASE_URL } from "@/app/config";
+import { STATIC_PRODUCTS, getStaticProductById } from "@/data/staticProducts";
 
 function SellerStoreContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const productId = searchParams.get("productId");
-  const sellerName = searchParams.get("seller") || "Gachpala Store";
-  const shopName = searchParams.get("shop") || "Verified Plant Seller";
-  const sellerLocation = searchParams.get("location") || "Bangladesh";
+  const sellerName = searchParams.get("seller") || "Green Flora Nursery";
+  const shopName = searchParams.get("shop") || "Gachpala Official Garden";
+  const sellerLocation = searchParams.get("location") || "Dhaka, Bangladesh";
 
-  const [products, setProducts] = useState([]);
-  const [seller, setSeller] = useState(null);
-  const [stats, setStats] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const currentProduct = useMemo(
+    () => getStaticProductById(productId) || STATIC_PRODUCTS[0],
+    [productId],
+  );
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const products = useMemo(() => {
+    const sellerProducts = STATIC_PRODUCTS.filter(
+      (p) =>
+        (p.seller_name && p.seller_name === currentProduct.seller_name) ||
+        p.seller_id === currentProduct.seller_id,
+    );
+    return sellerProducts.length > 0
+      ? sellerProducts
+      : STATIC_PRODUCTS.slice(0, 8);
+  }, [currentProduct]);
 
-    const fetchSellerStore = async () => {
-      if (!productId) {
-        setProducts([]);
-        setSeller(null);
-        setStats(null);
-        setIsLoading(false);
-        return;
-      }
+  const seller = useMemo(
+    () => ({
+      name: sellerName || currentProduct.seller_name || "Green Flora Nursery",
+      shop: shopName || currentProduct.shop_name || "Gachpala Official Garden",
+      location:
+        sellerLocation ||
+        currentProduct.seller_location ||
+        "Dhaka, Bangladesh",
+      status: "active",
+      verified: true,
+    }),
+    [sellerName, currentProduct, sellerLocation, shopName],
+  );
 
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          `${API_BASE_URL}/product-details/${productId}/seller`,
-          {
-            method: "GET",
-            cache: "no-store",
-            signal: controller.signal,
-          },
-        );
+  const stats = useMemo(
+    () => ({
+      totalProducts: products.length,
+      rating: 4.9,
+      reviewsCount: 142,
+      joinedYear: "2023",
+    }),
+    [products.length],
+  );
 
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch seller store data: ${response.status}`,
-          );
-        }
-
-        const data = await response.json();
-        setProducts(Array.isArray(data?.products) ? data.products : []);
-        setSeller(data?.seller || null);
-        setStats(data?.stats || null);
-      } catch (error) {
-        if (error?.name === "AbortError") return;
-        console.error("Seller store fetch error:", error);
-        setProducts([]);
-        setSeller(null);
-        setStats(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchSellerStore();
-
-    return () => {
-      controller.abort();
-    };
-  }, [productId]);
+  const isLoading = false;
 
   const sellerInfo = {
     name: seller?.seller_name || sellerName,
